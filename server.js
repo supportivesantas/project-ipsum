@@ -25,4 +25,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.resolve('./public/index.html'));
 });
 
-app.listen(1337);
+const port = 1337;
+
+app.listen(port, (err) => {
+  if (err) {
+    throw err;
+  } else {
+    console.log('Server listening at 127.0.0.1, port:', port);
+  }
+});
