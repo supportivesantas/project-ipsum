@@ -45,7 +45,56 @@ bower install
 ### Roadmap
 
 View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
-
+```
+                                                 +--------------------+
+                                                 |                    |
+  +----------------+  Preferences, credentials,  |                    |
+  |                |  commands                   |  OUR AWESOME APP   |
+  |     User       +-----------------------------+                    |
+  |   Dashboard    |                             |                    |
+  |                |     Alerts, metrics         |                    |
+  |                <-----------------------------+                    |
+  +----------------+                             |                    |
+                                                 |                    |
+  +-----------------+                            |                    |
+  |                 |      Requested Data        |                    |
+  |   PostgreSQL    +---------------------------->                    |
+  |                 |                            |                    |
+  |   Users, Apps   |       Compiled Data        |                    |
+  |                 <----------------------------+                    |
+  +-----------------^                            |                    |
+                                                 |     Controller     |
+                           Instructions          |      DOProxy       |
+        +----------------------------------------+                    |
+        |                                        +-------------^----^-+
+        |                                                      |    |
+        |                                                      |    |
++-------v------+   +-----------------------+                   |    |
+|              |   |                       |                   |    |
+| DigitalOcean |   |                       |                   |    |
+|      API     |   |        HAProxy        |                   |    |
+|              |   |                       |                   |    |
++-------+------+   |     Load Balancer     |                   |    |
+        |          |                       |                   |    |
+        |          |                       +-------------------+    |
+        |          |                       |  Routing info          |
+        |          |                       |                        |
+        |          +-----------+-----------+                        |
+        |                      |                                    |
+        | Add or               | Route web                          |
+        | Delete               | Traffic                            |
+        |                      |                                    |
+        |             +--------v---------+                          |
+        |             |                  |                          |
+        |             |                  |                          |
+        |             |   Droplet 1      |                          |
+        |             |   ...            +--------------------------+
+        |             |   Droplet n      |    Droplet info
+        +---------------> Droplet n+1    |
+                      |                  |
+                      |                  |
+                      +------------------+
+```
 
 ## Contributing
 
