@@ -5,18 +5,18 @@
   "main": "./public/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./server.js --ignore public"
+    "start": "nodemon ./server/server.js --ignore public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mbresnan1701/project-ipsum.git"
+    "url": "git+https://github.com/supportivesantas/project-ipsum.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mbresnan1701/project-ipsum/issues"
+    "url": "https://github.com/supportivesantas/project-ipsum/issues"
   },
-  "homepage": "https://github.com/mbresnan1701/project-ipsum#readme",
+  "homepage": "https://github.com/supportivesantas/project-ipsum#readme",
   "dependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.7.7",
@@ -24,7 +24,11 @@
     "babel-preset-es2015": "^6.6.0",
     "babel-preset-react": "^6.5.0",
     "body-parser": "^1.15.0",
+    "bookshelf": "^0.9.4",
     "express": "^4.13.4",
+    "knex": "^0.10.0",
+    "path": "^0.12.7",
+    "pg": "^4.5.5",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
     "react-redux": "^4.4.5",
