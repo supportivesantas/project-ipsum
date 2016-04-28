@@ -2,11 +2,11 @@ const ipsum = (state = [], action) => {
   switch (action.type) {
     case 'DO_THING':
       return [
-        ...state,
+        ...state, { payload: action.payload },
       ];
     default:
       return state;
   }
 };
 
-export default ipsum;
+module.exports = ipsum;

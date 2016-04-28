@@ -1,4 +1,5 @@
-const actions = {
+
+module.exports = {
   DO_THING(someProp) {
     return {
       type: 'DO_THING',
@@ -6,8 +7,4 @@ const actions = {
     };
   },
 
-
 };
-
-
-export default actions;
