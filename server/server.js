@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 // const bodyParser = require('body-parser');
-const config = require('./webpack.config.js');
+const config = require('../webpack.config.js');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
