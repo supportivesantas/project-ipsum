@@ -7,15 +7,15 @@ const actions = require('../public/actions/ipsumActions.js');
 const reducer = require('../public/reducers/ipsumReducers.js');
 
 describe('Reducer Tests ', () => {
-  it('Return the initial state', (done) => {
-    assert(Array.isArray(reducer(undefined, {})));
-    expect(reducer(undefined, {}).length).to.equal(0);
+  it('Return the current state if no action is given', (done) => {
+    const initState = reducer(undefined, {});
+    assert.isObject(initState);
     done();
   });
 
-  it('Should handle DO_THING', (done) => {
-    expect(reducer(undefined, { type: 'DO_THING', payload: 'Matt is great' })[0].payload).to.equal('Matt is great');
+  it('Should handle ADD_APPLICATION', (done) => {
+    expect(reducer({ applications: [] }, { type: 'ADD_APPLICATION', payload: 'Matt is great' }).applications[0].payload)
+      .to.equal('Matt is great');
     done();
   });
-
 });
