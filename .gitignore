@@ -1,2 +1,7 @@
 node_modules
 .eslintrc.js
+
+# VS Code
+typings
+typings.json
+
