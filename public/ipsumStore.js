@@ -5,10 +5,15 @@ import { routerReducer } from 'react-router-redux';
 
 
 const middleware = [logger()];
+const init = {
+  routing: [],
+  applications: [{ id: 0, payload: 'QQQQQQQQQQ' }],
+  user: {},
+};
 // const combinedReducers = combineReducers({ ...reducers, routing: routerReducer });
 
 // configure store with initial state and allow Redux Chrome extension to view store
-export default function configureStore(initialState = { routing: [], applications: [{ id: 0, payload: 'QQQQQQQQQQ' }] }) {
+export default function configureStore(initialState = init) {
   const store = createStore(combineReducers(...reducers, {
     routing: routerReducer,
   }), initialState, compose(
