@@ -19,6 +19,11 @@ app.use(webpackHotMiddleware(compiler));
 app.use(express.static('./dist'));
 app.use(bodyParser.json()); // for parsing application/json
 
+// api interface for interacting with digital_ocean, et al.
+const configureRequest = require('./api/configure.js');
+const makeRequest = require('./api/makeRequest.js');
+app.use('/api/:action', configureRequest, makeRequest);
+
 app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.resolve('./public/favicon.ico'));
 });
@@ -27,7 +32,8 @@ app.get('/', (req, res) => {
 });
 
 
-const port = 1337;
+
+const port = process.env.port || 1337;
 
 app.listen(port, (err) => {
   if (err) {

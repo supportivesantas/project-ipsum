@@ -26,7 +26,7 @@ module.exports = {
     },
     create_server: function(req) {
       if (!req.body) { throw new Error('Request body not present') }
-      if (!(req.body.name && req.body.region && req.body.size && req.body.image)) { 
+      if (!(req.body.name && req.body.region && req.body.size && req.body.image_id)) { 
         throw new Error('Name, region, size, or image not specified in req.body for the new server to be created.') 
       }
       req.options = {
@@ -36,7 +36,7 @@ module.exports = {
           name: req.body.name, 
           region: req.body.region, 
           size: req.body.size, 
-          image: req.body.image
+          image: req.body.image_id
         },
         json: true
       };

@@ -12,7 +12,8 @@ var actions = [
   'create_server',  
   'reboot_server',   
   'power_on_server', 
-  'power_off_server' 
+  'power_off_server',
+  'shutdown_server' 
 ];
 
 var configureRequest = function(req, res, next) {
@@ -28,11 +29,13 @@ var configureRequest = function(req, res, next) {
   // check if action exists
   if (actions.indexOf(action) === -1) { 
     console.log('No action matched to this api endpoint');
+    res.end('No action matched to this api endpoint');
     return;
   }
   // check if platform is defined
   if (!platforms.hasOwnProperty(req.body.platform)) {
     console.log('Requested platform is not defined');
+    res.end('Requested platform is not defined');
     return;
   } else {
     platform = platforms[req.body.platform];
@@ -69,22 +72,22 @@ module.exports = configureRequest;
 // code below is for testing... uncomment and use node to start this server
 // should forward the request to to Roland's DigitalOcean account (MEAN droplets)
 
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
+// const express = require('express');
+// const app = express();
+// const bodyParser = require('body-parser');
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use('/api/:action', configureRequest, makeRequest);
+// app.use(bodyParser.json()); // for parsing application/json
+// app.use('/api/:action', configureRequest, makeRequest);
 
-const port = process.env.port || 8000;
+// const port = process.env.port || 8000;
 
-app.listen(port, (err) => {
-  if (err) {
-    throw err;
-  } else {
-    console.log('Server listening at 127.0.0.1, port:', port);
-  }
-});
+// app.listen(port, (err) => {
+//   if (err) {
+//     throw err;
+//   } else {
+//     console.log('Server listening at 127.0.0.1, port:', port);
+//   }
+// });
 
 
 
