@@ -6,12 +6,12 @@ import Login from './components/Login.js';
 import AllApps from './components/AllApplications.js';
 import { Provider } from 'react-redux';
 import configureStore from './ipsumStore.js';
-import { hashHistory, Router, Route, Link, IndexRoute } from 'react-router';
+import { browserHistory, Router, Route, Link, IndexRoute } from 'react-router';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 import MainPage from './components/MainPage.js';
 
 const store = configureStore();
-const history = syncHistoryWithStore(hashHistory, store);
+const history = syncHistoryWithStore(browserHistory, store);
 
 render(
   <Provider store={store}>

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Navbar, Nav, NavDropdown, MenuItem, NavItem } from 'react-bootstrap';
 import { Link } from 'react-router';
+import NavLink from './NavLink.js';
 
 const NavigationBar = () => {
   return (
     <Navbar>
       <Navbar.Header>
         <Navbar.Brand>
-          <a href="#">Project-Ipsum</a>
+          <NavLink to="/">Project-Ipsum</NavLink>
         </Navbar.Brand>
         <Navbar.Toggle />
       </Navbar.Header>
@@ -24,8 +25,8 @@ const NavigationBar = () => {
           </NavDropdown>*/}
         </Nav>
         <Nav pullRight>
-          <NavItem eventKey={1} href="#"><Link to="/allApps">All Apps</Link></NavItem>
-          <NavItem eventKey={2} href="#"><Link to="/login">Login</Link></NavItem>
+          <NavItem eventKey={1} href="#"><NavLink to="/allApps">All Apps</NavLink></NavItem>
+          <NavItem eventKey={2} href="#"><NavLink to="/login">Login</NavLink></NavItem>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
