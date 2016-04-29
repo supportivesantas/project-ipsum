@@ -13,10 +13,10 @@ const app = express();
 
 const compiler = webpack(config);
 
-if (true) {
+// if (node_env === 'DEVELOPMENT') {
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
 app.use(webpackHotMiddleware(compiler));
-}
+// }
 
 var jsonParser = bodyParser.json();
 
