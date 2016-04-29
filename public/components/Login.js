@@ -1,6 +1,6 @@
 import React from 'react';
-import { ADD_APPLICATION } from '../actions/ipsumActions.js';
-import { connect } from 'react-redux';
+import actions from '../actions/ipsumActions.js';
+// import { connect } from 'react-redux';
 
 class Login extends React.Component {
   constructor(props) {
@@ -12,9 +12,7 @@ class Login extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(this.props.apps);
-    this.props.dispatch(ADD_APPLICATION('THE END IS NEAR!!!!'));
-    console.log(this.props.apps.length);
+    // do login with github here
   }
 
   render() {
