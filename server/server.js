@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const config = require('../webpack.config.js');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -17,6 +17,7 @@ app.use(webpackHotMiddleware(compiler));
 // }
 
 app.use(express.static('./dist'));
+app.use(bodyParser.json()); // for parsing application/json
 
 app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.resolve('./public/favicon.ico'));
@@ -24,6 +25,7 @@ app.get('/favicon.ico', (req, res) => {
 app.get('/', (req, res) => {
   res.sendFile(path.resolve('./public/index.html'));
 });
+
 
 const port = 1337;
 
