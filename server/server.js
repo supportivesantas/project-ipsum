@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 
 
 
-const port = process.env.port || 1337;
+const port = 1337;
 
 app.listen(port, (err) => {
   if (err) {
