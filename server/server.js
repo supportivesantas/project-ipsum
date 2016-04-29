@@ -6,18 +6,23 @@ const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
+const stats_controller = require('./routes/stats_route');
+
 
 const app = express();
 
 const compiler = webpack(config);
 
-// if (node_env === 'DEVELOPMENT') {
+if (true) {
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
 app.use(webpackHotMiddleware(compiler));
-// }
+}
+
+var jsonParser = bodyParser.json();
 
 app.use(express.static('./dist'));
 app.use(bodyParser.json()); // for parsing application/json
+app.use('/stats', jsonParser, stats_controller);
 
 // api interface for interacting with digital_ocean, et al.
 const configureRequest = require('./api/configure.js');

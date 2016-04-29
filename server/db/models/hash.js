@@ -2,9 +2,8 @@ var db = require('../config.js');
 var clientApps = require('./client-app');
 var clientServers = require('./client-server');
 
-var Stat = db.Model.extend({
-  tableName: 'stats',
-  hasTimestamps: true,
+var Hash = db.Model.extend({
+  tableName: 'hashes',
 
   clientApps: function() {
     return this.belongsTo(clientApps);
@@ -15,4 +14,4 @@ var Stat = db.Model.extend({
   }
 });
 
-module.exports = Stat;
+module.exports = Hash;
