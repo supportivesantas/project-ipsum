@@ -1,9 +1,22 @@
-const ipsum = (state = [], action) => {
+function getNextId(state) {
+  return state.applications.reduce((maxId, app) => {
+    return Math.max(app.id, maxId);
+  }, -1) + 1;
+}
+
+const ipsum = (state = {}, action) => {
   switch (action.type) {
-    case 'DO_THING':
-      return [
-        ...state, { payload: action.payload },
-      ];
+    case 'ADD_APPLICATION':
+      console.log('ADDING APP');
+      return Object.assign({}, state, {
+        applications: [
+          {
+            id: getNextId(state),
+            payload: action.payload,
+          },
+          ...state.applications],
+      });
+
     default:
       return state;
   }

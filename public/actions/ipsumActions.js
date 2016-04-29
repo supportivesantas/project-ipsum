@@ -1,8 +1,8 @@
 
 module.exports = {
-  DO_THING(someProp) {
+  ADD_APPLICATION(someProp) {
     return {
-      type: 'DO_THING',
+      type: 'ADD_APPLICATION',
       payload: someProp,
     };
   },
