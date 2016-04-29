@@ -17,6 +17,7 @@ var dns = require('dns');
 
 exports.version = '0.0.1';
 
+/* options object containing user overwritable options */
 var options = {
   name: null,
   url: 'http://localhost:8000/stats',
@@ -27,14 +28,17 @@ var options = {
   timeout: 10000
 };
 
+/* statistics object containing all gathered statistics */
 var statistics = {};
 
+/* payload is what is sent to the controller */
 var payload = {
   hash: null,
   token: null,
   statistics: statistics
 };
 
+/* middleware that increases counts per endpoint hit */
 var logEndPoint = function (req, res, next) {
   var path = url.parse(req.url).pathname;
   
@@ -46,10 +50,12 @@ var logEndPoint = function (req, res, next) {
   next();
 };
 
+/* post statistics to the controller every interval  */
 var pushStatistics = function () {
   console.log(statistics);
   payload.statistics = statistics;
   statistics = {};
+  
   requestP({
     url: options.url,
     method: "POST",
@@ -58,6 +64,7 @@ var pushStatistics = function () {
     timeout: options.timeout
   })
     .then(function (response) {
+      /* successfully sent the stats to the controller */
       setTimeout(pushStatistics, options.interval);
       return;
     })
@@ -99,9 +106,9 @@ var registerClient = function () {
     })
     .catch(function (error) {
       if (error.statusCode === 500) {
-        /* failed to register client just bail */
-        console.log('Registration Failure');
-        return;
+        /* failed to register client try again later */
+        console.log('Registration Failure.  Internal Server Error.  Retrying in 10 minutes.');
+        setTimeout(registerClient, 600000);
       } else {
         /* other error  */
         console.log('Registration Failure.  Retrying...');
@@ -111,8 +118,8 @@ var registerClient = function () {
 };
 
 exports.initClient = function (app, opts) {
-  var ipDefined = false;
-  
+
+  /* fill options with user overrides */
   for (var props in opts) {
     if (options[props] !== undefined) {
       options[props] = opts[props];
@@ -126,17 +133,13 @@ exports.initClient = function (app, opts) {
     }
   }
 
-  /* get ip of first interface */
+  /* get ip of first interface if ip is not user overwritten */
   if (!options.ip) {
     dns.lookup(options.hostname, function (err, address, family) {
       options.ip = address;
       registerClient();
     });
   } else {
-    ipDefined = true;
-  }
-  
-  if (ipDefined) {
     registerClient();
   }
   
