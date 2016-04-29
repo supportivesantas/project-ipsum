@@ -1,6 +1,7 @@
 import React from 'react';
 import actions from '../actions/ipsumActions.js';
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
+import maps from '../mappingFunctions.js';
 
 class Login extends React.Component {
   constructor(props) {
@@ -27,14 +28,10 @@ class Login extends React.Component {
           block
         >Login with Github</button>
 
-        {this.state.error && (
-          <p>You have supplied invalid login information. Please Try Again.</p>
-        )}
-
       </div>
     );
   }
 }
 
 
-module.exports = Login;
+export default connect(maps.mapStateToProps)(Login);
