@@ -12,6 +12,7 @@ class Login extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    // do login with github here
   }
 
   render() {

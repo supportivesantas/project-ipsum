@@ -1,21 +1,22 @@
 import React, { Component } from 'react';
-import Login from './Login.js';
+import NavigationBar from './NavigationBar.js';
 import { connect } from 'react-redux';
+import { Grid } from 'react-bootstrap';
+import { Link } from 'react-router';
+
 
 // Prefered way for stateless components:
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
 
-    };
-  }
   render() {
     return (
       <div>
-        SUPER COOL AWESOME MEGA FANTASTIC INCREDIBLE APP!!!!!!!
-        <Login dispatch={this.props.dispatch} apps={this.props.applications} />
+        <div id="navbar">{NavigationBar()}</div>
+        <div>
+        { this.props.children }
+        </div>
       </div>
+
     );
   }
 }
