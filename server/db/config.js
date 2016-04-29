@@ -22,9 +22,10 @@ db.knex.schema.hasTable('users').then(function(exists) {
 
 db.knex.schema.hasTable('clientApps').then(function(exists) {
   if (!exists) {
-    db.knex.schema.createTable('clientApps', function(event) {
+    db.knex.schema.createTable('clientApps', function(clientApp) {
       clientApp.increments('id').primary();
-      clientApp.integer('userId');
+      // clientApp.integer('user_id').references('users.id'); // comment out for now
+      clientApp.string('appname');
     }).then(function(table) {
       console.log('Created Client App Table', table);
     });
@@ -33,9 +34,11 @@ db.knex.schema.hasTable('clientApps').then(function(exists) {
 
 db.knex.schema.hasTable('clientServers').then(function(exists) {
   if (!exists) {
-    db.knex.schema.createTable('clientServers', function(user) {
+    db.knex.schema.createTable('clientServers', function(clientServer) {
       clientServer.increments('id').primary();
-      clientServer.integer('userId');
+      // clientServer.integer('user_id').references('users.id'); // comment out for now
+      clientServer.string('ip');
+      clientServer.string('hostname');
     }).then(function(table) {
       console.log('Created Client Server Table', table);
     });
@@ -55,7 +58,7 @@ db.knex.schema.hasTable('events').then(function(exists) {
 
 db.knex.schema.hasTable('serviceCreds').then(function(exists) {
   if (!exists) {
-    db.knex.schema.createTable('serviceCreds', function(user) {
+    db.knex.schema.createTable('serviceCreds', function(serviceCred) {
       serviceCred.increments('id').primary();
       serviceCred.integer('userId');
     }).then(function(table) {
@@ -66,9 +69,28 @@ db.knex.schema.hasTable('serviceCreds').then(function(exists) {
 
 db.knex.schema.hasTable('stats').then(function(exists) {
   if (!exists) {
-    db.knex.schema.createTable('stats', function(event) {
+    db.knex.schema.createTable('stats', function(stat) {
       stat.increments('id').primary();
-      stat.integer('userId');
+      stat.integer('clientApps_id').references('clientApps.id');
+      stat.integer('clientServers_id').references('clientServers.id');
+      stat.string('statName');
+      stat.integer('statValue');
+      stat.timestamps();
+    }).then(function(table) {
+      console.log('Created Stat Table', table);
+    });
+  }
+});
+
+db.knex.schema.hasTable('hashes').then(function(exists) {
+  if (!exists) {
+    db.knex.schema.createTable('hashes', function(stat) {
+      stat.increments('id').primary();
+      stat.integer('clientApps_id').references('clientApps.id');
+      stat.integer('clientServers_id').references('clientServers.id');
+      stat.string('hash');
+      stat.string('ip');
+      stat.string('appname');
     }).then(function(table) {
       console.log('Created Stat Table', table);
     });
