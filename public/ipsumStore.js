@@ -7,8 +7,11 @@ import { routerReducer } from 'react-router-redux';
 const middleware = [logger()];
 const init = {
   routing: [],
-  applications: [{ id: 0, payload: 'QQQQQQQQQQ' }],
-  user: {},
+  applications: [],
+  user: {
+    email: '',
+    handle: '',
+  },
 };
 // const combinedReducers = combineReducers({ ...reducers, routing: routerReducer });
 

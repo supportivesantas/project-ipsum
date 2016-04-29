@@ -7,7 +7,6 @@ function getNextId(state) {
 const ipsum = (state = {}, action) => {
   switch (action.type) {
     case 'ADD_APPLICATION':
-      console.log('ADDING APP');
       return Object.assign({}, state, {
         applications: [
           {
@@ -15,6 +14,13 @@ const ipsum = (state = {}, action) => {
             payload: action.payload,
           },
           ...state.applications],
+      });
+    case 'POPULATE_USER_DATA':
+      return Object.assign({}, state, {
+        user: {
+          email: action.email,
+          handle: action.handle,
+        },
       });
 
     default:
