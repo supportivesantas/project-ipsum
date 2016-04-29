@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import NavigationBar from './NavigationBar.js';
-import { connect } from 'react-redux';
 import { Grid } from 'react-bootstrap';
 import { Link } from 'react-router';
-
+import { connect } from 'react-redux';
+import maps from '../mappingFunctions.js';
 
 // Prefered way for stateless components:
 class App extends Component {
-
   render() {
     return (
       <div>
@@ -19,9 +18,5 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return state;
-};
 
-
-export default connect(mapStateToProps)(App);
+export default connect(maps.mapStateToProps)(App);
