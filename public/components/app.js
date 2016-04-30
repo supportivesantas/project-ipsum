@@ -4,9 +4,12 @@ import { Grid } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
+import Login from './Login.js';
 
-// Prefered way for stateless components:
+
 class App extends Component {
+
+
   render() {
     return (
       <div>
@@ -14,9 +17,13 @@ class App extends Component {
         {this.props.children}
       </div>
 
+
     );
   }
 }
-
-
-export default connect(maps.mapStateToProps)(App);
+// const mapStateToProps = (state) => {
+//   return { state: state };
+// };
+App = connect()(App);
+export default App;
+// export default App;

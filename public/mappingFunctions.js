@@ -2,6 +2,7 @@ const maps = {};
 
 
 maps.mapStateToProps = (state) => {
+  console.log(state);
   return state;
 };
 

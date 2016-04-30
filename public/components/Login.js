@@ -4,16 +4,12 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 
 class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: false,
-    };
-  }
 
   handleSubmit(e) {
     e.preventDefault();
     // do login with github here
+    console.log(actions.POPULATE_USER_DATA('m@m.com', 'jnasddassd'));
+    this.props.dispatch(actions.POPULATE_USER_DATA('m@m.com', 'jnasddassd'));
   }
 
   render() {
@@ -27,11 +23,10 @@ class Login extends React.Component {
           onClick={this.handleSubmit.bind(this)}
           block
         >Login with Github</button>
-
       </div>
     );
   }
 }
 
-
-export default connect(maps.mapStateToProps)(Login);
+Login = connect(state => ({ state: state }))(Login);
+export default Login;

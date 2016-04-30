@@ -3,23 +3,23 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 
-class MainPage extends React.Component {
+
+class AllServers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
     };
   }
 
-
   render() {
     return (
-      <div> THIS IS OUR MAIN PAGE.
-      COOL STUFF WILL GO HERE!!!!
+      <div> THIS IS OUR ALL SERVERS PAGE.
+      List of all apps goes here.
       </div>
     );
   }
 }
 
 
-MainPage = connect(state => ({ state: state }))(MainPage);
-export default MainPage;
+// export default connect()(AllServers);
+export default AllServers;
