@@ -22,6 +22,16 @@ module.exports = (state = [], action) => {
         handle: action.handle,
       });
 
+    case 'ADD_SERVER':
+      return Object.assign({}, state, {
+        servers: [
+          {
+            ip: action.ip,
+            platform: action.platform,
+            app: action.app,
+          },
+          ...state.servers],
+      });
 
     default:
       return state;

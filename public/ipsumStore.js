@@ -12,6 +12,8 @@ const init = {
     email: 'QQ@QQ.com',
     handle: 'QQQQQQQ',
   },
+  servers: [{ ip: '1.1.1.1', platform: 'Digital Ocean', app: 'someApp' },
+  { ip: '4.3.2.1', platform: 'Heroku', app: 'Things' }],
 };
 // const combinedReducers = combineReducers({ ...reducers, routing: routerReducer });
 
@@ -21,6 +23,7 @@ export default function configureStore(browserHistory, initialState = init) {
     routing: routerReducer,
     applications: reducers,
     user: reducers,
+    servers: reducers,
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f
