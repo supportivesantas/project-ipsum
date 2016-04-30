@@ -14,10 +14,9 @@ const init = {
     email: 'QQ@QQ.com',
     handle: 'QQQQQQQ',
   },
-  servers: [{ ip: '1.1.1.1', platform: 'Digital Ocean', app: 'someApp' },
-  { ip: '4.3.2.1', platform: 'Heroku', app: 'Things' }],
+  servers: [{ id: 0, ip: '1.1.1.1', platform: 'Digital Ocean', app: 'someApp', active: 'True' },
+  { id: 1, ip: '4.3.2.1', platform: 'Heroku', app: 'Things', active: 'False' }],
 };
-// const combinedReducers = combineReducers({ ...reducers, routing: routerReducer });
 
 // configure store with initial state and allow Redux Chrome extension to view store
 export default function configureStore(browserHistory, initialState = init) {
