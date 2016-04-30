@@ -25,6 +25,7 @@ var options = {
   token: '',             /*    token   */
   hostname: os.hostname(),
   ip: null,
+  enableIPv6: false,
   timeout: 10000
 };
 
@@ -133,15 +134,38 @@ exports.initClient = function (app, opts) {
     }
   }
 
-  /* get ip of first interface if ip is not user overwritten */
+  /* ip is not defined so discover the first one that is not internal */
   if (!options.ip) {
-    dns.lookup(options.hostname, function (err, address, family) {
-      options.ip = address;
-      registerClient();
-    });
-  } else {
-    registerClient();
+    var interfaces = os.networkInterfaces();
+    for (var interface in interfaces) {
+      for (var idx = 0; idx < interfaces[interface].length; idx++) {
+        if (interfaces[interface][idx].internal) {
+          /* we don't care about internal IPs */
+          continue;
+        }
+        
+        if (options.enableIPv6 && interfaces[interface][idx].family === 'IPv6') {
+          options.ip = interfaces[interface][idx].address;
+          console.log('ip set to ' + options.ip);
+          break;
+        } else if (interfaces[interface][idx].family === 'IPv4') {
+          options.ip = interfaces[interface][idx].address;
+          console.log('ip set to ' + options.ip);
+          break;
+        } else {
+          // uh what?
+          console.log('Unknown IP Family.  Ignoring...');
+        }
+      }
+      
+      /* we got the ip just bail */
+      if (options.ip) {
+        break;
+      }
+    }
   }
+  
+  registerClient();
   
   return logEndPoint;
 };
