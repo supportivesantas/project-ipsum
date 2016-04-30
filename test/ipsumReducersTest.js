@@ -25,4 +25,10 @@ describe('Reducer Tests ', () => {
       .to.equal('mbresnan1701');
     done();
   });
+  it('Should handle ADD_SERVER', (done) => {
+    expect(reducer({ servers: [] },
+      actions.ADD_SERVER('1.2.3.4', 'Azure', 'CoolApp')).servers[0].ip)
+      .to.equal('1.2.3.4');
+    done();
+  });
 });

@@ -13,5 +13,13 @@ module.exports = {
       handle: userhandle,
     };
   },
+  ADD_SERVER(ip, platform, app) {
+    return {
+      type: 'ADD_SERVER',
+      ip: ip,
+      platform: platform,
+      app: app,
+    };
+  },
 
 };
