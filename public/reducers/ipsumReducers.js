@@ -4,7 +4,7 @@ function getNextId(state) {
   }, -1) + 1;
 }
 
-export default (state = [], action) => {
+module.exports = (state = [], action) => {
   switch (action.type) {
     case 'ADD_APPLICATION':
       return Object.assign({}, state, {

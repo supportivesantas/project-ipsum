@@ -6,11 +6,9 @@ const actions = require('../public/actions/ipsumActions.js');
 const reducer = require('../public/reducers/ipsumReducers.js');
 
 describe('Reducer Tests ', () => {
-  beforeEach('creates a store to test with', (done) => {
-    done();
-  });
+
   it('Return the current state if no action is given', (done) => {
-    const initState = reducer(undefined, {});
+    const initState = reducer({}, {});
     assert.isObject(initState);
     done();
   });
@@ -23,7 +21,7 @@ describe('Reducer Tests ', () => {
 
   it('Should handle POPULATE_USER_DATA', (done) => {
     expect(reducer({ user: { email: '', handle: '' } },
-      actions.POPULATE_USER_DATA('m@m.com', 'mbresnan1701')).user.handle)
+      actions.POPULATE_USER_DATA('m@m.com', 'mbresnan1701')).handle)
       .to.equal('mbresnan1701');
     done();
   });

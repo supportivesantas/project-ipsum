@@ -23,7 +23,6 @@ class Login extends React.Component {
           onClick={this.handleSubmit.bind(this)}
           block
         >Login with Github</button>
-      {this.props.state.user.handle}
       </div>
     );
   }
