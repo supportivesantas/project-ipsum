@@ -1,5 +1,7 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
-import reducers from './reducers/ipsumReducers.js';
+import userReducer from './reducers/userReducer.js';
+import applicationReducer from './reducers/applicationReducer.js';
+import serverReducer from './reducers/serverReducer.js';
 import logger from 'redux-logger';
 import { routerReducer } from 'react-router-redux';
 
@@ -19,11 +21,11 @@ const init = {
 
 // configure store with initial state and allow Redux Chrome extension to view store
 export default function configureStore(browserHistory, initialState = init) {
-  const store = createStore(combineReducers(...reducers, {
+  const store = createStore(combineReducers({
     routing: routerReducer,
-    applications: reducers,
-    user: reducers,
-    servers: reducers,
+    applications: applicationReducer,
+    user: userReducer,
+    servers: serverReducer,
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f

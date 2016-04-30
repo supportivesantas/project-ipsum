@@ -4,7 +4,6 @@ import { Grid } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
-import Login from './Login.js';
 
 
 class App extends Component {
@@ -21,9 +20,9 @@ class App extends Component {
     );
   }
 }
-// const mapStateToProps = (state) => {
-//   return { state: state };
-// };
-App = connect()(App);
+const mapStateToProps = (state) => {
+  return { state: state };
+};
+App = connect(state => ({ state: state }))(App);
 export default App;
 // export default App;

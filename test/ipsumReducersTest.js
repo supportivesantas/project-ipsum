@@ -3,32 +3,55 @@ const chai = require('chai');
 const expect = chai.expect;
 const assert = chai.assert;
 const actions = require('../public/actions/ipsumActions.js');
-const reducer = require('../public/reducers/ipsumReducers.js');
+const userReducer = require('../public/reducers/userReducer.js');
+const appReducer = require('../public/reducers/applicationReducer.js');
+const servReducer = require('../public/reducers/serverReducer.js');
 
-describe('Reducer Tests ', () => {
+describe('User Reducer Tests ', () => {
 
   it('Return the current state if no action is given', (done) => {
-    const initState = reducer({}, {});
+    const initState = userReducer({}, {});
+    assert.isObject(initState);
+    done();
+  });
+
+  it('Should handle POPULATE_USER_DATA', (done) => {
+    expect(userReducer({ user: {} },
+      actions.POPULATE_USER_DATA('m@m.com', 'mbresnan1701')).handle)
+      .to.equal('mbresnan1701');
+    done();
+  });
+});
+
+describe('Application Reducer Tests', () => {
+
+  it('Return the current state if no action is given', (done) => {
+    const initState = appReducer({}, {});
     assert.isObject(initState);
     done();
   });
 
   it('Should handle ADD_APPLICATION', (done) => {
-    expect(reducer({ applications: [] }, actions.ADD_APPLICATION('Matt is great')).applications[0].payload)
+    expect(appReducer([], actions.ADD_APPLICATION('Matt is great'))[0].payload)
       .to.equal('Matt is great');
     done();
   });
 
-  it('Should handle POPULATE_USER_DATA', (done) => {
-    expect(reducer({ user: { email: '', handle: '' } },
-      actions.POPULATE_USER_DATA('m@m.com', 'mbresnan1701')).handle)
-      .to.equal('mbresnan1701');
+});
+
+describe('Server Reducer Tests', () => {
+
+  it('Return the current state if no action is given', (done) => {
+    const initState = servReducer({}, {});
+    assert.isObject(initState);
     done();
   });
+
   it('Should handle ADD_SERVER', (done) => {
-    expect(reducer({ servers: [] },
-      actions.ADD_SERVER('1.2.3.4', 'Azure', 'CoolApp')).servers[0].ip)
-      .to.equal('1.2.3.4');
+    expect(servReducer([{ ip: '5.5.5.5', platform: 'AWS', app: 'Things' }],
+      actions.ADD_SERVER('1.2.3.4', 'Azure', 'CoolApp'))[1].ip)
+      .to.equal('5.5.5.5');
     done();
   });
+
 });

@@ -11,15 +11,22 @@ class AllApps extends React.Component {
     };
   }
 
+  addApp(e) {
+    e.preventDefault();
+    this.props.dispatch(actions.ADD_APPLICATION('sdasdasdasdasd'));
+  }
+
   render() {
     return (
       <div> THIS IS OUR ALL APPS PAGE.
       List of all apps goes here.
+      <button type="submit" onClick={this.addApp.bind(this)} > Add app </button>
+
       </div>
     );
   }
 }
 
 
-// export default connect(maps.mapStateToProps)(AllApps);
+AllApps = connect(state => ({ applications: state.applications }))(AllApps);
 export default AllApps;
