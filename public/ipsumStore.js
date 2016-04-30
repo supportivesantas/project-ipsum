@@ -9,16 +9,18 @@ const init = {
   routing: [],
   applications: [],
   user: {
-    email: '',
-    handle: '',
+    email: 'QQ@QQ.com',
+    handle: 'QQQQQQQ',
   },
 };
 // const combinedReducers = combineReducers({ ...reducers, routing: routerReducer });
 
 // configure store with initial state and allow Redux Chrome extension to view store
-export default function configureStore(initialState = init) {
+export default function configureStore(browserHistory, initialState = init) {
   const store = createStore(combineReducers(...reducers, {
     routing: routerReducer,
+    applications: reducers,
+    user: reducers,
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f

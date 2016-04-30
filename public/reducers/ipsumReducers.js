@@ -4,7 +4,7 @@ function getNextId(state) {
   }, -1) + 1;
 }
 
-const ipsum = (state = {}, action) => {
+export default (state = [], action) => {
   switch (action.type) {
     case 'ADD_APPLICATION':
       return Object.assign({}, state, {
@@ -15,17 +15,16 @@ const ipsum = (state = {}, action) => {
           },
           ...state.applications],
       });
+
     case 'POPULATE_USER_DATA':
-      return Object.assign({}, state, {
-        user: {
-          email: action.email,
-          handle: action.handle,
-        },
+      return Object.assign({}, state.user, {
+        email: action.email,
+        handle: action.handle,
       });
+
 
     default:
       return state;
   }
 };
 
-module.exports = ipsum;

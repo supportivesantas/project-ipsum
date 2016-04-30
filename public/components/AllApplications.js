@@ -21,4 +21,5 @@ class AllApps extends React.Component {
 }
 
 
-export default connect(maps.mapStateToProps)(AllApps);
+// export default connect(maps.mapStateToProps)(AllApps);
+export default AllApps;
