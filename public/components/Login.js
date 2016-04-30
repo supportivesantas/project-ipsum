@@ -8,7 +8,6 @@ class Login extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     // do login with github here
-    console.log(actions.POPULATE_USER_DATA('m@m.com', 'jnasddassd'));
     this.props.dispatch(actions.POPULATE_USER_DATA('m@m.com', 'jnasddassd'));
   }
 
@@ -23,6 +22,7 @@ class Login extends React.Component {
           onClick={this.handleSubmit.bind(this)}
           block
         >Login with Github</button>
+        {this.props.state.user.handle}
       </div>
     );
   }

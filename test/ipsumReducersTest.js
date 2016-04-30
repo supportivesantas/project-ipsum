@@ -26,9 +26,9 @@ describe('Reducer Tests ', () => {
     done();
   });
   it('Should handle ADD_SERVER', (done) => {
-    expect(reducer({ servers: [] },
-      actions.ADD_SERVER('1.2.3.4', 'Azure', 'CoolApp')).servers[0].ip)
-      .to.equal('1.2.3.4');
+    expect(reducer({ servers: [{ ip: '5.5.5.5', platform: 'AWS', app: 'Things' }] },
+      actions.ADD_SERVER('1.2.3.4', 'Azure', 'CoolApp')).servers[1].ip)
+      .to.equal('5.5.5.5');
     done();
   });
 });

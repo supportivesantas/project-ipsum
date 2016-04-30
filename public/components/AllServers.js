@@ -11,10 +11,17 @@ class AllServers extends React.Component {
     };
   }
 
+  addServer(e) {
+    e.preventDefault();
+    this.props.dispatch(actions.ADD_SERVER('6.6.6.6', 'Azure', 'CoolAppThingy'));
+  }
+
   render() {
     return (
       <div> THIS IS OUR ALL SERVERS PAGE.
-      List of all apps goes here.
+
+        <button type="submit" onClick={this.addServer.bind(this)} > Add a server </button>
+
         <BootstrapTable data={this.props.state.servers} striped={true} hover={true}>
           <TableHeaderColumn dataField="ip" isKey={true} dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>
           <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
