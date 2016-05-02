@@ -12,33 +12,34 @@ exports.singleServer = function(req, res) {
   //   return;
   // }
 
+  //TODO: narrow down search for only entries from last ~6hours/// OR for summary information/ day, week, month, etc;
+  //TODO: Add 'total' obj to front of array, total hits for all
   stats.model.where('clientServers_id', serverId).fetchAll()
     .then(function(serverStats) {
       var count = 0;
-      var obj = {};
-      var result = [];
+      var routes = {};
+      var graphData = [];
       serverStats.models.forEach(function(model) {
-        var item = model.attributes;
+        var routeDataPoint = model.attributes;
 
-        var inputObj = {
-          hits: item.statValue,
-          time: item.created_at
+        var routeData = {
+          hits: routeDataPoint.statValue,
+          time: routeDataPoint.created_at
         };
 
-        if (item.statName in obj) {
-          result[obj[item.statName]].data.push(inputObj);
+        if (routeDataPoint.statName in routes) {
+          graphData[routes[routeDataPoint.statName]].data.push(routeData);
         } else {
-          obj[item.statName] = count;
-          result[count] = {
-            route: item.statName.slice(1),
-            data: [inputObj]
+          routes[routeDataPoint.statName] = count;
+          graphData[count] = {
+            route: routeDataPoint.statName.slice(1),
+            data: [routeData]
           };
-
         count++;
         }
 
       });
-      res.status(200).send(result);
+      res.status(200).send(graphData);
     })
     .catch(function(error) {
       console.error("Get stats error", error);
