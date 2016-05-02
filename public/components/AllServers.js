@@ -6,9 +6,8 @@ import NavLink from './NavLink.js';
 
 
 const selectRowProp = {
-  mode: 'checkbox',  //checkbox for multi select, radio for single select.
-  clickToSelect: true,   //click row will trigger a selection on that row.
-  bgColor: 'rgb(238, 193, 213)',  //selected row background color
+  mode: 'checkbox',
+  bgColor: 'rgb(238, 193, 213)',
 };
 
 class AllServers extends React.Component {
