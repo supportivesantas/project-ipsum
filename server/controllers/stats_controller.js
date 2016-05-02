@@ -120,7 +120,6 @@ statsController.registerClient = function (req, res) {
           clientServers_id: serverID,
           hash: computedHash,
           ip: ip,
-          hostname: hostname,
           appname: appname
         }).save();
       } else {
