@@ -33,12 +33,16 @@ const makeRequest = require('./api/makeRequest.js');
 app.use('/api/:action', configureRequest, makeRequest);
 
 app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.resolve('./public/favicon.ico'));
+  res.sendFile(path.resolve(__dirname, '../public/favicon.ico'));
 });
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve('./public/index.html'));
+  res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
 
+app.get('*', (request, response) => {
+  console.log('directing to index');
+  response.sendFile(path.resolve(__dirname, '../public/index.html'));
+});
 
 
 const port = process.env.port || 1337;

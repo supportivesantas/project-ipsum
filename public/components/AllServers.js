@@ -2,13 +2,12 @@ import React from 'react';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import NavLink from './NavLink.js';
+import { Link } from 'react-router';
 
 
 const selectRowProp = {
-  mode: 'checkbox',  //checkbox for multi select, radio for single select.
-  clickToSelect: true,   //click row will trigger a selection on that row.
-  bgColor: 'rgb(238, 193, 213)',  //selected row background color
+  mode: 'checkbox',
+  bgColor: 'rgb(238, 193, 213)',
 };
 
 class AllServers extends React.Component {
@@ -16,6 +15,16 @@ class AllServers extends React.Component {
     super(props);
     this.state = {
     };
+  }
+
+  tableLinkForm(cell) {
+    return (
+      <Link to="/myServer">Click Me!</Link>
+      );
+  }
+
+  enumFormatter(cell, row, enumObject) {
+    return enumObject(cell);
   }
 
   getSelectedRowKeys() {
@@ -34,7 +43,6 @@ class AllServers extends React.Component {
   render() {
     return (
       <div>
-
         <button type="submit" onClick={this.addServer.bind(this)} > Add a server </button>
         <button onClick={this.getSelectedRowKeys.bind(this)}>Get selected row keys</button>
 
@@ -44,7 +52,7 @@ class AllServers extends React.Component {
           <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
           <TableHeaderColumn dataField="active" dataSort={true}>Active?</TableHeaderColumn>
           <TableHeaderColumn dataField="app" >Application</TableHeaderColumn>
-          <TableHeaderColumn ><NavLink to="/myServer">Go To</NavLink></TableHeaderColumn>
+          <TableHeaderColumn dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm}>Link</TableHeaderColumn>
         </BootstrapTable>
       </div>
     );
