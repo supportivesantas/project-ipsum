@@ -2,6 +2,7 @@ import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import userReducer from './reducers/userReducer.js';
 import applicationReducer from './reducers/applicationReducer.js';
 import serverReducer from './reducers/serverReducer.js';
+import getDataReducer from './reducers/getDataReducer.js';
 import logger from 'redux-logger';
 import { routerReducer } from 'react-router-redux';
 
@@ -29,10 +30,10 @@ const init = {
 export default function configureStore(browserHistory, initialState = init) {
   const store = createStore(combineReducers({
     routing: routerReducer,
-    applications: reducers,
-    user: reducers,
-    servers: reducers,
-    graphData: reducers,
+    applications: applicationReducer,
+    user: userReducer,
+    servers: serverReducer,
+    graphData: getDataReducer,
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f
