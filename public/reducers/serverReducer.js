@@ -21,6 +21,9 @@ module.exports = (state = [], action) => {
     case 'REMOVE_SERVER':
       return state.filter(item => item.id !== action.id);
 
+    case 'MASS_POPULATE_SERVERS':
+      return action.servers;
+
     default:
       return state;
   }

@@ -50,7 +50,7 @@ class AllServers extends React.Component {
           <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Server ID</TableHeaderColumn>
           <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>
           <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
-          <TableHeaderColumn dataField="active" dataSort={true}>Active?</TableHeaderColumn>
+          <TableHeaderColumn dataField="active" dataSort={true}>Status</TableHeaderColumn>
           <TableHeaderColumn dataField="app" >Application</TableHeaderColumn>
           <TableHeaderColumn dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm}>Link</TableHeaderColumn>
         </BootstrapTable>

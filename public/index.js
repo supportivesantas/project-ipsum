@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import App from './components/App.js';
+import App from './components/app.js';
 import Login from './components/Login.js';
 import MyApp from './components/MyApp.js';
 import MyServer from './components/MyServer.js';
@@ -11,13 +11,12 @@ import configureStore from './ipsumStore.js';
 import { browserHistory, Router, Route, IndexRoute } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import MainPage from './components/MainPage.js';
-import restHandler from './util/restHelpers.js';
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
 // GET ASYNC DATA HERE BEFORE RENDER, THEN CALL RENDER
-// restHandler.post('/api/list_all_servers')
+
 render(
   <Provider store={store}>
     <Router history={history}>
@@ -36,3 +35,6 @@ render(
   </Provider>,
   document.getElementById('app')
 );
+
+
+

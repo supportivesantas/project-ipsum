@@ -1,6 +1,6 @@
 const request = require('superagent');
 
-const Get = (url, callback) => {
+const get = (url, callback) => {
   request
     .get(url)
     .end((err, res) => {
@@ -11,7 +11,7 @@ const Get = (url, callback) => {
     });
 };
 
-const Post = (url, data, callback) => {
+const post = (url, data, callback) => {
   request
     .post(url)
     .send(data)
@@ -24,6 +24,6 @@ const Post = (url, data, callback) => {
 };
 
 export default {
-  Get: Get,
-  Post: Post,
+  get: get,
+  post: post,
 };

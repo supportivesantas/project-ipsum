@@ -19,9 +19,11 @@ module.exports = {
       handle: userhandle,
     };
   },
-  ADD_SERVER(ip, platform, app, isActive) {
+  ADD_SERVER(id, ip, platform, app, isActive) {
+    console.log('ADD SERV ACTION');
     return {
       type: 'ADD_SERVER',
+      id: id,
       ip: ip,
       platform: platform,
       app: app,
@@ -37,7 +39,13 @@ module.exports = {
   ADD_SERVER_DATA(data) {
     return {
       type: 'ADD_SERVER_DATA',
-      data: data
+      data: data,
+    };
+  },
+  MASS_POPULATE_SERVERS(data) {
+    return {
+      type: 'MASS_POPULATE_SERVERS',
+      servers: data,
     };
   },
 
