@@ -1,5 +1,5 @@
 function getNextId(state) {
-  return state.applications.reduce((maxId, app) => {
+  return state.reduce((maxId, app) => {
     return Math.max(app.id, maxId);
   }, -1) + 1;
 }
@@ -13,6 +13,9 @@ module.exports = (state = [], action) => {
         },
         ...state,
       ];
+
+    case 'REMOVE_APPLICATION':
+      return state.filter(item => item.id !== action.id);
 
     default:
       return state;

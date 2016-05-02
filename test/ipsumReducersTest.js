@@ -37,6 +37,11 @@ describe('Application Reducer Tests', () => {
     done();
   });
 
+  it('Should handle REMOVE_APPLICATION', (done) => {
+    expect(appReducer([{ id: 0, thing: 'mwb' }, { id: 1, thing: 'QQ' }], actions.REMOVE_APPLICATION(1))[1])
+      .be.undefined;
+    done();
+  });
 });
 
 describe('Server Reducer Tests', () => {
@@ -53,5 +58,13 @@ describe('Server Reducer Tests', () => {
       .to.equal('5.5.5.5');
     done();
   });
+
+  it('Should handle REMOVE_SERVER', (done) => {
+    expect(servReducer([{ id: 0, ip: '1.1.1.1', platform: 'Digital Ocean', app: 'MWBISCOOL', active: 'True' },
+  { id: 1, ip: '4.3.2.1', platform: 'Heroku', app: 'Things', active: 'False' }], actions.REMOVE_SERVER(1))[1])
+      .be.undefined;
+    done();
+  });
+
 
 });
