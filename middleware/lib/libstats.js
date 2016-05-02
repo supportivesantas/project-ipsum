@@ -42,7 +42,7 @@ var payload = {
 /* middleware that increases counts per endpoint hit */
 var logEndPoint = function (req, res, next) {
   var path = url.parse(req.url).pathname;
-  
+
   if (!statistics[path]) {
     statistics[path] = 0;
   }
@@ -56,7 +56,7 @@ var pushStatistics = function () {
   console.log(statistics);
   payload.statistics = statistics;
   statistics = {};
-  
+
   requestP({
     url: options.url,
     method: "POST",
@@ -100,7 +100,7 @@ var registerClient = function () {
   })
     .then(function (response) {
       console.log('Successfully Registered Client');
-      
+
       /* start monitoring */
       payload.hash = response;
       setTimeout(pushStatistics, options.interval);
@@ -143,7 +143,7 @@ exports.initClient = function (app, opts) {
           /* we don't care about internal IPs */
           continue;
         }
-        
+
         if (options.enableIPv6 && interfaces[interface][idx].family === 'IPv6') {
           options.ip = interfaces[interface][idx].address;
           console.log('ip set to ' + options.ip);
@@ -157,15 +157,14 @@ exports.initClient = function (app, opts) {
           console.log('Unknown IP Family.  Ignoring...');
         }
       }
-      
+
       /* we got the ip just bail */
       if (options.ip) {
         break;
       }
     }
   }
-  
+
   registerClient();
-  
   return logEndPoint;
 };

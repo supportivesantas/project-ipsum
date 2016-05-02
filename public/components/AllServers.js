@@ -2,6 +2,7 @@ import React from 'react';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import NavLink from './NavLink.js';
 
 
 const selectRowProp = {
@@ -41,14 +42,14 @@ class AllServers extends React.Component {
           <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Server ID</TableHeaderColumn>
           <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>
           <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
-          <TableHeaderColumn dataField="app" dataSort={true}>Application</TableHeaderColumn>
           <TableHeaderColumn dataField="active" dataSort={true}>Active?</TableHeaderColumn>
+          <TableHeaderColumn dataField="app" >Application</TableHeaderColumn>
+          <TableHeaderColumn ><NavLink to="/myServer">Go To</NavLink></TableHeaderColumn>
         </BootstrapTable>
       </div>
     );
   }
 }
-
 
 AllServers = connect(state => ({ state: state }))(AllServers);
 export default AllServers;

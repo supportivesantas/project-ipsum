@@ -7,6 +7,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
 const stats_controller = require('./routes/stats_route');
+const getStats_controller = require('./routes/getStats_route');
 
 
 const app = express();
@@ -19,6 +20,8 @@ app.use(webpackHotMiddleware(compiler));
 // }
 
 var jsonParser = bodyParser.json();
+
+app.use('/getStats', jsonParser, getStats_controller);
 
 app.use(express.static('./dist'));
 app.use(bodyParser.json()); // for parsing application/json
