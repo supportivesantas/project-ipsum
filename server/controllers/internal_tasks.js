@@ -6,9 +6,11 @@ var internalTasks = {};
 internalTasks.syncServersToPlatforms = function (overwriteAll) {
   var serverList = null;
   var serverQuickLookup = {};
+  
   internalRequest.getServerList()
     .then(function (data) {
       serverList = data;
+      
       /* build object to quickly reference retrieved servers by ip */
       for (var idx = 0; idx < serverList.servers.length; idx++) {
         var quickLook = serverQuickLookup[serverList.servers[idx].ip] = {};
@@ -24,7 +26,8 @@ internalTasks.syncServersToPlatforms = function (overwriteAll) {
       /* update server table with retrieved information */
       clientServers.forEach(function (clientServer) {
         var quickLook = serverQuickLookup[clientServer.attributes.ip];
-        
+
+        /* if the table field is not filled in or we're overwriting */
         if ((quickLook !== undefined) &&
         ((!clientServer.attributes.platform) || overwriteAll)) {
           clientServer.attributes.platform = quickLook.platform;
