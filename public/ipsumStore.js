@@ -16,7 +16,13 @@ const init = {
   },
   servers: [{ ip: '1.1.1.1', platform: 'Digital Ocean', app: 'someApp' },
   { ip: '4.3.2.1', platform: 'Heroku', app: 'Things' }],
-  graphData: ["onegraph", "twograph", "threegraph", "four", "fivegraph", "sixgraph", "sevengraph", "more"],
+  graphData: [
+    {route: "Total", data: [{val:15, time: 30}, {val:35, time: 60} ]},
+    {route: "route1", data: [{val:1, time: 30}, {val:6, time: 60} ]},
+    {route: "route2", data: [{val:5, time: 30}, {val:5, time: 60} ]},
+    {route: "route3", data: [{val:7, time: 30}, {val:9, time: 60} ]},
+    {route: "route4", data: [{val:2, time: 30}, {val:15, time: 60} ]}
+  ],
 };
 
 // configure store with initial state and allow Redux Chrome extension to view store

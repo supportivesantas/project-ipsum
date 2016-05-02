@@ -1,7 +1,4 @@
-var big = "A BIG"
-export function print(name) {
-  console.log(big + " HELLO " + name);
-};
+
 var dataMain = [{val: 10, time: 0}];
 var dataRange = 15;  //From User Config
 
@@ -11,10 +8,11 @@ export function addData(graphId) {
     time: dataMain.slice(-1)[0].time + 30
   });
   d3.selectAll('svg').remove();
-  var data = dataMain.slice(-1 * dataRange);
+  // var data = dataMain.slice(-1 * dataRange);
   // renderChart(graphId);
 
 };
+
 export function renderChart(graphId) {
   var m = [80, 80, 80, 80]; // margins
   var w = 1000 - m[1] - m[3]; // width
@@ -69,4 +67,4 @@ export function renderChart(graphId) {
       //append line path after so it shows on top
       graph.append("svg:path").attr("d", line(data));
 }
-//renderChart("graph");
+

@@ -4,18 +4,41 @@ var stats = require('../db/collections/stats');
 
 
 exports.singleServer = function(req, res) {
-  // var serverId = req.params.id;
-  // console.log("THis is server id" + serverId)
+  //TODO change path to include server id params;
+  var serverId = 1;
   // if (!id) {
   //   console.log('Error, could not get serverID', error);
   //   res.status(500).send("Error, no serverID supllied");
   //   return;
   // }
 
-  stats.model.where('clientServers_id', 1).fetchAll()
+  stats.model.where('clientServers_id', serverId).fetchAll()
     .then(function(serverStats) {
-      console.log("SERVER STATSSS", serverStats);
-      res.status(200).send(serverStats);
+      var count = 0;
+      var obj = {};
+      var result = [];
+      serverStats.models.forEach(function(model) {
+        var item = model.attributes;
+
+        var inputObj = {
+          hits: item.statValue,
+          time: item.created_at
+        };
+
+        if (item.statName in obj) {
+          result[obj[item.statName]].data.push(inputObj);
+        } else {
+          obj[item.statName] = count;
+          result[count] = {
+            route: item.statName.slice(1),
+            data: [inputObj]
+          };
+
+        count++;
+        }
+
+      });
+      res.status(200).send(result);
     })
     .catch(function(error) {
       console.error("Get stats error", error);
