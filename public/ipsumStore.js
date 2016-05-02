@@ -15,8 +15,8 @@ const init = {
     email: 'QQ@QQ.com',
     handle: 'QQQQQQQ',
   },
-  servers: [{ ip: '1.1.1.1', platform: 'Digital Ocean', app: 'someApp' },
-  { ip: '4.3.2.1', platform: 'Heroku', app: 'Things' }],
+  servers: [{ id: 0, ip: '1.1.1.1', platform: 'Digital Ocean', app: 'someApp', active: 'False' },
+  { id: 1, ip: '4.3.2.1', platform: 'Heroku', app: 'Things', active: 'True' }],
   graphData: [
     {route: "Total", data: [{val:15, time: 30}, {val:35, time: 60} ]},
     {route: "route1", data: [{val:1, time: 30}, {val:6, time: 60} ]},
