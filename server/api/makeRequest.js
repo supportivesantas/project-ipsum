@@ -4,7 +4,7 @@ var requestP = require('request-promise');
 var makeRequest = function(req, res, next) {
   requestP(req.options)
   .then(function(resp) {
-    res.json(resp);
+    req.resp = resp;
     next();
   })
   .catch(function(err) {

@@ -4,6 +4,7 @@ node_modules
 # VS Code
 typings
 typings.json
+jsconfig.json
 
 # OSX Specific
 **/.DS_Store

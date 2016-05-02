@@ -39,6 +39,8 @@ db.knex.schema.hasTable('clientServers').then(function(exists) {
       // clientServer.integer('user_id').references('users.id'); // comment out for now
       clientServer.string('ip');
       clientServer.string('hostname');
+      clientServer.string('platform');
+      clientServer.string('server_id');
     }).then(function(table) {
       console.log('Created Client Server Table', table);
     });

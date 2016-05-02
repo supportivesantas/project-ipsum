@@ -30,7 +30,8 @@ app.use('/stats', jsonParser, stats_controller);
 // api interface for interacting with digital_ocean, et al.
 const configureRequest = require('./api/configure.js');
 const makeRequest = require('./api/makeRequest.js');
-app.use('/api/:action', configureRequest, makeRequest);
+const sendReply = require('./api/sendReply');
+app.use('/api/:action', configureRequest, makeRequest, sendReply);
 
 app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.resolve('./public/favicon.ico'));

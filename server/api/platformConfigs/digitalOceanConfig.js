@@ -75,6 +75,42 @@ module.exports = {
     }
   },
 
+  parsers: {
+    list_all_servers: function (res) {
+      var parsedData = {
+        servers: []
+      };
+
+      var resJSON = JSON.parse(res);
+      
+      if (!resJSON || !resJSON.droplets) {
+        return parsedData;
+      }
+      
+      for (var idx = 0; idx < resJSON.droplets.length; idx++) {
+        var droplet = resJSON.droplets[idx];
+        var server = {
+          name: droplet.name,
+          /* assume it's the first ipv4 address */
+          ip: droplet.networks.v4[0].ip_address,
+          server_id: droplet.id,
+          platform: 'digital_ocean',
+          platformSpecific: {
+            imageID: droplet.image.id,
+            region: droplet.region.slug,
+            size: droplet.size.slug,
+            status: droplet.status
+          }
+        };
+        parsedData.servers.push(server);
+      }
+      return parsedData;
+    },
+    list_all_images: function (res) {
+      //something
+    },
+  },
+
   authorize: function(req) {
     req.options.headers = (function(username, server_id) {
       // TODO: get the token based on username and server_id / token join table
