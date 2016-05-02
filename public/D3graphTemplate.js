@@ -40,31 +40,31 @@ export function renderChart(graphId) {
     .y(function(d) { return y(d.val); });
 
     // Add an SVG element with the desired dimensions and margin.
-    var graph = d3.select("#"+graphId).append("svg:svg")
-          .attr("width", w + m[1] + m[3])
-          .attr("height", h + m[0] + m[2])
-          .attr("id", graphId)
-        .append("svg:g")
-          .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+  var graph = d3.select("#"+graphId).append("svg:svg")
+        .attr("width", w + m[1] + m[3])
+        .attr("height", h + m[0] + m[2])
+        .attr("id", graphId)
+      .append("svg:g")
+        .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
-    // create yAxis
-    var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
-    // Add the x-axis.
-    graph.append("svg:g")
-          .attr("class", "x axis")
-          .attr("transform", "translate(0," + h + ")")
-          .call(xAxis);
+  // create yAxis
+  var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
+  // Add the x-axis.
+  graph.append("svg:g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + h + ")")
+        .call(xAxis);
 
 
-    // create left yAxis
-    var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
-    // Add the y-axis to the left
-    graph.append("svg:g")
-          .attr("class", "y axis")
-          .attr("transform", "translate(-25,0)")
-          .call(yAxisLeft);
+  // create left yAxis
+  var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
+  // Add the y-axis to the left
+  graph.append("svg:g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(-25,0)")
+        .call(yAxisLeft);
 
-      //append line path after so it shows on top
-      graph.append("svg:path").attr("d", line(data));
+    //append line path after so it shows on top
+    graph.append("svg:path").attr("d", line(data));
 }
 
