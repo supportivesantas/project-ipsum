@@ -1,26 +1,13 @@
 // var postgres = requires('')... connect to postgres
-var makeRequest = require('./makeRequest.js');
-
-var platforms = {
-  'digital_ocean': require('./platformConfigs/digitalOceanConfig.js')
-}
-
-var actions = [
-  'list_all_servers',
-  'list_all_images',      
-  'delete_server',
-  'create_server',  
-  'reboot_server',   
-  'power_on_server', 
-  'power_off_server',
-  'shutdown_server' 
-];
+// var makeRequest = require('./makeRequest.js');
+var platforms = require('./platforms');
+var actions = require('./actions');
 
 var configureRequest = function(req, res, next) {
   console.log('Request body is:', req.body);
   console.log('Request action is:', req.params.action);
 
-  var platform;
+  var platform = req.platform = 'digital_ocean'; // should come from db later
   var action = req.params.action;
   var username = req.body.username;
   var target_id = req.body.target_id;
@@ -29,21 +16,22 @@ var configureRequest = function(req, res, next) {
   // check if action exists
   if (actions.indexOf(action) === -1) { 
     console.log('No action matched to this api endpoint');
-    res.end('No action matched to this api endpoint');
+    res.status(404).end('No action matched to this api endpoint');
     return;
   }
   // check if platform is defined
-  if (!platforms.hasOwnProperty(req.body.platform)) {
+  if (!platforms.hasOwnProperty(platform)) {
     console.log('Requested platform is not defined');
-    res.end('Requested platform is not defined');
+    res.status(404).end('Requested platform is not defined');
     return;
   } else {
-    platform = platforms[req.body.platform];
+    platform = platforms[platform];
   }
 
   // check if action exists for the platform
   if (!platform.actions.hasOwnProperty(action)) {
     console.log('No matching action on this platform for this api endpoint');
+    res.status(404).end('No matching action on this platform for this api endpoint');
     return;
   }
 

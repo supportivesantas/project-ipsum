@@ -3,6 +3,7 @@ var clientServers = require('../db/collections/client-server');
 var stats = require('../db/collections/stats');
 var hashes = require('../db/collections/hashes');
 var lookup = require('./lookup');
+var internalTasks = require('./internal_tasks');
 var statsController = {};
 
 /* store the stats into postgresql */
@@ -38,7 +39,7 @@ statsController.processStats = function (req, res) {
 
   if (!hash) {
     /* no hash sent this is a critical error */
-    console.log('Error: No Hash in Request', error);
+    console.log('Error: No Hash in Request');
     res.status(500).send('Error: No Hash in Request');
     return;
   }
@@ -82,7 +83,10 @@ statsController.registerClient = function (req, res) {
   /* put server ip and appname in db if it does't already exist */
   clientServers.model.where('ip', ip).fetch().then(function (clientServer) {
     if (!clientServer) {
-      return new clientServers.model({ ip: ip }).save();
+      return new clientServers.model({
+        ip: ip,
+        hostname: hostname
+      }).save();
     } else {
       return clientServer;
     }
@@ -116,6 +120,7 @@ statsController.registerClient = function (req, res) {
           clientServers_id: serverID,
           hash: computedHash,
           ip: ip,
+          hostname: hostname,
           appname: appname
         }).save();
       } else {
@@ -125,6 +130,7 @@ statsController.registerClient = function (req, res) {
     .then(function (hash) {
       console.log('Stats Client Successfully Registered for IP: ' + ip);
       res.status(200).send(computedHash);
+      internalTasks.syncServersToPlatforms();
     })
     .catch(function (error) {
       console.log('Stats Client Registration Failure', error);
