@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import App from './components/App.js';
+import App from './components/app.js';
 import Login from './components/Login.js';
 import MyApp from './components/MyApp.js';
 import MyServer from './components/MyServer.js';
@@ -35,3 +35,6 @@ render(
   </Provider>,
   document.getElementById('app')
 );
+
+
+

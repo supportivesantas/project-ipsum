@@ -19,7 +19,7 @@ app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output
 app.use(webpackHotMiddleware(compiler));
 // }
 
-var jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json();
 
 app.use('/getStats', jsonParser, getStats_controller);
 

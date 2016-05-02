@@ -66,5 +66,11 @@ describe('Server Reducer Tests', () => {
     done();
   });
 
+  it('Should handle MASS_POPULATE_SERVERS', (done) => {
+    expect(servReducer([], actions.MASS_POPULATE_SERVERS([{ id: 0, ip: '1.1.1.1', platform: 'Digital Ocean', app: 'MWBISCOOL', active: 'True' },
+     { id: 1, ip: '4.3.2.1', platform: 'Heroku', app: 'MWBISCOOL', active: 'False' }])).length)
+      .to.equal(2);
+    done();
+  });
 
 });
