@@ -46,7 +46,7 @@ class AllServers extends React.Component {
         <button type="submit" onClick={this.addServer.bind(this)} > Add a server </button>
         <button onClick={this.getSelectedRowKeys.bind(this)}>Get selected row keys</button>
 
-        <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true}   selectRow={selectRowProp} search={true}>
+        <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
           <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Server ID</TableHeaderColumn>
           <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>
           <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
