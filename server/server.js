@@ -25,10 +25,8 @@ require('./auth/passport')(passport); // pass passport for configuration
 require('./auth/configRoutes')(app, passport); // pass app for configuration
 /*================================================*/
 
-app.use('/getStats', jsonParser, getStats_controller);
-
 app.use(express.static('./dist'));
-app.use(bodyParser.json()); // for parsing application/json
+app.use('/getStats', jsonParser, getStats_controller);
 app.use('/stats', jsonParser, stats_controller);
 
 // api interface for interacting with digital_ocean, et al.

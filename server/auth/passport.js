@@ -23,7 +23,7 @@ module.exports = function(passport) {
 
   // used to deserialize the user
   passport.deserializeUser(function(id, done) {
-    new User({'github.id': id})
+    new User({'githubid': id})
       .fetch()
       .then(function(user) {
         done(err, user)
@@ -36,22 +36,23 @@ module.exports = function(passport) {
       callbackURL: "http://localhost:1337/auth/github/callback"
     },
     function(token, refreshToken, profile, done) {
-      process.nextTick(function() {
 
-        new User({'github.id': profile.id}).fetch(function(user){
+        new User({'githubid': profile.id}).fetch(function(user){
+          console.log('inside callback function!')
           if (user) {
 
             // if there is a user id already but no token (user was linked at one point and then removed)
-            if (!user.github.token) {
-              // need to add columns to schema...
-              user[githubToken] = token;
-              user[githubEmail] = (profile.email || '').toLowerCase();
-
-              user.save(function(err) {
-                if (err)
-                    return done(err);
-                    
+            if (!user.githubtoken) {
+              user.save({
+                githubtoken: token,
+                githubemail: (profile.email || '').toLowerCase(),
+                githubid: profile.id
+              })
+              .then(function(user){
                 return done(null, user);
+              })
+              .catch(function(err){
+                return done(err);
               });
             }
 
@@ -59,24 +60,22 @@ module.exports = function(passport) {
 
           } else {
             // if there is no user, create them
-            var newUser            = new User();
-
-            newUser.github.id    = profile.id;
-            newUser.github.token = token;
-            newUser.github.name  = profile.name.givenName + ' ' + profile.name.familyName;
-            newUser.github.email = (profile.emails[0].value || '').toLowerCase();
-
-            newUser.save(function(err) {
-              if (err)
-                return done(err);
-                  
-              return done(null, newUser);
+            var newUser = new User();
+            newUser.save({
+              githubid: profile.id,
+              githubtoken: token,
+              githubemail: (profile.email || '').toLowerCase()
+            })
+            .then(function(user){
+              return done(null, user);
+            })
+            .catch(function(err){
+              return done(err);
             });
           }
 
         });
 
-      });
 
     }));
 
