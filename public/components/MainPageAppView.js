@@ -12,9 +12,9 @@ class MainPageAppView extends React.Component {
 
   render() {
     return (
-      <div>
-      DONALD TRUMP
-      {this.props.selected.id}
+      <div className="MainPageAppView">
+        <div className="AppViewHeaderText">DONALD TRUMP - {this.props.selected.id} - 3/5 </div>
+        INSERT GRAPH HERE
       </div>
     );
   }

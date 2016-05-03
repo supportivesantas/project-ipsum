@@ -29,3 +29,14 @@ path {
   fill: none;
   stroke: #000;
 }
+
+.MainPageAppView {
+  width: 80%;
+  background-color: light-green;
+  border: 2px solid red;
+}
+
+.AppViewHeaderText {
+  color: 'red';
+  text-align: left;
+}
