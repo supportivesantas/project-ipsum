@@ -19,7 +19,7 @@ module.exports = function(passport) {
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
     console.log('SERIALIZING SESSION')
-    done(null, user.get('githubid'));
+    done(null, {'githubid': user.get('githubid')});
   });
 
   // used to deserialize the user
@@ -28,6 +28,7 @@ module.exports = function(passport) {
     new User({'githubid': id})
       .fetch()
       .then(function(user) {
+        console.log(user);
         done(null, user)
       })
       .catch(function(err){
