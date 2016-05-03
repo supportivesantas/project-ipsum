@@ -12,8 +12,8 @@ const init = {
   routing: [],
   applications: [],
   user: {
-    email: 'QQ@QQ.com',
-    handle: 'QQQQQQQ',
+    isLogged: false,
+    handle: '',
   },
   servers: [],
   graphData: [

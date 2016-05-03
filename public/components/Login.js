@@ -8,16 +8,13 @@ class Login extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     // do login with github here
-    this.props.dispatch(actions.POPULATE_USER_DATA('m@m.com', 'jnasddassd'));
+    window.location.href = '/auth/github';
   }
 
   render() {
     return (
       <div id="loginFormWrapper">
         <h2>Please login</h2>
-
-        
-        <a href="/auth/github">Login with GitHub</a>
 
         <button
           type="submit"

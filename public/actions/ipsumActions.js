@@ -12,10 +12,9 @@ module.exports = {
       id: id,
     };
   },
-  POPULATE_USER_DATA(useremail, userhandle) {
+  POPULATE_USER_DATA(userhandle) {
     return {
       type: 'POPULATE_USER_DATA',
-      email: useremail,
       handle: userhandle,
     };
   },

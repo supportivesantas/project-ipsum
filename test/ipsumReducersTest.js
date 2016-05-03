@@ -16,9 +16,10 @@ describe('User Reducer Tests ', () => {
   });
 
   it('Should handle POPULATE_USER_DATA', (done) => {
-    expect(userReducer({ user: {} },
-      actions.POPULATE_USER_DATA('m@m.com', 'mbresnan1701')).handle)
-      .to.equal('mbresnan1701');
+    const test = userReducer({ user: { handle: '', isLogged: false } },
+      actions.POPULATE_USER_DATA('mbresnan1701'));
+    expect(test.handle).to.equal('mbresnan1701');
+    expect(test.isLogged).to.equal(true);
     done();
   });
 });

@@ -16,6 +16,15 @@ const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
 // GET ASYNC DATA HERE BEFORE RENDER, THEN CALL RENDER
+const requireAuth = (nextState, replace) => {
+  const status = store.getState().user.isLogged;
+  if (!status) {
+    replace({
+      pathname: '/login',
+      state: { nextPathname: nextState.location.pathname },
+    });
+  }
+};
 
 render(
   <Provider store={store}>
@@ -23,20 +32,17 @@ render(
 
       <Route path="/login" component={Login} />
       <Route path="/logout" component={Login} />
-      <Route path="/auth/github/callback" component={MainPage} />
 
-      <Route path="/" component={App} >
-        <IndexRoute component={MainPage} />
-        <Route path="/allApps" component={AllApps} />
-        <Route path="/allServers" component={AllServers} />
-        <Route path="/myServer" component={MyServer} />
-        <Route path="/myApp" component={MyApp} />
+      <Route path="/" component={App} onEnter={requireAuth} >
+        <IndexRoute component={MainPage} onEnter={requireAuth} />
+        <Route path="/allApps" component={AllApps} onEnter={requireAuth} />
+        <Route path="/allServers" component={AllServers} onEnter={requireAuth} />
+        <Route path="/myServer" component={MyServer} onEnter={requireAuth} />
+        <Route path="/myApp" component={MyApp} onEnter={requireAuth} />
       </Route>
 
     </Router>
   </Provider>,
   document.getElementById('app')
 );
-
-
 
