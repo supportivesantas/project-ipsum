@@ -18,11 +18,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const jsonParser = bodyParser.json();
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true }))
 
 /*======== GITHUB AUTHENTICATION SETUP ===========*/
 const passport = require('passport');
 require('./auth/passport')(passport); // pass passport for configuration
-require('./auth/configRoutes')(app, passport); // pass app for configuration
+require('./auth/configRoutes').configRoutes(app, passport); // pass app for configuration
 /*================================================*/
 
 app.use(express.static('./dist'));

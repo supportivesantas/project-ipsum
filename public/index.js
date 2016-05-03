@@ -22,6 +22,7 @@ render(
     <Router history={history}>
 
       <Route path="/login" component={Login} />
+      <Route path="/auth/github/callback" component={MainPage} />
 
       <Route path="/" component={App} >
         <IndexRoute component={MainPage} />

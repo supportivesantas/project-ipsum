@@ -18,15 +18,20 @@ module.exports = function(passport) {
 
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
-      done(null, user.id);
+    console.log('SERIALIZING SESSION')
+    done(null, user.get('githubid'));
   });
 
   // used to deserialize the user
   passport.deserializeUser(function(id, done) {
+    console.log('DESERIALIZING SESSION')
     new User({'githubid': id})
       .fetch()
       .then(function(user) {
-        done(err, user)
+        done(null, user)
+      })
+      .catch(function(err){
+        done(err);
       });
   });
 
@@ -37,47 +42,25 @@ module.exports = function(passport) {
     },
     function(token, refreshToken, profile, done) {
 
-        new User({'githubid': profile.id}).fetch(function(user){
-          console.log('inside callback function!')
-          if (user) {
+      new User({'githubid': profile.id}).fetch()
+      .then(function(user){
+        if (!user) { user = new User(); console.log('User not found, creating a new one!')}
+        // if there is a user id already but no token (user was linked at one point and then removed)
+        if (! (user.get('githubtoken') && user.get('githubemail') && user.get('githubid') )) {
+          user.save({
+            githubtoken: token,
+            githubemail: (profile._json.email || '').toLowerCase(),
+            githubid: profile.id
+          })
+          .then(function(user){
+            return done(null, user);
+          })
+          .catch(function(err){
+            return done(err);
+          });
+        }
 
-            // if there is a user id already but no token (user was linked at one point and then removed)
-            if (!user.githubtoken) {
-              user.save({
-                githubtoken: token,
-                githubemail: (profile.email || '').toLowerCase(),
-                githubid: profile.id
-              })
-              .then(function(user){
-                return done(null, user);
-              })
-              .catch(function(err){
-                return done(err);
-              });
-            }
-
-            return done(null, user); // user found, return that user
-
-          } else {
-            // if there is no user, create them
-            var newUser = new User();
-            newUser.save({
-              githubid: profile.id,
-              githubtoken: token,
-              githubemail: (profile.email || '').toLowerCase()
-            })
-            .then(function(user){
-              return done(null, user);
-            })
-            .catch(function(err){
-              return done(err);
-            });
-          }
-
-        });
-
-
+        return done(null, user); // user found, return that user
+      });
     }));
-
-
 }
