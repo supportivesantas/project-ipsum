@@ -8,6 +8,9 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const stats_controller = require('./routes/stats_route');
 const getStats_controller = require('./routes/getStats_route');
 
+//add this middleware to protected routes. redirects to github login page if not authenticated
+const ensureAuthenticated = require('./auth/passport.js').ensureAuthenticated
+
 const app = express();
 
 const compiler = webpack(config);
