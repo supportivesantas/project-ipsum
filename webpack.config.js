@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map',
   entry: [
     'webpack-hot-middleware/client',
     './public/index.js'],
@@ -26,8 +26,6 @@ module.exports = {
           presets: ['react', 'es2015', 'react-hmre'],
         },
       },
-
-
     ],
   },
 
