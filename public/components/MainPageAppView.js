@@ -21,7 +21,7 @@ class MainPageAppView extends React.Component {
   render() {
     return (
       <div className="MainPageAppView">
-        <Col xs={10} xsOffset={1} >
+        <Col xs={5} xsOffset={1} >
           <Panel header={this.generateHeader()}>
             <Panel>
               GRAPH GOES HERE
@@ -30,10 +30,10 @@ class MainPageAppView extends React.Component {
               <Button bsSize="xsmall">Graph Option 1</Button>
               <Button bsSize="xsmall">Graph Option 2</Button>
               <Button bsSize="xsmall">Graph Option 3</Button>
-              <Button bsSize="xsmall">Graph Option 4</Button>
-              <Button bsSize="xsmall">Graph Option 5</Button>
+
 
             </ButtonToolbar>
+
             Panel content <br />
             Panel content<br />
             Panel content<br />
