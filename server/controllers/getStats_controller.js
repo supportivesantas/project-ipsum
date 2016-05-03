@@ -1,65 +1,105 @@
 var clientApps = require('../db/collections/client-apps');
 var clientServers = require('../db/collections/client-server');
 var stats = require('../db/collections/stats');
+var _ = require('underscore');
+var knex = require('knex')({
+  client: 'pg',
+  connection: process.env.PG_CONNECTION_STRING,
+});
 
 
 exports.singleServer = function(req, res) {
   //TODO change path to include server id params;
-  var serverId = 1;
-  // if (!id) {
-  //   console.log('Error, could not get serverID', error);
-  //   res.status(500).send("Error, no serverID supllied");
-  //   return;
-  // }
+  var serverId = 2;
+  hoursvar = 24 || 12; //default to twelve
+  var dataRange = _.range(hoursvar + 1);
 
-  //TODO: narrow down search for only entries from last ~6hours/// OR for summary information/ day, week, month, etc;
-  stats.model.where('clientServers_id', serverId).fetchAll()
-    .then(function(serverStats) {
-      var totalData = {
-        route: 'Total',
-        data: [],
-      };
-      var timesForTotal = {};
-      var totalCounter = 0;
-      var count = 0;
-      var routes = {};
-      var graphData = [];
-      serverStats.models.forEach(function(model) {
-        var routeDataPoint = model.attributes;
-        var timestamp = routeDataPoint.created_at
-        // .slice(0, 19);
+  if (!serverId) {
+    console.log('Error, could not get serverID', error);
+    res.status(500).send("Error, no serverID supllied");
+    return;
+  }
 
-        var routeData = {
-          hits: routeDataPoint.statValue,
-          time: timestamp,
-        };
-
-        if (routeDataPoint.statName in routes) {
-          graphData[routes[routeDataPoint.statName]].data.push(routeData);
-        } else {
-          routes[routeDataPoint.statName] = count;
-          graphData[count] = {
-            route: routeDataPoint.statName.slice(1),
-            data: [routeData],
-          };
-        count++;
-        }
-        if (!(timestamp in timesForTotal)) {
-          timesForTotal[timestamp] = totalCounter;
-          totalData.data[totalCounter++] = {
-            hits: 0,
-            time: timestamp,
-          };
-        }
-        totalData.data[timesForTotal[timestamp]].hits += routeDataPoint.statValue;
+  stats.model.where('clientServers_id', serverId)
+  .fetchAll()
+  //get all routes to fill data points if no activity in the hours requested
+    .then(function(serverRoutesByStamp) {
+      var routeByStamp = serverRoutesByStamp.models;
+      var allRoutes = { Total: { route: 'Total', data: [] } };
+      routeByStamp.forEach(function(hit) {
+        allRoutes[hit.attributes.statName.slice(1)] = { route: hit.attributes.statName.slice(1), data: [] };
       });
-      graphData.unshift(totalData);
-      res.status(200).send(graphData);
+      return allRoutes;
     })
-    .catch(function(error) {
-      console.error("Get stats error", error);
-      res.send(500);
-    });
+    .then(function(allRoutes) {
+      //get hits for the specified time interval
+      stats.model.where('clientServers_id', serverId)
+      .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
+      .fetchAll()
+        .then(function(serverStats) {
 
+          var models = serverStats.models;
+          var graphData = [];
+          // if no hits for all routes populate with data, hits = 0
+          if (!models.length) {
+            var tempArr = [];
+            dataRange.forEach(function(i) {
+              tempArr.push({time: i, hits: 0});
+            });
+            for (var route in allRoutes) {
+              allRoutes[route].data = tempArr;
+              graphData.push(allRoutes[route]);
+            }
+          } else {
+            var totalHits = {};
+            models.forEach(function(model) {
+              var route = model.attributes;
+              //put together all data with time: hours ago from now     (below): floor or ciel??
+              allRoutes[route.statName.slice(1)].data.push({time: Math.floor(Math.abs(route.created_at - Date.now()) / 36e5), hits: route.statValue});
+            });
+            //Compile hits and add missing dataPoints for each route
+            _.each(allRoutes, function(route) {
+              var routeHits = {};
+              _.each(route.data, function(hitObj) {
+                if (!routeHits[hitObj.time]) {
+                  routeHits[hitObj.time] = hitObj.hits;
+                } else {
+                  routeHits[hitObj.time] += hitObj.hits;
+                }
+                if (!totalHits[hitObj.time]) {
+                  totalHits[hitObj.time] = hitObj.hits;
+                } else {
+                  totalHits[hitObj.time] += hitObj.hits;
+                }
+              });
+              route.data = [];
+              for (var time in routeHits) {
+                route.data.push({time: +time, hits: routeHits[time]});
+              }
+              _.each(dataRange, function(i) {
+                if (!routeHits[i]) {
+                  route.data.push({time: i, hits: 0 });
+                }
+              });
+            });
+            //Compile Total Hits
+            _.each(allRoutes.Total.data, function(dataPoint) {
+              if (totalHits[dataPoint.time]) {
+                dataPoint.hits = totalHits[dataPoint.time];
+              }
+            });
+          }
+          //Put into graphData Array
+          for (var aRoute in allRoutes) {
+            graphData.push(allRoutes[aRoute]);
+          }
+
+          res.send(graphData);
+        })
+        .catch(function(error) {
+          console.error("Get stats error", error);
+          res.send(500);
+        });
+    });
 };
 

@@ -17,11 +17,17 @@ const init = {
   },
   servers: [],
   graphData: [
-    {route: "Total", data: [{val:15, time: 30}, {val:35, time: 60} ]},
-    {route: "route1", data: [{val:1, time: 30}, {val:6, time: 60} ]},
-    {route: "route2", data: [{val:5, time: 30}, {val:5, time: 60} ]},
-    {route: "route3", data: [{val:7, time: 30}, {val:9, time: 60} ]},
-    {route: "route4", data: [{val:2, time: 30}, {val:15, time: 60} ]}
+    {route: "Total",
+      data: [{ time: 0, hits: 5}, { time: 0+1, hits: 4}, { time: 1+1, hits: 10}, { time: 2+1, hits: 2}, { time:3 +1, hits: 14}, { time:4 +1, hits: 8}, { time: 5+1, hits: 12}, { time: 6+1, hits: 4}, { time: 7+1, hits: 10}, { time: 8+1, hits: 2}, { time:9 +1, hits: 14}, { time:10+1 , hits: 8}, { time: 1+11, hits: 12}]
+    },
+    {
+      "route": "something",
+      "data": [{ time: 0, hits: 0}, { time: 0+1, hits: 0}, { time: 1+1, hits: 0}, { time: 2+1, hits: 0}, { time:3 +1, hits: 0}, { time:4 +1, hits: 0}, { time: 5+1, hits: 0}]
+    },
+    {
+      "route": "swwweeettt",
+      "data": [{ time: 0, hits: 5}, { time: 0+1, hits: 4}, { time: 1+1, hits: 10}, { time: 2+1, hits: 2}, { time:3 +1, hits: 14}, { time:4 +1, hits: 8}, { time: 5+1, hits: 12}, { time: 6+1, hits: 4}, { time: 7+1, hits: 10}, { time: 8+1, hits: 2}, { time:9 +1, hits: 14}, { time:10+1 , hits: 8}, { time: 1+11, hits: 12}, { time: 13, hits: 4}, { time: 14, hits: 10}, { time: 15, hits: 2}, { time:16, hits: 14}, { time:17, hits: 8}, { time: 18, hits: 12}, { time: 19, hits: 4}, { time: 20, hits: 10}, { time: 21, hits: 2}, { time:22, hits: 14}, { time:23 , hits: 8}, { time: 24, hits: 12}]
+    }
   ],
 };
 
