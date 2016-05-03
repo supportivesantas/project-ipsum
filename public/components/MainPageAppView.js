@@ -2,7 +2,7 @@ import React from 'react';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
-import { Panel, Col } from 'react-bootstrap';
+import { Button, ButtonToolbar, Panel, Col } from 'react-bootstrap';
 
 class MainPageAppView extends React.Component {
   constructor(props) {
@@ -23,6 +23,17 @@ class MainPageAppView extends React.Component {
       <div className="MainPageAppView">
         <Col xs={10} xsOffset={1} >
           <Panel header={this.generateHeader()}>
+            <Panel>
+              GRAPH GOES HERE
+            </Panel>
+            <ButtonToolbar>
+              <Button bsSize="xsmall">Graph Option 1</Button>
+              <Button bsSize="xsmall">Graph Option 2</Button>
+              <Button bsSize="xsmall">Graph Option 3</Button>
+              <Button bsSize="xsmall">Graph Option 4</Button>
+              <Button bsSize="xsmall">Graph Option 5</Button>
+
+            </ButtonToolbar>
             Panel content <br />
             Panel content<br />
             Panel content<br />
