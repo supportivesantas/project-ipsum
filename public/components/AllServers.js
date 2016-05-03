@@ -31,19 +31,9 @@ class AllServers extends React.Component {
     console.log(this.refs.table.state.selectedRowKeys);
   }
 
-  addServer(e) {
-    e.preventDefault();
-    this.props.dispatch(actions.ADD_SERVER('6.6.6.6', 'Azure', 'CoolAppThingy', 'True'));
-  }
-
-  removeServers(servArr) {
-
-  }
-
   render() {
     return (
       <div>
-        <button type="submit" onClick={this.addServer.bind(this)} > Add a server </button>
         <button onClick={this.getSelectedRowKeys.bind(this)}>Get selected row keys</button>
 
         <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
