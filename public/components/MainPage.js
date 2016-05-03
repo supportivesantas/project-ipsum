@@ -3,6 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
+import MainPageAppView from './MainPageAppView.js';
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -23,11 +24,18 @@ class MainPage extends React.Component {
     });
   }
 
+  appList() {
+    return this.props.state.servers.map((server, index) => {
+      return (
+        <MainPageAppView selected={server} />
+      );
+    });
+  }
 
   render() {
     return (
-      <div> THIS IS OUR MAIN PAGE.
-      COOL STUFF WILL GO HERE!!!!
+      <div>
+        {this.appList()}
       </div>
     );
   }

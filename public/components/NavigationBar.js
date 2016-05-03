@@ -5,7 +5,7 @@ import NavLink from './NavLink.js';
 
 const NavigationBar = () => {
   return (
-    <Navbar className="navigation">
+    <Navbar className="navigation" fluid>
       <Navbar.Header>
         <Navbar.Brand>
           <NavLink to="/">Project-Ipsum</NavLink>
