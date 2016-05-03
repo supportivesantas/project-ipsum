@@ -14,10 +14,10 @@ const app = express();
 
 const compiler = webpack(config);
 
-// if (node_env === 'DEVELOPMENT') {
-app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
-app.use(webpackHotMiddleware(compiler));
-// }
+if (process.env.NODE_ENV !== 'production') {
+  app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
+  app.use(webpackHotMiddleware(compiler));
+}
 
 const jsonParser = bodyParser.json();
 
@@ -45,13 +45,4 @@ app.get('*', (request, response) => {
   response.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
 
-
-const port = process.env.port || 1337;
-
-app.listen(port, (err) => {
-  if (err) {
-    throw err;
-  } else {
-    console.log('Server listening at 127.0.0.1, port:', port);
-  }
-});
+module.exports = app;

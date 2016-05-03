@@ -73,8 +73,8 @@ db.knex.schema.hasTable('stats').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('stats', function(stat) {
       stat.increments('id').primary();
-      stat.integer('clientApps_id').references('clientApps.id');
-      stat.integer('clientServers_id').references('clientServers.id');
+      stat.integer('clientApps_id').references('clientApps.id').onDelete('CASCADE');
+      stat.integer('clientServers_id').references('clientServers.id').onDelete('CASCADE');
       stat.string('statName');
       stat.integer('statValue');
       stat.timestamps();
