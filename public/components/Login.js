@@ -16,6 +16,8 @@ class Login extends React.Component {
       <div id="loginFormWrapper">
         <h2>Please login</h2>
 
+        
+        <a href="/auth/github">Login with GitHub</a>
 
         <button
           type="submit"

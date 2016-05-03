@@ -11,7 +11,7 @@ module.exports = {
     list_all_images: function(req) {
       req.options = {
         method: 'GET',  
-        uri: `${module.exports.baseUrl}/images`
+        uri: `${module.exports.baseUrl}/images?private=true`
       };
     },
     delete_server: function(req) {

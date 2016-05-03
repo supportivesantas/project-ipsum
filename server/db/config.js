@@ -13,6 +13,9 @@ db.knex.schema.hasTable('users').then(function(exists) {
       user.string('email', 20).unique();
       user.string('phoneNumber', 20);
       user.string('password', 20);
+      user.string('githubid');
+      user.string('githubemail');
+      user.string('githubtoken');
     }).then(function(table) {
       console.log('Created User Table', table);
     });

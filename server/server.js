@@ -5,10 +5,11 @@ const config = require('../webpack.config.js');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-
 const stats_controller = require('./routes/stats_route');
 const getStats_controller = require('./routes/getStats_route');
 
+//add this middleware to protected routes. redirects to github login page if not authenticated
+const ensureAuthenticated = require('./auth/passport.js').ensureAuthenticated
 
 const app = express();
 
@@ -19,13 +20,19 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(webpackHotMiddleware(compiler));
 }
 
-const jsonParser = bodyParser.json();
+// const jsonParser = bodyParser.json();
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use('/getStats', jsonParser, getStats_controller);
+/*======== GITHUB AUTHENTICATION SETUP ===========*/
+const passport = require('passport');
+require('./auth/passport')(passport); // pass passport for configuration
+require('./auth/configRoutes').configRoutes(app, passport); // pass app for configuration
+/*================================================*/
 
 app.use(express.static('./dist'));
-app.use(bodyParser.json()); // for parsing application/json
-app.use('/stats', jsonParser, stats_controller);
+app.use('/getStats', getStats_controller);
+app.use('/stats', stats_controller);
 
 // api interface for interacting with digital_ocean, et al.
 const configureRequest = require('./api/configure.js');
