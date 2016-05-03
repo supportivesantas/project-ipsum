@@ -20,8 +20,8 @@ class MainPageAppView extends React.Component {
 
   render() {
     return (
-      <div className="MainPageAppView">
-        <Col xs={5} xsOffset={1} >
+      <Col xs={12} sm={6}>
+        <div className="MainPageAppView">
           <Panel header={this.generateHeader()}>
             <Panel>
               GRAPH GOES HERE
@@ -40,8 +40,8 @@ class MainPageAppView extends React.Component {
             Panel content<br />
             Panel content<br />
           </Panel>
-        </Col>
-      </div>
+        </div>
+      </Col>
     );
   }
 }
