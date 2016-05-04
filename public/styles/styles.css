@@ -83,6 +83,10 @@ nav.navbar a {
 }
 .navbar-default .navbar-brand {
   color: white;
+  transition: letter-spacing 0.5s ease;
+}
+.navbar-default .navbar-brand:hover {
+  letter-spacing: .1em;
 }
 .panel {
   color: #272822;
