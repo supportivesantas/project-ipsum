@@ -18,8 +18,12 @@ module.exports = {
       handle: userhandle,
     };
   },
+  USER_RESET() {
+    return {
+      type: 'USER_RESET',
+    };
+  },
   ADD_SERVER(id, ip, platform, app, isActive) {
-    console.log('ADD SERV ACTION');
     return {
       type: 'ADD_SERVER',
       id: id,

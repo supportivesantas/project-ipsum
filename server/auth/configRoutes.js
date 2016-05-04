@@ -22,6 +22,8 @@ var configRoutes = function(app, passport) {
     passport.authenticate('github', { failureRedirect: '/login' }),
     function(req, res) {
       // Successful authentication, redirect home.
+      res.cookie('il', 'true', { httpOnly: false });
+
       res.redirect('/');
     });
 

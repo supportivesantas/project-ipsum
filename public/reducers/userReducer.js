@@ -8,6 +8,12 @@ module.exports = (state = {}, action) => {
         handle: action.handle,
       });
 
+    case 'USER_RESET':
+      return {
+        isLogged: false,
+        handle: '',
+      };
+
     default:
       return state;
   }

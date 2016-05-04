@@ -11,19 +11,19 @@ import configureStore from './ipsumStore.js';
 import { browserHistory, Router, Route, IndexRoute } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import MainPage from './components/MainPage.js';
+import actions from './actions/ipsumActions.js';
+import auth from './util/authHelpers.js';
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
 // GET ASYNC DATA HERE BEFORE RENDER, THEN CALL RENDER
-const requireAuth = (nextState, replace) => {
-  const status = store.getState().user.isLogged;
-  if (!status) {
-    replace({
-      pathname: '/login',
-      state: { nextPathname: nextState.location.pathname },
-    });
-  }
+
+const logout = () => {
+  console.log('LO hit');
+  auth.logout();
+  store.dispatch(actions.USER_RESET());
+  window.location.href = '/login';
 };
 
 render(
@@ -31,14 +31,15 @@ render(
     <Router history={history}>
 
       <Route path="/login" component={Login} />
-      <Route path="/logout" component={Login} />
+      <Route path="/logout" onEnter={logout} />
+      <Route path="/auth/github/callback" />
 
-      <Route path="/" component={App} onEnter={requireAuth} >
-        <IndexRoute component={MainPage} onEnter={requireAuth} />
-        <Route path="/allApps" component={AllApps} onEnter={requireAuth} />
-        <Route path="/allServers" component={AllServers} onEnter={requireAuth} />
-        <Route path="/myServer" component={MyServer} onEnter={requireAuth} />
-        <Route path="/myApp" component={MyApp} onEnter={requireAuth} />
+      <Route path="/" component={App} onEnter={auth.requireAuth} >
+        <IndexRoute component={MainPage} onEnter={auth.requireAuth} />
+        <Route path="/allApps" component={AllApps} onEnter={auth.requireAuth} />
+        <Route path="/allServers" component={AllServers} onEnter={auth.requireAuth} />
+        <Route path="/myServer" component={MyServer} onEnter={auth.requireAuth} />
+        <Route path="/myApp" component={MyApp} onEnter={auth.requireAuth} />
       </Route>
 
     </Router>
