@@ -73,27 +73,23 @@ path {
 
 /*=========== ALL APPS PAGE STYLING ============*/
 body {
-  background-color: #272822;
   color: #c1c1c1;
 }
 nav.navbar {
-  background-color: #686868;
+  background-color: #66D9EF;
 }
-a {
-  color: #66D9EF;
+nav.navbar a {
+  color: white;
 }
 .navbar-default .navbar-brand {
-  color: #66D9EF;
+  color: white;
 }
 .panel {
-  background-color: #272822;
-  color: #c1c1c1;
+  color: #272822;
 }
-.panel-default .panel-heading {
-  background-color: #686868;
-}
-.panel-title {
-  color: #e6db74;
+.panel-heading:hover {
+  background-color: #FD971F;
+  color: white;
 }
 button {
   color: #272822;
