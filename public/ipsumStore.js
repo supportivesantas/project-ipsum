@@ -33,7 +33,6 @@ const getInitialState = () => {
 
 // configure store with initial state and allow Redux Chrome extension to view store
 export default function configureStore(browserHistory, initialState = getInitialState()) {
-  console.log(initialState);
   const store = createStore(combineReducers({
     routing: routerReducer,
     applications: applicationReducer,
