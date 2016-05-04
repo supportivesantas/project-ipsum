@@ -38,27 +38,29 @@ class MyServer extends React.Component {
 
   render() {
     return (
-      <div>
-        <Panel header={<h1>Control Panel</h1>}>
-          server info/control panel goes here
-        </Panel>
+      <Grid>
+        <Row className="server-control-panel">
+          <Panel header={<h1>Server Control Panel</h1>}>
+            server info/control panel goes here
+          </Panel>
+        </Row>
 
-        <div class='serverStatContainer'>
-          <Col xs={6} md={4} >
+        <Row class='serverStatContainer'>
+          <Col xs={12} md={3} >
             <Panel header={<div>Routes</div>} >
              {this.props.state.graphData.map(graph =>
                 <Panel onClick={this.updateGraph.bind(this, graph)}>
-                  <h3>/{graph.route}</h3>
+                  <p>/{graph.route}</p>
                 </Panel>
               )}
            </Panel>
           </Col>
-          <Col xs={12} md={8}>
+          <Col xs={12} md={9}>
             <Panel header={<div>{this.graphTitle}</div>} id="serverGraph"></Panel>
           </Col>
 
-        </div>
-      </div>
+        </Row>
+      </Grid>
     );
   }
 }

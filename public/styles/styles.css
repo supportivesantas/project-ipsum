@@ -91,10 +91,10 @@ nav.navbar a {
 .panel {
   color: #272822;
 }
-.panel-heading:hover {
+/*.panel-heading:hover {
   background-color: #FD971F;
   color: white;
-}
+}*/
 button {
   color: #272822;
 }
