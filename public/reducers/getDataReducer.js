@@ -7,10 +7,7 @@ function getNextId(state) {
 module.exports = (state = [], action) => {
   switch (action.type) {
       case 'ADD_SERVER_DATA':
-        return Object.assign({}, state, {
-          graphData: action.data,
-        });
-
+        return action.data;
     default:
       return state;
   }

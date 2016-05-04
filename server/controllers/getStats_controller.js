@@ -9,9 +9,8 @@ var knex = require('knex')({
 
 
 exports.singleServer = function(req, res) {
-  //TODO change path to include server id params;
-  var serverId = 2;
-  hoursvar = 24 || 12; //default to twelve
+  var serverId = req.body.serverId || 1; //TODO: leave until server IDs are fixed
+  hoursvar = req.body.hours || 12; //default to last twelve hours
   var dataRange = _.range(hoursvar + 1);
 
   if (!serverId) {
@@ -37,7 +36,6 @@ exports.singleServer = function(req, res) {
       .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
       .fetchAll()
         .then(function(serverStats) {
-
           var models = serverStats.models;
           var graphData = [];
           // if no hits for all routes populate with data, hits = 0
@@ -55,7 +53,10 @@ exports.singleServer = function(req, res) {
             models.forEach(function(model) {
               var route = model.attributes;
               //put together all data with time: hours ago from now     (below): floor or ciel??
-              allRoutes[route.statName.slice(1)].data.push({time: Math.floor(Math.abs(route.created_at - Date.now()) / 36e5), hits: route.statValue});
+              allRoutes[route.statName.slice(1)].data.push({
+                  time: Math.floor(Math.abs(route.created_at - Date.now()) / 36e5),
+                  hits: route.statValue
+                });
             });
             //Compile hits and add missing dataPoints for each route
             _.each(allRoutes, function(route) {
