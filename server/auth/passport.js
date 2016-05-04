@@ -32,7 +32,7 @@ module.exports = function(passport) {
         done(null, user)
       })
       .catch(function(err){
-        done(err);
+        done(err, null);
       });
   });
 
@@ -56,7 +56,7 @@ module.exports = function(passport) {
             return done(null, user);
           })
           .catch(function(err){
-            return done(err);
+            return done(err, null);
           });
         }
 
