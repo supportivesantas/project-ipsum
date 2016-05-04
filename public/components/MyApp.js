@@ -16,12 +16,18 @@ class MyServer extends React.Component {
     };
   }
 
-  componentWillMount() {
-    renderChart('serverGraph', this.props.state.graphData[0].data);
-    setTimeout(() => {
-      d3.selectAll('svg').remove();
-      renderChart('serverGraph', this.props.state.graphData[0].data);
-    }, 50);
+  componentDidMount() {
+    var appId = appId || 1; //1 for testing, will need to connect with clicked server
+    request.post('/getStats/app',
+      {serverId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
+      (err, res) => {
+        if (err) { console.log("Error getting Server Data", err); }
+        this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
+      renderChart('appGraph', this.props.state.graphData[0].data);
+      });
+
+    // renderChart('appGraph', this.props.state.graphData[0].data);
+
   //   // this.props.dispatch(actions.ADD_WEEK_DATA());
   //   restHandler.post('/api/list_all_servers', {}, (err, res) => {
   //     const servers = JSON.parse(res.text).servers;
@@ -35,10 +41,10 @@ class MyServer extends React.Component {
   }
 
   // componentDidMount() {
-  //   renderChart('serverGraph', this.props.state.graphData[0].data);
+  //   renderChart('appGraph', this.props.state.graphData[0].data);
   //   setTimeout(() => {
   //     d3.selectAll('svg').remove();
-  //     renderChart('serverGraph', this.props.state.graphData[0].data);
+  //     renderChart('appGraph', this.props.state.graphData[0].data);
   //   }, 50);
   // }
 
@@ -52,7 +58,7 @@ class MyServer extends React.Component {
         routeIndex = i;
       }
     }
-    renderChart('serverGraph', graphData[routeIndex].data);
+    renderChart('appGraph', graphData[routeIndex].data);
   }
 
   render() {
@@ -92,7 +98,7 @@ class MyServer extends React.Component {
           <Col xs={12} lg={8}>
             <Panel header={<div>{this.graphTitle}</div>} >
               <h5 className="xAxis-title">Hits Per Hour</h5>
-              <div id="serverGraph"></div>
+              <div id="appGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
             </Panel>
           </Col>
@@ -101,7 +107,7 @@ class MyServer extends React.Component {
 
         <Row>
         <Col xs={12} md={12}>
-          <Panel header={<div>{this.graphTitle}</div>} id="serverGraph"></Panel>
+          <Panel header={<div>{this.graphTitle}</div>} id="appGraph"></Panel>
         </Col>
         </Row>
       </Grid>

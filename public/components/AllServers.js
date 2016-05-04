@@ -19,19 +19,9 @@ class AllServers extends React.Component {
     };
   }
 
-  goToServer(context, servId) {
-    servId = servId || 1; //1 for testing, will need to connect with clicked server
-    request.post('/getStats/server',
-      {serverId: servId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
-      (err, res) => {
-        if (err) { console.log("Error getting Server Data", err); }
-        this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-      });
-  }
-
   tableLinkForm(cell) {
     return (
-      <Link  onClick={this.goToServer.bind(this)} to="/myServer">Click Me!</Link>
+      <Link to="/myServer">Click Me!</Link>
       );
   }
 

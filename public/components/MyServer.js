@@ -16,11 +16,14 @@ class MyServer extends React.Component {
   }
 
   componentDidMount() {
-    renderChart('serverGraph', this.props.state.graphData[0].data);
-    setTimeout(() => {
-      d3.selectAll('svg').remove();
+    var servId = servId || 1; //1 for testing, will need to connect with clicked server
+    request.post('/getStats/server',
+      {serverId: servId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
+      (err, res) => {
+        if (err) { console.log("Error getting Server Data", err); }
+        this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
       renderChart('serverGraph', this.props.state.graphData[0].data);
-    }, 50);
+      });
   }
 
   updateGraph(graph) {

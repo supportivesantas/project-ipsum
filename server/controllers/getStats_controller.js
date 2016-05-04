@@ -74,7 +74,7 @@ const formatDataByHour = function(allRoutes, serverStats, dataRange) {
 };
 
 exports.singleApp = function(req, res) {
-  var appId = req.body.appId || 1; //TODO: leave until server IDs are fixed
+  var appId = req.body.appId || 3; //TODO: leave until server IDs are fixed
   var hoursvar = req.body.hours || 12; //default to last twelve hours
   var dataRange = _.range(hoursvar + 1);
 
