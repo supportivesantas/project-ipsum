@@ -3,6 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import { addData, renderChart } from '../D3graphTemplate';
 import { Grid, Row, Col, Clearfix } from 'react-bootstrap';
+import request from '../util/restHelpers.js';
 // import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
 
@@ -16,21 +17,10 @@ class MyServer extends React.Component {
 
   componentDidMount() {
     renderChart('serverGraph', this.props.state.graphData[0].data);
-    // this.props.state.graphData.map(graph =>
-    //   renderChart(graph.route)
-    // );
-
-    // var that = this;
-    // this.setInt = setInterval(function() {
-    //   addData();
-    //   that.props.state.graphData.map(graph => {
-    //     renderChart(graph.route);
-    //   });
-    // }, 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.setInt);
+    setTimeout(() => {
+      d3.selectAll('svg').remove();
+      renderChart('serverGraph', this.props.state.graphData[0].data);
+    }, 50);
   }
 
   updateGraph(graph) {
