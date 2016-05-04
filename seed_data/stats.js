@@ -27,17 +27,11 @@ class stats {
 
   saveHash(client) {
     var hash = this.statServer.ip + this.statApp.appname;
-//     INSERT INTO example_table
-//     (id, name)
-// SELECT 1, 'John'
-// WHERE
-//     NOT EXISTS (
-//         SELECT id FROM example_table WHERE id = 1
-//     );
+    
     client.query('INSERT INTO "hashes" ("clientApps_id", "clientServers_id", "hash", "ip", "appname") VALUES ($1, $2, $3, $4, $5) ON CONFLICT ("hash") DO NOTHING',
       [this.statApp.id, this.statServer.id, hash, this.statServer.ip, this.statApp.appname])
       .then((results) => {
-        console.log(results);
+        // do nothing
       })
       .catch((error) => {
         console.log('ERROR: Failed to save hash', error);
