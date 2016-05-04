@@ -16,26 +16,39 @@ class MyServer extends React.Component {
     };
   }
 
-  componentDidMount() {
-    renderChart('serverGraph', this.props.state.graphData[0].data);
-    setTimeout(() => {
-      d3.selectAll('svg').remove();
-      renderChart('serverGraph', this.props.state.graphData[0].data);
-    }, 50);
+  componentWillMount() {
+    // this.props.dispatch(actions.ADD_WEEK_DATA());
+    restHandler.post('/api/list_all_servers', {}, (err, res) => {
+      const servers = JSON.parse(res.text).servers;
+      const serversArr = [];
+      for (let i = 0; i < servers.length; i++) {
+        serversArr.push(actions.ADD_SERVER(servers[i].server_id, servers[i].ip, servers[i].platform,
+          servers[i].name, servers[i].platformSpecific.status));
+      }
+      this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
+    });
   }
 
-  updateGraph(graph) {
-    var graphData = this.props.state.graphData;
-    this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
-    d3.selectAll('svg').remove();
-    var routeIndex;
-    for (var i = 0; i < graphData.length; i++) {
-      if (graphData[i].route === graph.route) {
-        routeIndex = i;
-      }
-    }
-    renderChart('serverGraph', graphData[routeIndex].data);
-  }
+  // componentDidMount() {
+  //   renderChart('serverGraph', this.props.state.graphData[0].data);
+  //   setTimeout(() => {
+  //     d3.selectAll('svg').remove();
+  //     renderChart('serverGraph', this.props.state.graphData[0].data);
+  //   }, 50);
+  // }
+
+  // updateGraph(graph) {
+  //   var graphData = this.props.state.graphData;
+  //   this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
+  //   d3.selectAll('svg').remove();
+  //   var routeIndex;
+  //   for (var i = 0; i < graphData.length; i++) {
+  //     if (graphData[i].route === graph.route) {
+  //       routeIndex = i;
+  //     }
+  //   }
+  //   renderChart('serverGraph', graphData[routeIndex].data);
+  // }
 
   render() {
     return (
@@ -63,9 +76,7 @@ class MyServer extends React.Component {
           <Col xs={12} md={3} >
             <Panel header={<div>Routes</div>} >
              {this.props.state.graphData.map(graph =>
-                <Panel onClick={this.updateGraph.bind(this, graph)}>
                   <p>/{graph.route}</p>
-                </Panel>
               )}
            </Panel>
           </Col>

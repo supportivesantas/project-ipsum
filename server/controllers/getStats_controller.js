@@ -7,15 +7,36 @@ var knex = require('knex')({
   connection: process.env.PG_CONNECTION_STRING,
 });
 
+exports.singleApp = function() {
+  var appId = req.body.appId || 1; //TODO: leave until server IDs are fixed
+  var daysvar = req.body.days || 7; //default to last twelve hours
+  var dataRange = _.range(daysvar + 1);
+
+  if (!appId) {
+    console.log('Error, could not get appID', error);
+    res.status(500).send("Error, no appID supplied");
+    return;
+  }
+
+  stats.model.where('clientApps_id', appId)
+  .where(knex.raw("created_at > (NOW() - INTERVAL '" + daysvar + " day'" + ") ORDER BY created_at asc"))
+  .fetchAll()
+  .then(function(data) {
+    console.log(data);
+  })
+
+
+}
+
 
 exports.singleServer = function(req, res) {
   var serverId = req.body.serverId || 1; //TODO: leave until server IDs are fixed
-  hoursvar = req.body.hours || 12; //default to last twelve hours
-  var dataRange = _.range(1, hoursvar + 1);
+  var hoursvar = req.body.hours || 12; //default to last twelve hours
+  var dataRange = _.range(hoursvar + 1);
 
   if (!serverId) {
     console.log('Error, could not get serverID', error);
-    res.status(500).send("Error, no serverID supllied");
+    res.status(500).send("Error, no serverID supplied");
     return;
   }
 
