@@ -35,7 +35,6 @@
     "pg": "^4.5.5",
     "pg-promise": "^4.0.4",
     "react": "^15.0.1",
-    "react-bootstrap": "^0.29.3",
     "react-bootstrap-table": "^2.2.0",
     "react-dom": "^15.0.1",
     "react-redux": "^4.4.5",

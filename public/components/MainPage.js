@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
 import MainPageAppView from './MainPageAppView.js';
+import style from '../styles/styles.js';
 
 class MainPage extends React.Component {
   constructor(props) {

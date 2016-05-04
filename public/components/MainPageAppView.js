@@ -3,6 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import { Button, ButtonToolbar, Panel, Col } from 'react-bootstrap';
+import style from '../styles/styles.js';
 
 class MainPageAppView extends React.Component {
   constructor(props) {

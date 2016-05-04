@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar, Nav, NavDropdown, MenuItem, NavItem } from 'react-bootstrap';
 import { Link } from 'react-router';
 import NavLink from './NavLink.js';
+import style from '../styles/styles.js';
 
 const NavigationBar = () => {
   return (
