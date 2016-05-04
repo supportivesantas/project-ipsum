@@ -33,30 +33,40 @@ class MyServer extends React.Component {
         routeIndex = i;
       }
     }
+    this.render();
     renderChart('serverGraph', graphData[routeIndex].data);
+    this.render();
   }
 
   render() {
     return (
       <Grid>
         <Row className="server-control-panel">
-          <Panel header={<h1>Server Control Panel</h1>}>
-            server info/control panel goes here
-          </Panel>
+          <Col xs={12} md={12} lg={12}>
+            <Panel header={<h1>Server Control Panel</h1>}>
+              server info/control panel goes here
+            </Panel>
+          </Col>
         </Row>
 
-        <Row class='serverStatContainer'>
-          <Col xs={12} md={3} >
+        <Row className='serverStatContainer'>
+          <Col xs={12} lg={4} >
             <Panel header={<div>Routes</div>} >
-             {this.props.state.graphData.map(graph =>
-                <Panel onClick={this.updateGraph.bind(this, graph)}>
-                  <p>/{graph.route}</p>
-                </Panel>
-              )}
+              <div className='server-route-list'>
+               {this.props.state.graphData.map(graph =>
+                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+                    <p>/{graph.route}</p>
+                  </Panel>
+                )}
+             </div>
            </Panel>
           </Col>
-          <Col xs={12} md={9}>
-            <Panel header={<div>{this.graphTitle}</div>} id="serverGraph"></Panel>
+          <Col xs={12} lg={8}>
+            <Panel header={<div>{this.graphTitle}</div>} >
+              <h5 className="xAxis-title">Hits Per Hour</h5>
+              <div id="serverGraph"></div>
+              <h5 className="xAxis-title">Hours Ago</h5>
+            </Panel>
           </Col>
 
         </Row>
