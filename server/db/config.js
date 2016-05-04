@@ -92,7 +92,7 @@ db.knex.schema.hasTable('hashes').then(function(exists) {
       stat.increments('id').primary();
       stat.integer('clientApps_id').references('clientApps.id');
       stat.integer('clientServers_id').references('clientServers.id');
-      stat.string('hash');
+      stat.string('hash').unique();
       stat.string('ip');
       stat.string('appname');
     }).then(function(table) {
