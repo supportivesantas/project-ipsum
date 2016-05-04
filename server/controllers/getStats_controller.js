@@ -11,7 +11,7 @@ var knex = require('knex')({
 exports.singleServer = function(req, res) {
   var serverId = req.body.serverId || 1; //TODO: leave until server IDs are fixed
   hoursvar = req.body.hours || 12; //default to last twelve hours
-  var dataRange = _.range(hoursvar + 1);
+  var dataRange = _.range(1, hoursvar + 1);
 
   if (!serverId) {
     console.log('Error, could not get serverID', error);
@@ -54,7 +54,7 @@ exports.singleServer = function(req, res) {
               var route = model.attributes;
               //put together all data with time: hours ago from now     (below): floor or ciel??
               allRoutes[route.statName.slice(1)].data.push({
-                  time: Math.floor(Math.abs(route.created_at - Date.now()) / 36e5),
+                  time: Math.ceil(Math.abs(route.created_at - Date.now()) / 36e5),
                   hits: route.statValue
                 });
             });
@@ -88,6 +88,10 @@ exports.singleServer = function(req, res) {
               if (totalHits[dataPoint.time]) {
                 dataPoint.hits = totalHits[dataPoint.time];
               }
+            });
+            //sort data points, matters for D3
+            _.each(allRoutes, function(route) {
+              route.data = _.sortBy(route.data, 'time');
             });
           }
           //Put into graphData Array

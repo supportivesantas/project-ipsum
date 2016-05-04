@@ -1,6 +1,6 @@
 export function renderChart(graphId, data) {
-  var m = [80, 80, 80, 80]; // margins
-  var w = 1000 - m[1] - m[3]; // width
+  var m = [20, 80, 20, 80]; // margins
+  var w = 700 - m[1] - m[3]; // width
   var h = 400 - m[0] - m[2]; // height
 
   var maxY = 0;

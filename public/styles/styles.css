@@ -9,6 +9,15 @@ path {
   shape-rendering: crispEdges;
 }
 
+svg#serverGraph {
+  position: relative;
+  align-content: center;
+}
+
+h5.xAxis-title {
+  text-align: center;
+}
+
 .x.axis line {
   stroke: lightgrey;
 }
@@ -42,6 +51,19 @@ path {
 
 }
 /*=======================================*/
+
+/*========= My Server Styling =============*/
+
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+.server-route-list {
+  max-height: 478px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+/*=================================*/
 
 /*========= MONOKAI THEME COLORS =============*/
 .background-dark {
