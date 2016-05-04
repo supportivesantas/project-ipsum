@@ -10,7 +10,7 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 class MyServer extends React.Component {
   constructor(props) {
     super(props);
-    this.graphTitle = this.graphTitle || '/Total';
+    this.graphTitle = '/Total';
     this.state = {
     };
   }
@@ -25,7 +25,7 @@ class MyServer extends React.Component {
 
   updateGraph(graph) {
     var graphData = this.props.state.graphData;
-    this.graphTitle = "/" + graph.route;
+    this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
     d3.selectAll('svg').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
@@ -34,7 +34,6 @@ class MyServer extends React.Component {
       }
     }
     renderChart('serverGraph', graphData[routeIndex].data);
-    console.log(this.graphTitle)
   }
 
   render() {
