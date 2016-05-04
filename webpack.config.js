@@ -26,10 +26,8 @@ module.exports = {
           presets: ['react', 'es2015', 'react-hmre'],
         },
       },
-      { 
-        test: /\.css$/, 
-        loader: "style-loader!css-loader?root=." 
-      }
+      { test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css" },
+      { test: /\.useable\.css$/, loader: "style/useable!css" }
     ]
   }
 

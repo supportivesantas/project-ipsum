@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
 import actions from '../actions/ipsumActions.js';
-import style from '../styles/styles.js';
+import styles from '../styles/styles.css';
 
 class App extends Component {
 
   render() {
     return (
-      <div style={style.backgroundDark}>
+      <div>
         {NavigationBar()}
         {this.props.children}
       </div>
