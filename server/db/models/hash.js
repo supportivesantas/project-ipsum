@@ -6,11 +6,11 @@ var Hash = db.Model.extend({
   tableName: 'hashes',
 
   clientApps: function() {
-    return this.belongsTo(clientApps);
+    return this.belongsTo(clientApps, 'clientApps_id');
   },
 
   clientServers: function () {
-    return this.belongsTo(clientServers);
+    return this.belongsTo(clientServers, 'clientServers_id');
   }
 });
 
