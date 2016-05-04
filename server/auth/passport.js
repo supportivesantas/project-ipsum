@@ -42,7 +42,6 @@ module.exports = function(passport) {
       callbackURL: "http://localhost:1337/auth/github/callback"
     },
     function(token, refreshToken, profile, done) {
-
       new User({'githubid': profile.id}).fetch()
       .then(function(user){
         if (!user) { user = new User(); console.log('User not found, creating a new one!')}

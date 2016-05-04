@@ -13,6 +13,7 @@ class MainPage extends React.Component {
   }
 
   componentWillMount() {
+    this.props.dispatch(actions.POPULATE_USER_DATA('Mattisgreat'));
     restHandler.post('/api/list_all_servers', {}, (err, res) => {
       const servers = JSON.parse(res.text).servers;
       const serversArr = [];

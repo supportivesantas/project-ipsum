@@ -9,7 +9,7 @@ const stats_controller = require('./routes/stats_route');
 const getStats_controller = require('./routes/getStats_route');
 
 //add this middleware to protected routes. redirects to github login page if not authenticated
-const ensureAuthenticated = require('./auth/passport.js').ensureAuthenticated
+const ensureAuthenticated = require('./auth/passport.js').ensureAuthenticated;
 
 const app = express();
 
@@ -40,9 +40,6 @@ const makeRequest = require('./api/makeRequest.js');
 const sendReply = require('./api/sendReply');
 app.use('/api/:action', configureRequest, makeRequest, sendReply);
 
-app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../public/favicon.ico'));
-});
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
