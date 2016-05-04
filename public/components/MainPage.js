@@ -14,15 +14,15 @@ class MainPage extends React.Component {
   }
 
   componentWillMount() {
-    this.props.dispatch(actions.POPULATE_USER_DATA('Mattisgreat'));
-    restHandler.post('/api/list_all_servers', {}, (err, res) => {
-      const servers = JSON.parse(res.text).servers;
-      const serversArr = [];
-      for (let i = 0; i < servers.length; i++) {
-        serversArr.push(actions.ADD_SERVER(servers[i].server_id, servers[i].ip, servers[i].platform,
-          servers[i].name, servers[i].platformSpecific.status));
-      }
-      this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
+    restHandler.get('/user/userapps', (err, res) => {
+      // const servers = JSON.parse(res.text).servers;
+      // const serversArr = [];
+      // for (let i = 0; i < servers.length; i++) {
+      //   serversArr.push(actions.ADD_SERVER(servers[i].server_id, servers[i].ip,
+      //     servers[i].platform, servers[i].name, servers[i].platformSpecific.status));
+      // }
+      // this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
+      console.log(res);
     });
   }
 

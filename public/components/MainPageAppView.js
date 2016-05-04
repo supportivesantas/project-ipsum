@@ -13,7 +13,7 @@ class MainPageAppView extends React.Component {
 
   generateHeader() {
     return (
-      <div className="AppViewHeaderText">DONALD TRUMP - {this.props.selected.id} - 3/5 </div>
+      <div className="AppViewHeaderText">DONALD TRUMP - MAKING AMERICA GREAT AGAIN - 3/5 </div>
 
     );
   }
