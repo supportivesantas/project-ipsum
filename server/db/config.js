@@ -90,8 +90,8 @@ db.knex.schema.hasTable('hashes').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('hashes', function(stat) {
       stat.increments('id').primary();
-      stat.integer('clientApps_id').references('clientApps.id');
-      stat.integer('clientServers_id').references('clientServers.id');
+      stat.integer('clientApps_id').references('clientApps.id').onDelete('CASCADE');
+      stat.integer('clientServers_id').references('clientServers.id').onDelete('CASCADE');
       stat.string('hash').unique();
       stat.string('ip');
       stat.string('appname');
