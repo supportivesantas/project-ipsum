@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { addData, renderChart } from '../D3graphTemplate';
 import { Grid, Row, Col, Clearfix } from 'react-bootstrap';
 import request from '../util/restHelpers.js';
-// import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
 
 class MyServer extends React.Component {

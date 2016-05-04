@@ -1,7 +1,4 @@
-body {
-  background-color: blue;
-}
-
+/*=========== GRAPH STYLING  ===========*/
 path {
   stroke: green;
   stroke-width: 2;
@@ -33,10 +30,72 @@ path {
 .MainPageAppView {
   width: 80%;
   background-color: light-green;
-  border: 2px solid red;
+  /*border: 2px solid red;*/
 }
 
 .AppViewHeaderText {
-  color: 'red';
+  /*color: red;*/
   text-align: left;
 }
+
+.panel-heading {
+
+}
+/*=======================================*/
+
+/*========= MONOKAI THEME COLORS =============*/
+.background-dark {
+  background-color: #272822;
+}
+.background-light {
+  background-color: #686868;
+}
+.text-light {
+  color: #c1c1c1;
+}
+.text-red {
+  color: #F92672;
+}
+.text-blue {
+  color: #66D9EF;
+}
+.text-orange {
+  color: #FD971F;
+}
+.text-yellow {
+  color: #e6db74;
+}
+.text-green {
+  color: #A6E22E;
+}
+/*=================================*/
+
+
+/*=========== ALL APPS PAGE STYLING ============*/
+body {
+  background-color: #272822;
+  color: #c1c1c1;
+}
+nav.navbar {
+  background-color: #686868;
+}
+a {
+  color: #66D9EF;
+}
+.navbar-default .navbar-brand {
+  color: #66D9EF;
+}
+.panel {
+  background-color: #272822;
+  color: #c1c1c1;
+}
+.panel-default .panel-heading {
+  background-color: #686868;
+}
+.panel-title {
+  color: #e6db74;
+}
+button {
+  color: #272822;
+}
+/*============================================*/
