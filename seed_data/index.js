@@ -56,6 +56,8 @@ var compileStats = () => {
   var currentServer = 0;
   var currentDate = new Date();
 
+  console.log('Generating stats and saving to database');
+
   // loop for each server
   var loopServer = () => {
     var wdate = new Date();
@@ -109,6 +111,9 @@ var compileStats = () => {
       // for each app generate some stats on this server
       for (var i = 0; i < numApps; i++) {
         var testStat = new stats(servers[currentServer], apps[theseApps[i]], 1000, timeStamps[currentStamp]);
+
+        // save hash        
+        testStat.saveHash(client);
 
         // build the stats
         testStat.buildStats();
