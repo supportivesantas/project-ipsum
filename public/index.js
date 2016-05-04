@@ -25,7 +25,10 @@ const logout = () => {
   store.dispatch(actions.USER_RESET());
   window.location.href = '/login';
 };
-
+store.subscribe(() => {
+  const state = store.getState();
+  localStorage.setItem('state', JSON.stringify(state));
+});
 render(
   <Provider store={store}>
     <Router history={history}>
