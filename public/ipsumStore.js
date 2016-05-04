@@ -10,7 +10,9 @@ import { routerReducer } from 'react-router-redux';
 const middleware = [logger()];
 const getInitialState = () => {
   if (localStorage.getItem('state')) {
-    return JSON.parse(localStorage.getItem('state'));
+    const restoredState = JSON.parse(localStorage.getItem('state'));
+    restoredState.routing = [];
+    return restoredState;
   } else {
     return {
       routing: [],
