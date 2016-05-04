@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router';
 import request from '../util/restHelpers.js';
+import {Grid, Row, Col} from 'react-bootstrap';
 
 
 const selectRowProp = {
@@ -44,7 +45,7 @@ class AllServers extends React.Component {
 
   render() {
     return (
-      <div>
+      <Grid><Row><Col md={12} xs={12}>
         <button onClick={this.getSelectedRowKeys.bind(this)}>Get selected row keys</button>
 
         <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
@@ -55,7 +56,7 @@ class AllServers extends React.Component {
           <TableHeaderColumn dataField="app" >Application</TableHeaderColumn>
           <TableHeaderColumn dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm.bind(this)}>Link</TableHeaderColumn>
         </BootstrapTable>
-      </div>
+      </Col></Row></Grid>
     );
   }
 }

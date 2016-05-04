@@ -20,7 +20,7 @@ class MainPageAppView extends React.Component {
 
   render() {
     return (
-      <Col xs={12} sm={6}>
+      <Col xs={12} sm={6} md={6}>
         <div className="MainPageAppView">
           <Panel header={this.generateHeader()}>
             <Panel>

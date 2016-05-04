@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
 import MainPageAppView from './MainPageAppView.js';
+import {Grid, Row} from 'react-bootstrap';
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -35,9 +36,9 @@ class MainPage extends React.Component {
 
   render() {
     return (
-      <div>
+      <Grid><Row>
         {this.appList()}
-      </div>
+      </Row></Grid>
     );
   }
 }

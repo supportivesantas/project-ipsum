@@ -37,7 +37,6 @@ h5.xAxis-title {
 }
 
 .MainPageAppView {
-  width: 80%;
   background-color: light-green;
   /*border: 2px solid red;*/
 }
@@ -95,7 +94,7 @@ h5.xAxis-title {
 
 /*=========== ALL APPS PAGE STYLING ============*/
 body {
-  color: #c1c1c1;
+  color: black;
 }
 nav.navbar {
   background-color: #66D9EF;
