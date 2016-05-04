@@ -33,9 +33,7 @@ class MyServer extends React.Component {
         routeIndex = i;
       }
     }
-    this.render();
     renderChart('serverGraph', graphData[routeIndex].data);
-    this.render();
   }
 
   render() {

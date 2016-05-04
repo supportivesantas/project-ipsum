@@ -17,16 +17,21 @@ class MyServer extends React.Component {
   }
 
   componentWillMount() {
-    // this.props.dispatch(actions.ADD_WEEK_DATA());
-    restHandler.post('/api/list_all_servers', {}, (err, res) => {
-      const servers = JSON.parse(res.text).servers;
-      const serversArr = [];
-      for (let i = 0; i < servers.length; i++) {
-        serversArr.push(actions.ADD_SERVER(servers[i].server_id, servers[i].ip, servers[i].platform,
-          servers[i].name, servers[i].platformSpecific.status));
-      }
-      this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
-    });
+    renderChart('serverGraph', this.props.state.graphData[0].data);
+    setTimeout(() => {
+      d3.selectAll('svg').remove();
+      renderChart('serverGraph', this.props.state.graphData[0].data);
+    }, 50);
+  //   // this.props.dispatch(actions.ADD_WEEK_DATA());
+  //   restHandler.post('/api/list_all_servers', {}, (err, res) => {
+  //     const servers = JSON.parse(res.text).servers;
+  //     const serversArr = [];
+  //     for (let i = 0; i < servers.length; i++) {
+  //       serversArr.push(actions.ADD_SERVER(servers[i].server_id, servers[i].ip, servers[i].platform,
+  //         servers[i].name, servers[i].platformSpecific.status));
+  //     }
+  //     this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
+  //   });
   }
 
   // componentDidMount() {
@@ -37,18 +42,18 @@ class MyServer extends React.Component {
   //   }, 50);
   // }
 
-  // updateGraph(graph) {
-  //   var graphData = this.props.state.graphData;
-  //   this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
-  //   d3.selectAll('svg').remove();
-  //   var routeIndex;
-  //   for (var i = 0; i < graphData.length; i++) {
-  //     if (graphData[i].route === graph.route) {
-  //       routeIndex = i;
-  //     }
-  //   }
-  //   renderChart('serverGraph', graphData[routeIndex].data);
-  // }
+  updateGraph(graph) {
+    var graphData = this.props.state.graphData;
+    this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
+    d3.selectAll('svg').remove();
+    var routeIndex;
+    for (var i = 0; i < graphData.length; i++) {
+      if (graphData[i].route === graph.route) {
+        routeIndex = i;
+      }
+    }
+    renderChart('serverGraph', graphData[routeIndex].data);
+  }
 
   render() {
     return (
@@ -66,21 +71,30 @@ class MyServer extends React.Component {
 
         <Row>
           <Col xs={12} md={12}>
-            <Panel header={<div>Week Summary</div>} >
-            
+            <Panel header={<div>Summary</div>} >
+
             </Panel>
-          </Col> 
+          </Col>
         </Row>
 
-        <Row>
-          <Col xs={12} md={3} >
+        <Row className='serverStatContainer'>
+          <Col xs={12} lg={4} >
             <Panel header={<div>Routes</div>} >
-             {this.props.state.graphData.map(graph =>
-                  <p>/{graph.route}</p>
-              )}
+              <div className='server-route-list'>
+               {this.props.state.graphData.map(graph =>
+                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+                    <p>/{graph.route}</p>
+                  </Panel>
+                )}
+             </div>
            </Panel>
           </Col>
-          <Col xs={12} md={9}>
+          <Col xs={12} lg={8}>
+            <Panel header={<div>{this.graphTitle}</div>} >
+              <h5 className="xAxis-title">Hits Per Hour</h5>
+              <div id="serverGraph"></div>
+              <h5 className="xAxis-title">Hours Ago</h5>
+            </Panel>
           </Col>
 
         </Row>
