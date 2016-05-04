@@ -27,6 +27,8 @@ const getInitialState = () => {
           data: [{ time: 0, hits: 0}] //quick fix for async data retrival, probs a better way
         },
       ],
+    };
+  }
 };
 
 // configure store with initial state and allow Redux Chrome extension to view store
