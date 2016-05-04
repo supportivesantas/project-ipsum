@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-  devtool: 'eval-source-map',
+  devtool: 'cheap-module-eval-source-map',
   entry: [
     'webpack-hot-middleware/client',
     './public/index.js'],
@@ -21,9 +21,10 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node-modules/,
+        exclude: /node_modules/,
         query: {
           presets: ['react', 'es2015', 'react-hmre'],
+          cacheDirectory: true
         },
       },
       { test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css" },
