@@ -25,7 +25,6 @@ class MainPageAppView extends React.Component {
   generateHeader() {
     return (
       <div className="AppViewHeaderText">{this.props.selected.appname} - 3/5 </div>
-
     );
   }
 

@@ -19,13 +19,12 @@ module.exports = {
   getUserApps: (req, res) => {
     console.log('IN USER APPS!!!!!');
     Apps.query('where', 'users_id', '=', req.user.id).fetch()
+    Apps.fetch()
       .then(function(apps) {
-        console.log(apps);
         var appData = [];
         for (var i = 0; i < apps.models.length; i++) {
           appData.push(apps.models[i].attributes);
         }
-        console.log(appData);
         res.status(200).send(appData);
       });
 
@@ -49,13 +48,12 @@ module.exports = {
   getUserServers: (req, res) => {
     console.log('IN USER SERVS!!!!!');
     Servers.query('where', 'users_id', '=', req.user.id).fetch()
+    Servers.fetch()
       .then((servers) => {
-        console.log(servers);
         let servData = [];
         for (let i = 0; i < servers.models.length; i++) {
           servData.push(servers.models[i].attributes);
         }
-        console.log(servData);
         res.status(200).send(servData);
       });
 
@@ -91,7 +89,8 @@ module.exports = {
             id: curServer.id,
             hostname: curServer.hostname,
             ip: curServer.ip,
-            platform: curServer.platform,
+            // platform: curServer.platform,
+            platform: 'Digital Ocean',
             active: 'active', // fix me later
             apps: []
           };
