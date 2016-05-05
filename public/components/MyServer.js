@@ -10,12 +10,18 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 class MyServer extends React.Component {
   constructor(props) {
     super(props);
-    this.graphTitle = '/Total';
     this.state = {
     };
   }
 
+  updateGraphTitle(clickedRoute) {
+    console.log(clickedRoute);
+    this.graphTitle = clickedRoute;
+    return this.graphTitle;
+  }
+
   componentDidMount() {
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
     var servId = servId || 1; //1 for testing, will need to connect with clicked server
     request.post('/getStats/server',
       {serverId: servId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
@@ -27,13 +33,14 @@ class MyServer extends React.Component {
   }
 
   updateGraph(graph) {
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
     var graphData = this.props.state.graphData;
-    this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
     d3.selectAll('svg').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
       if (graphData[i].route === graph.route) {
         routeIndex = i;
+        break;
       }
     }
     renderChart('serverGraph', graphData[routeIndex].data);
@@ -63,7 +70,7 @@ class MyServer extends React.Component {
            </Panel>
           </Col>
           <Col xs={12} lg={8}>
-            <Panel header={<div>{this.graphTitle}</div>} >
+            <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
               <h5 className="xAxis-title">Hits Per Hour</h5>
               <div id="serverGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>

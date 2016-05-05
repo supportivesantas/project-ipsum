@@ -58,5 +58,11 @@ module.exports = {
       servers: data,
     };
   },
+  ADD_LINE_GRAPH_TITLE(title) {
+    return {
+      type: 'ADD_LINE_GRAPH_TITLE',
+      title: title,
+    };
+  },
 
 };

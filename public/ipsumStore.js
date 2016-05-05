@@ -6,6 +6,7 @@ import getDataReducer from './reducers/getDataReducer.js';
 import weekDataReducer from './reducers/weekDataReducer.js';
 import logger from 'redux-logger';
 import { routerReducer } from 'react-router-redux';
+import lineGraphTitleReducer from './reducers/lineGraphTitleReducer.js';
 
 
 const middleware = [logger()];
@@ -23,13 +24,14 @@ const getInitialState = () => {
         handle: '',
       },
       servers: [],
+      lineGraphTitle: [],
       graphData: [
         {route: "init",
           data: [{ time: 0, hits: 0}] //quick fix for async data retrival, probs a better way
         },
       ],
-      weekData: [] /* an array of integers containing the number 
-                    of hits over one week for one app (across 
+      weekData: [] /* an array of integers containing the number
+                    of hits over one week for one app (across
                     all serves for all relevantrelated routes) */
     };
   }
@@ -41,6 +43,7 @@ export default function configureStore(browserHistory, initialState = getInitial
     routing: routerReducer,
     applications: applicationReducer,
     user: userReducer,
+    lineGraphTitle: lineGraphTitleReducer,
     servers: serverReducer,
     graphData: getDataReducer,
     weekData: weekDataReducer
