@@ -11,12 +11,12 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 class MyServer extends React.Component {
   constructor(props) {
     super(props);
-    this.graphTitle = '/Total';
     this.state = {
     };
   }
 
   componentDidMount() {
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
     var appId = appId || 1; //1 for testing, will need to connect with clicked server
     request.post('/getStats/app',
       {serverId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
@@ -25,37 +25,17 @@ class MyServer extends React.Component {
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
       renderChart('appGraph', this.props.state.graphData[0].data);
       });
-
-    // renderChart('appGraph', this.props.state.graphData[0].data);
-
-  //   // this.props.dispatch(actions.ADD_WEEK_DATA());
-  //   restHandler.post('/api/list_all_servers', {}, (err, res) => {
-  //     const servers = JSON.parse(res.text).servers;
-  //     const serversArr = [];
-  //     for (let i = 0; i < servers.length; i++) {
-  //       serversArr.push(actions.ADD_SERVER(servers[i].server_id, servers[i].ip, servers[i].platform,
-  //         servers[i].name, servers[i].platformSpecific.status));
-  //     }
-  //     this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
-  //   });
   }
 
-  // componentDidMount() {
-  //   renderChart('appGraph', this.props.state.graphData[0].data);
-  //   setTimeout(() => {
-  //     d3.selectAll('svg').remove();
-  //     renderChart('appGraph', this.props.state.graphData[0].data);
-  //   }, 50);
-  // }
-
   updateGraph(graph) {
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
     var graphData = this.props.state.graphData;
-    this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
     d3.selectAll('svg').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
       if (graphData[i].route === graph.route) {
         routeIndex = i;
+        break;
       }
     }
     renderChart('appGraph', graphData[routeIndex].data);
@@ -96,7 +76,7 @@ class MyServer extends React.Component {
            </Panel>
           </Col>
           <Col xs={12} lg={8}>
-            <Panel header={<div>{this.graphTitle}</div>} >
+            <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
               <h5 className="xAxis-title">Hits Per Hour</h5>
               <div id="appGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>

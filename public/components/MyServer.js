@@ -10,13 +10,19 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 class MyServer extends React.Component {
   constructor(props) {
     super(props);
-    this.graphTitle = '/Total';
     this.state = {
     };
   }
 
+  updateGraphTitle(clickedRoute) {
+    console.log(clickedRoute);
+    this.graphTitle = clickedRoute;
+    return this.graphTitle;
+  }
+
   componentDidMount() {
-    var servId = servId || 1; //1 for testing, will need to connect with clicked server
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
+    var servId = this.props.state.serverSelection.id;
     request.post('/getStats/server',
       {serverId: servId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
       (err, res) => {
@@ -27,13 +33,14 @@ class MyServer extends React.Component {
   }
 
   updateGraph(graph) {
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
     var graphData = this.props.state.graphData;
-    this.graphTitle = "/" + graph.route; //Fix to Update TITLE when clicking a new route
     d3.selectAll('svg').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
       if (graphData[i].route === graph.route) {
         routeIndex = i;
+        break;
       }
     }
     renderChart('serverGraph', graphData[routeIndex].data);
@@ -45,7 +52,10 @@ class MyServer extends React.Component {
         <Row className="server-control-panel">
           <Col xs={12} md={12} lg={12}>
             <Panel header={<h1>Server Control Panel</h1>}>
-              server info/control panel goes here
+              <span style={{textDecoration:'underline'}}>Server:  </span> {this.props.state.serverSelection.hostname}<br/>
+              <span style={{textDecoration:'underline'}}>IP:  </span> {this.props.state.serverSelection.ip}<br/>
+              <span style={{textDecoration:'underline'}}>Status:  </span> {this.props.state.serverSelection.active}<br/>
+              <span style={{textDecoration:'underline'}}>Platform:  </span> {this.props.state.serverSelection.platform}<br/>
             </Panel>
           </Col>
         </Row>
@@ -63,7 +73,7 @@ class MyServer extends React.Component {
            </Panel>
           </Col>
           <Col xs={12} lg={8}>
-            <Panel header={<div>{this.graphTitle}</div>} >
+            <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
               <h5 className="xAxis-title">Hits Per Hour</h5>
               <div id="serverGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>

@@ -46,6 +46,12 @@ module.exports = {
       id: id,
     };
   },
+  ADD_SERVER_SELECTION(data) {
+    return {
+      type: 'ADD_SERVER_SELECTION',
+      data: data,
+    };
+  },
   ADD_SERVER_DATA(data) {
     return {
       type: 'ADD_SERVER_DATA',
@@ -56,6 +62,12 @@ module.exports = {
     return {
       type: 'MASS_POPULATE_SERVERS',
       servers: data,
+    };
+  },
+  ADD_LINE_GRAPH_TITLE(title) {
+    return {
+      type: 'ADD_LINE_GRAPH_TITLE',
+      title: title,
     };
   },
 
