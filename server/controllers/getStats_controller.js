@@ -168,8 +168,8 @@ exports.serverTotalsForApp = function(req, res, next) {
     clientApps.model.where('appname', appname)
     .fetch()
     .then(function(appObject) {
-      res.status(200).end(appObject)
-      return;
+      appid = appObject.id;
+      getStatsWithAppId(appid); 
     })
     .catch(function(err) {
       var message = 'Bad Request! Could not find an application with the supplied information. ';
@@ -177,52 +177,57 @@ exports.serverTotalsForApp = function(req, res, next) {
       res.status(400).send(message);
       return;
     });
+  } else {
+    getStatsWithAppId(appid);
   }
 
-  // get stats for this app with a valid appid
-  stats.model.where('clientApps_id', appid)
-  .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
-  .fetchAll()
-  .then(function(data) {
-    console.log('Application stats received. Processing...');
-    //format the data and add hostname and ip
-    var serverStats = {}; /* key is the clientSever_id, and value 
-                          is an object with hostname, ip, and and total hits */
-    var serverIds = [];
+  var getStatsWithAppId = function(appid) {
+    // get stats for this app with a valid appid
+    stats.model.where('clientApps_id', appid)
+    .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
+    .fetchAll()
+    .then(function(data) {
+      console.log('Application stats received. Processing...');
+      //format the data and add hostname and ip
+      var serverStats = {}; /* key is the clientSever_id, and value 
+                            is an object with hostname, ip, and and total hits */
+      var serverIds = [];
 
-    data.forEach(function(stat, idx, data) {
-      var id = stat.get('clientServers_id');
-      if (!serverStats.hasOwnProperty(id)) {
-        // initialize as empty object. keys will be added for the ip and hostname (see below)
-        serverStats[id] = {ip: null, hostname: null, statValue: 0};
-        serverIds.push(id);
-      } else {
-        // server hostname and ip already exist in our results, so just increment
-        serverStats[id].statValue += stat.get('statValue');
-      }
-    });
-
-    knex('clientServers')
-    .select('id', 'ip', 'hostname')
-    .whereIn('id', serverIds)
-    .then(function(serversData) {
-      serversData.forEach(function(serverInfo) {
-        serverStats[serverInfo.id].ip = serverInfo.ip;
-        serverStats[serverInfo.id].hostname = serverInfo.hostname;
+      data.forEach(function(stat, idx, data) {
+        var id = stat.get('clientServers_id');
+        if (!serverStats.hasOwnProperty(id)) {
+          // initialize as empty object. keys will be added for the ip and hostname (see below)
+          serverStats[id] = {ip: null, hostname: null, statValue: 0};
+          serverIds.push(id);
+        } else {
+          // server hostname and ip already exist in our results, so just increment
+          serverStats[id].statValue += stat.get('statValue');
+        }
       });
-      res.status(200).json(serverStats);
-      console.log('Done processing.')
-    })
-    .catch(function(err) {
-      var message = 'Error while processing server totals. ';
-      console.log(message, err);
-      res.status(500).send(message)
-    });
 
-  })
-  .catch(function(err){
-    var message = 'Error while fetching app stats from database. ';
-    console.log(err);
-    res.status(500).send(message);
-  });
+      knex('clientServers')
+      .select('id', 'ip', 'hostname')
+      .whereIn('id', serverIds)
+      .then(function(serversData) {
+        serversData.forEach(function(serverInfo) {
+          serverStats[serverInfo.id].ip = serverInfo.ip;
+          serverStats[serverInfo.id].hostname = serverInfo.hostname;
+        });
+        res.status(200).json(serverStats);
+        console.log('Done processing.')
+      })
+      .catch(function(err) {
+        var message = 'Error while processing server totals. ';
+        console.log(message, err);
+        res.status(500).send(message)
+      });
+
+    })
+    .catch(function(err){
+      var message = 'Error while fetching app stats from database. ';
+      console.log(err);
+      res.status(500).send(message);
+    });
+  }
+  
 }
