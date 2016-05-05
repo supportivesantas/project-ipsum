@@ -150,3 +150,94 @@ exports.singleServer = function(req, res) {
     });
 };
 
+exports.serverTotalsForApp = function(req, res, next) {
+  // check if appname or appid is specified
+  var appname = req.body.appname;
+  var appid = req.body.appid;
+  var hoursvar = req.body.hours || 168;
+
+  if (!req.body.appname && ! req.body.appid) {
+    var message = 'Bad Request! No appname or appid supplied';
+    console.log(message); 
+    res.status(400).send(message);
+    return;
+  }
+  // fetch the appid from the db if only the appname is supplied
+  if (!appid && appname) {
+    clientApps.model.where('appname', appname)
+    .fetch()
+    .then(function(appObject) {
+      res.status(200).end(appObject)
+      return;
+    })
+    .catch(function(err) {
+      var message = 'Bad Request! Could not find an application with the supplied information.';
+      console.log(message);
+      res.status(400).send(message, err);
+      return;
+    });
+  }
+
+  // get stats for this app with a valid appid
+  stats.model.where('clientApps_id', appid)
+  .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
+  .fetchAll()
+  .then(function(data) {
+    console.log('Application stats received. Processing...');
+    //format the data and add hostname and ip
+    var serverStats = {}; /* key is the clientSever_id, and value 
+                          is an object with hostname, ip, and and total hits */
+    var serversIdInfo = {}; /* the server ids we need to lookup hostnames and IPs for */
+
+    data.forEach(function(stat, idx, data) {
+      if (!serverIds[stat.clientServers_id]) {
+        // make it null for now. will turn it into {ip, hostname} in the async loop
+        serversIdInfo[stat.clientServers_id] = null;
+      } else {
+        // server hostname and ip already exist in our results, so just increment
+        // the stat value for this server
+        serverStats[stat.clientServers_id][statValue] += stat.statValue;
+      }
+    });
+
+    // the async lookup for hostname and ip address
+    var lookupHostnameAndIp = function() {
+     clientServers.where('id', stat.clientServers_id)
+      .fetch()
+      .then(function(serverInfo) {
+        var hostname = serverInfo.hostname;
+        var ip = serverInfo.ip;
+        serverStats[stat.clientServers_id] = {
+            hostname: hostname, 
+            ip: ip, 
+            statValue: stat.statValue
+          };
+        })
+        .catch(function(err) {
+          var message = "Error while processing server totals";
+          console.log(message);
+          res.status(500).send(message, err)
+        })
+    }
+    
+    // the function to end the this call
+    var returnFormattedData = function(res, serverStats) {
+      res.status(200).json(serverStats);
+    };
+
+    asyncLoop(
+      serversIdInfo, 
+      lookupHostnameAndIp, 
+      returnFormattedData.bind(null, res, serverStats)
+    );
+
+
+  })
+  .catch(function(err){
+    var message = 'Error while fetching app stats from database';
+    console.log(message);
+    res.status(500).send(message, err);
+  });
+
+
+}
