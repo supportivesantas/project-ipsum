@@ -163,23 +163,6 @@ exports.serverTotalsForApp = function(req, res, next) {
     res.status(400).send(message);
     return;
   }
-  // fetch the appid from the db if only the appname is supplied
-  if (!appid && appname) {
-    clientApps.model.where('appname', appname)
-    .fetch()
-    .then(function(appObject) {
-      appid = appObject.id;
-      getStatsWithAppId(appid); 
-    })
-    .catch(function(err) {
-      var message = 'Bad Request! Could not find an application with the supplied information. ';
-      console.log(message, err);
-      res.status(400).send(message);
-      return;
-    });
-  } else {
-    getStatsWithAppId(appid);
-  }
 
   var getStatsWithAppId = function(appid) {
     // get stats for this app with a valid appid
@@ -229,5 +212,25 @@ exports.serverTotalsForApp = function(req, res, next) {
       res.status(500).send(message);
     });
   }
+
+  // fetch the appid from the db if only the appname is supplied
+  if (!appid && appname) {
+    clientApps.model.where('appname', appname)
+    .fetch()
+    .then(function(appObject) {
+      appid = appObject.id;
+      getStatsWithAppId(appid); 
+    })
+    .catch(function(err) {
+      var message = 'Bad Request! Could not find an application with the supplied information. ';
+      console.log(message, err);
+      res.status(400).send(message);
+      return;
+    });
+  } else {
+    getStatsWithAppId(appid);
+  }
+
+
   
 }
