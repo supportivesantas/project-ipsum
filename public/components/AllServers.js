@@ -30,7 +30,7 @@ class AllServers extends React.Component {
   }
 
   goToServer(cell) {
-    this.props.dispatch(actions.ADD_SERVER_SELECTION(this.refs.table.props.data[cell]));
+    this.props.dispatch(actions.ADD_SERVER_SELECTION(this.refs.table.props.data[cell - 1]));
   }
 
   goToApp(appId) {
