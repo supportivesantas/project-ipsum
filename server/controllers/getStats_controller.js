@@ -6,6 +6,7 @@ var knex = require('knex')({
   client: 'pg',
   connection: process.env.PG_CONNECTION_STRING,
 });
+var hashes = require('../db/collections/hashes');
 
 const formatDataByHour = function(allRoutes, serverStats, dataRange) {
     // if no hits for all routes populate with data, hits = 0
@@ -171,9 +172,9 @@ exports.serverTotalsForApp = function(req, res, next) {
       return;
     })
     .catch(function(err) {
-      var message = 'Bad Request! Could not find an application with the supplied information.';
-      console.log(message);
-      res.status(400).send(message, err);
+      var message = 'Bad Request! Could not find an application with the supplied information. ';
+      console.log(message, err);
+      res.status(400).send(message);
       return;
     });
   }
@@ -187,57 +188,41 @@ exports.serverTotalsForApp = function(req, res, next) {
     //format the data and add hostname and ip
     var serverStats = {}; /* key is the clientSever_id, and value 
                           is an object with hostname, ip, and and total hits */
-    var serversIdInfo = {}; /* the server ids we need to lookup hostnames and IPs for */
+    var serverIds = [];
 
     data.forEach(function(stat, idx, data) {
-      if (!serverIds[stat.clientServers_id]) {
-        // make it null for now. will turn it into {ip, hostname} in the async loop
-        serversIdInfo[stat.clientServers_id] = null;
+      var id = stat.get('clientServers_id');
+      if (!serverStats.hasOwnProperty(id)) {
+        // initialize as empty object. keys will be added for the ip and hostname (see below)
+        serverStats[id] = {ip: null, hostname: null, statValue: 0};
+        serverIds.push(id);
       } else {
         // server hostname and ip already exist in our results, so just increment
-        // the stat value for this server
-        serverStats[stat.clientServers_id][statValue] += stat.statValue;
+        serverStats[id].statValue += stat.get('statValue');
       }
     });
 
-    // the async lookup for hostname and ip address
-    var lookupHostnameAndIp = function() {
-     clientServers.where('id', stat.clientServers_id)
-      .fetch()
-      .then(function(serverInfo) {
-        var hostname = serverInfo.hostname;
-        var ip = serverInfo.ip;
-        serverStats[stat.clientServers_id] = {
-            hostname: hostname, 
-            ip: ip, 
-            statValue: stat.statValue
-          };
-        })
-        .catch(function(err) {
-          var message = "Error while processing server totals";
-          console.log(message);
-          res.status(500).send(message, err)
-        })
-    }
-    
-    // the function to end the this call
-    var returnFormattedData = function(res, serverStats) {
+    knex('clientServers')
+    .select('id', 'ip', 'hostname')
+    .whereIn('id', serverIds)
+    .then(function(serversData) {
+      serversData.forEach(function(serverInfo) {
+        serverStats[serverInfo.id].ip = serverInfo.ip;
+        serverStats[serverInfo.id].hostname = serverInfo.hostname;
+      });
       res.status(200).json(serverStats);
-    };
-
-    asyncLoop(
-      serversIdInfo, 
-      lookupHostnameAndIp, 
-      returnFormattedData.bind(null, res, serverStats)
-    );
-
+      console.log('Done processing.')
+    })
+    .catch(function(err) {
+      var message = 'Error while processing server totals. ';
+      console.log(message, err);
+      res.status(500).send(message)
+    });
 
   })
   .catch(function(err){
-    var message = 'Error while fetching app stats from database';
-    console.log(message);
-    res.status(500).send(message, err);
+    var message = 'Error while fetching app stats from database. ';
+    console.log(err);
+    res.status(500).send(message);
   });
-
-
 }
