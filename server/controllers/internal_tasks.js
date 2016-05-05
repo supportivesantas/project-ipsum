@@ -6,7 +6,7 @@ var internalTasks = {};
 internalTasks.syncServersToPlatforms = function (overwriteAll) {
   var serverList = null;
   var serverQuickLookup = {};
-  
+
   internalRequest.getServerList()
     .then(function (data) {
       serverList = data;
@@ -24,18 +24,18 @@ internalTasks.syncServersToPlatforms = function (overwriteAll) {
     })
     .then(function (clientServers) {
       /* update server table with retrieved information */
-      clientServers.forEach(function (clientServer) {
+      clientServers.each(function (clientServer) {
         var quickLook = serverQuickLookup[clientServer.attributes.ip];
 
         /* if the table field is not filled in or we're overwriting */
         if ((quickLook !== undefined) &&
-        ((!clientServer.attributes.platform) || overwriteAll)) {
+          ((!clientServer.attributes.platform) || overwriteAll)) {
           clientServer.attributes.platform = quickLook.platform;
           clientServer.attributes.server_id = quickLook.server_id;
           clientServer.save();
         }
       });
     });
-}
+};
 
 module.exports = internalTasks;
