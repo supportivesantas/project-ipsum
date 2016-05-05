@@ -1,6 +1,5 @@
 const session = require('express-session');
 const methodOverride = require('method-override');
-const express = require('express');
 
 var configRoutes = function(app, passport) {
 
@@ -16,7 +15,7 @@ var configRoutes = function(app, passport) {
   app.use(passport.session());
 
   app.get('/auth/github',
-    passport.authenticate('github', {scopes: ['user', 'user:email']}));
+    passport.authenticate('github', { scopes: ['user'] }));
 
   app.get('/auth/github/callback',
     passport.authenticate('github', { failureRedirect: '/login' }),

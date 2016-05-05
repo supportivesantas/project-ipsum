@@ -7,6 +7,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const stats_controller = require('./routes/stats_route');
 const getStats_controller = require('./routes/getStats_route');
+const userRouter = require('./routes/userRouter.js');
 
 //add this middleware to protected routes. redirects to github login page if not authenticated
 const ensureAuthenticated = require('./auth/passport.js').ensureAuthenticated;
@@ -33,6 +34,7 @@ require('./auth/configRoutes').configRoutes(app, passport); // pass app for conf
 app.use(express.static('./dist'));
 app.use('/getStats', getStats_controller);
 app.use('/stats', stats_controller);
+app.use('/user', userRouter);
 
 // api interface for interacting with digital_ocean, et al.
 const configureRequest = require('./api/configure.js');

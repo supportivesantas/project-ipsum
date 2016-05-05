@@ -19,17 +19,18 @@ module.exports = function(passport) {
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
     console.log('SERIALIZING SESSION')
-    done(null, {'githubid': user.get('githubid')});
+    done(null, {githubid: user.get('githubid')});
   });
 
   // used to deserialize the user
   passport.deserializeUser(function(id, done) {
     console.log('DESERIALIZING SESSION')
-    new User({'githubid': id})
+    new User({ githubid: id})
       .fetch()
       .then(function(user) {
-        console.log(user);
-        done(null, user)
+        var theuser = user.attributes;
+        console.log(theuser);
+        done(null, theuser);
       })
       .catch(function(err){
         done(err, null);
@@ -39,10 +40,10 @@ module.exports = function(passport) {
   passport.use(new GitHubStrategy({
       clientID: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:1337/auth/github/callback"
+      callbackURL: "http://localhost:1337/auth/github/callback",
     },
     function(token, refreshToken, profile, done) {
-      new User({'githubid': profile.id}).fetch()
+      new User({githubid: profile.id}).fetch()
       .then(function(user){
         if (!user) { user = new User(); console.log('User not found, creating a new one!')}
         // if there is a user id already but no token (user was linked at one point and then removed)

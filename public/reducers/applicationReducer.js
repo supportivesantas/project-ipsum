@@ -16,6 +16,9 @@ module.exports = (state = [], action) => {
 
     case 'REMOVE_APPLICATION':
       return state.filter(item => item.id !== action.id);
+    
+    case 'MASS_POPULATE_APPS':
+      return action.apps;
 
     default:
       return state;
