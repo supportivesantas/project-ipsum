@@ -25,6 +25,21 @@ class AllServers extends React.Component {
       );
   }
 
+  goToApp(appId) {
+    /* placeholder for going to app specific page */
+    console.log('went to appID:' + appId);
+  }
+
+  tableAppsLinkForm(cell) {
+    return (
+      <div>
+        {cell.map((app) => {
+          return (<div key={app[0]+app[1]}><Link onClick={this.goToApp.bind(this, app[0])} to="/">{app[1]}</Link></div>);
+        })}
+      </div>
+    );
+  }
+
   enumFormatter(cell, row, enumObject) {
     return enumObject(cell);
   }
@@ -41,9 +56,10 @@ class AllServers extends React.Component {
         <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
           <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Server ID</TableHeaderColumn>
           <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>
+          <TableHeaderColumn dataField="hostname" dataAlign="center" dataSort={true}>Hostname</TableHeaderColumn>
           <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
           <TableHeaderColumn dataField="active" dataSort={true}>Status</TableHeaderColumn>
-          <TableHeaderColumn dataField="app" >Application</TableHeaderColumn>
+          <TableHeaderColumn dataField="apps" dataFormat={this.enumFormatter} formatExtraData={this.tableAppsLinkForm.bind(this)}>Application</TableHeaderColumn>
           <TableHeaderColumn dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm.bind(this)}>Link</TableHeaderColumn>
         </BootstrapTable>
       </Col></Row></Grid>

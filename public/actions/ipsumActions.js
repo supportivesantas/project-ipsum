@@ -29,13 +29,14 @@ module.exports = {
       type: 'USER_RESET',
     };
   },
-  ADD_SERVER(id, ip, platform, app, isActive) {
+  ADD_SERVER(id, ip, platform, hostname, apps, isActive) {
     return {
       type: 'ADD_SERVER',
       id: id,
       ip: ip,
       platform: platform,
-      app: app,
+      hostname: hostname,
+      apps: apps,
       active: isActive,
     };
   },

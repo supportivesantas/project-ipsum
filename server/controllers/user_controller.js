@@ -1,9 +1,11 @@
+"use strict";
 const User = require('../db/models/user');
 const Users = require('../db/collections/users');
 const App = require('../db/models/client-app.js');
 const Apps = require('../db/collections/client-apps.js');
 const Server = require('../db/models/client-server.js');
 const Servers = require('../db/collections/client-server.js');
+const Hashes = require('../db/collections/hashes');
 
 module.exports = {
 
@@ -76,22 +78,66 @@ module.exports = {
 
   getInit: (req, res) => {
     // const id = req.session.passport.user.githubid;
-    Servers.fetch()
+    let serverQuickLook = {};
+    const servData = [];
+    Servers.query('orderBy', 'id', 'ASC').fetch()
       .then((servers) => {
-        const servData = [];
+        
         for (let i = 0; i < servers.models.length; i++) {
-          servData.push(servers.models[i].attributes);
+          // servData.push(servers.models[i].attributes);
+          let curServer = servers.models[i].attributes;
+
+          let serverAttrib = {
+            id: curServer.id,
+            hostname: curServer.hostname,
+            ip: curServer.ip,
+            platform: curServer.platform,
+            active: 'active', // fix me later
+            apps: []
+          };
+
+          servData.push(serverAttrib);
+          /* store into quick lookup object */
+          serverQuickLook[curServer.id] = serverAttrib;
         }
-        console.log(servData);
-        Apps.fetch()
-          .then((apps) => {
-            const appData = [];
-            for (let i = 0; i < apps.models.length; i++) {
-              appData.push(apps.models[i].attributes);
-            }
-            console.log(appData);
-            res.status(200).send({ servers: servData, apps: appData });
+        // console.log(servData);
+        
+        /* query hashes table and filter only server/app id and appnames */
+        return Hashes.query('orderBy', 'id', 'ASC')
+          .fetch({
+            withRelated: [{
+              'clientApps': (qb) => {
+                qb.column('appname');
+              }
+            }], columns: ['clientServers_id', 'clientApps_id', 'appname']
           });
+      })
+      .then((hashesResult) => {
+        hashesResult.each((hash) => {
+          var hashAttrib = hash.attributes;
+
+          if (hashAttrib.clientServers_id === undefined || !hashAttrib.appname) {
+            return;
+          }
+
+          /* push appname into array */
+          var appDescription = [hashAttrib.clientApps_id, hashAttrib.appname];
+          serverQuickLook[hashAttrib.clientServers_id].apps.push(appDescription);
+        });
+        
+        return Apps.fetch();
+      })
+      .then((apps) => {
+        const appData = [];
+        for (let i = 0; i < apps.models.length; i++) {
+          appData.push(apps.models[i].attributes);
+        }
+        // console.log(appData);
+        res.status(200).json({ servers: servData, apps: appData });
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to get init data', error);
+        res.status(500).send(error);
       });
 
     // const id = req.session.passport.user.githubid;

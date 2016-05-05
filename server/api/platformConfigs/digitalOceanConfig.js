@@ -89,10 +89,20 @@ module.exports = {
       
       for (var idx = 0; idx < resJSON.droplets.length; idx++) {
         var droplet = resJSON.droplets[idx];
+        var ip = null;
+
+        /* get the public IPv4 address */
+        for (var ifidx = 0; ifidx < droplet.networks.v4.length; ifidx++) {
+          if (droplet.networks.v4[ifidx].type === 'public') {
+            ip = droplet.networks.v4[ifidx].ip_address;
+            break;
+          }
+        }
+        
         var server = {
           name: droplet.name,
           /* assume it's the first ipv4 address */
-          ip: droplet.networks.v4[0].ip_address,
+          ip: ip,
           server_id: droplet.id,
           platform: 'digital_ocean',
           platformSpecific: {
