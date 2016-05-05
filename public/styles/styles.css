@@ -119,6 +119,16 @@ nav.navbar a {
 button {
   color: #272822;
 }
+
+.table {
+  table-layout:fixed;
+}
+
+.table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 /*============================================*/
 /*=========== WELCOME PAGE STYLING ============*/
 
