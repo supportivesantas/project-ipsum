@@ -21,8 +21,16 @@ class AllServers extends React.Component {
 
   tableLinkForm(cell) {
     return (
-      <Link to="/myServer">Click Me!</Link>
+      <Link to="/myServer">
+        <div onClick={this.goToServer.bind(this, cell)}>
+        Click Me!
+        </div>
+      </Link>
       );
+  }
+
+  goToServer(cell) {
+    this.props.dispatch(actions.ADD_SERVER_SELECTION(this.refs.table.props.data[cell]));
   }
 
   goToApp(appId) {

@@ -22,7 +22,7 @@ class MyServer extends React.Component {
 
   componentDidMount() {
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
-    var servId = servId || 1; //1 for testing, will need to connect with clicked server
+    var servId = this.props.state.serverSelection.id;
     request.post('/getStats/server',
       {serverId: servId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
       (err, res) => {
@@ -52,7 +52,10 @@ class MyServer extends React.Component {
         <Row className="server-control-panel">
           <Col xs={12} md={12} lg={12}>
             <Panel header={<h1>Server Control Panel</h1>}>
-              server info/control panel goes here
+              <span style={{textDecoration:'underline'}}>Server:  </span> {this.props.state.serverSelection.hostname}<br/>
+              <span style={{textDecoration:'underline'}}>IP:  </span> {this.props.state.serverSelection.ip}<br/>
+              <span style={{textDecoration:'underline'}}>Status:  </span> {this.props.state.serverSelection.active}<br/>
+              <span style={{textDecoration:'underline'}}>Platform:  </span> {this.props.state.serverSelection.platform}<br/>
             </Panel>
           </Col>
         </Row>

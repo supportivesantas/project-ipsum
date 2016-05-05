@@ -46,6 +46,12 @@ module.exports = {
       id: id,
     };
   },
+  ADD_SERVER_SELECTION(data) {
+    return {
+      type: 'ADD_SERVER_SELECTION',
+      data: data,
+    };
+  },
   ADD_SERVER_DATA(data) {
     return {
       type: 'ADD_SERVER_DATA',
