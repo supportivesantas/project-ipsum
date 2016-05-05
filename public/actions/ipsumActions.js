@@ -12,6 +12,12 @@ module.exports = {
       id: id,
     };
   },
+  MASS_POPULATE_APPS(data) {
+    return {
+      type: 'MASS_POPULATE_APPS',
+      apps: data,
+    };
+  },
   POPULATE_USER_DATA(userhandle) {
     return {
       type: 'POPULATE_USER_DATA',

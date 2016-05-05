@@ -1,12 +1,17 @@
 var userRouter = require('express').Router();
 var userController = require('../controllers/user_controller.js');
-var appController = require('../controllers/appController.js');
 
-userRouter.route('/userdata')
-  .get(userController.getUserData);
+userRouter.route('/userid')
+  .get(userController.getUserId);
 
 userRouter.route('/userapps')
-  .get(appController.getUserApps);
+  .get(userController.getUserApps);
+
+userRouter.route('/userservers')
+  .get(userController.getUserServers);
+
+userRouter.route('/init')
+  .get(userController.getInit);
 
 
 module.exports = userRouter;

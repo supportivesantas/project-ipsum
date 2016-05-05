@@ -14,7 +14,7 @@ class MainPage extends React.Component {
   }
 
   componentWillMount() {
-    restHandler.get('/user/userapps', (err, res) => {
+    restHandler.get('/user/init', (err, res) => {
       // const servers = JSON.parse(res.text).servers;
       // const serversArr = [];
       // for (let i = 0; i < servers.length; i++) {
@@ -22,14 +22,17 @@ class MainPage extends React.Component {
       //     servers[i].platform, servers[i].name, servers[i].platformSpecific.status));
       // }
       // this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
-      console.log(res);
+      const data = JSON.parse(res.text);
+      console.log(data);
+      this.props.dispatch(actions.MASS_POPULATE_APPS(data.apps));
+      this.props.dispatch(actions.MASS_POPULATE_SERVERS(data.servers));
     });
   }
 
   appList() {
-    return this.props.state.servers.map((server, index) => {
+    return this.props.state.applications.map((app, index) => {
       return (
-        <MainPageAppView selected={server} />
+        <MainPageAppView selected={app} />
       );
     });
   }

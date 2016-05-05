@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
 import actions from '../actions/ipsumActions.js';
-import styles from '../styles/styles.css';
 
 class App extends Component {
 
