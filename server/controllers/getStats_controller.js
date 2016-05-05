@@ -6,7 +6,6 @@ var knex = require('knex')({
   client: 'pg',
   connection: process.env.PG_CONNECTION_STRING,
 });
-var hashes = require('../db/collections/hashes');
 
 const formatDataByHour = function(allRoutes, serverStats, dataRange) {
     // if no hits for all routes populate with data, hits = 0
@@ -171,15 +170,14 @@ exports.serverTotalsForApp = function(req, res, next) {
     .fetchAll()
     .then(function(data) {
       console.log('Application stats received. Processing...');
-      //format the data and add hostname and ip
-      var serverStats = {}; /* key is the clientSever_id, and value 
-                            is an object with hostname, ip, and and total hits */
-      var serverIds = [];
+      
+      var serverStats = {}; // the results that will eventuall be send back
+      var serverIds = []; // store server ids for which we need to look up hostnames & ips
 
       data.forEach(function(stat, idx, data) {
         var id = stat.get('clientServers_id');
         if (!serverStats.hasOwnProperty(id)) {
-          // initialize as empty object. keys will be added for the ip and hostname (see below)
+          // initialize a server object. keys will be added for the ip and hostname (see below)
           serverStats[id] = {ip: null, hostname: null, statValue: 0};
           serverIds.push(id);
         } else {
@@ -230,7 +228,4 @@ exports.serverTotalsForApp = function(req, res, next) {
   } else {
     getStatsWithAppId(appid);
   }
-
-
-  
 }
