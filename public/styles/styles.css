@@ -119,6 +119,15 @@ nav.navbar a {
 button {
   color: #272822;
 }
+
+.table {
+  table-layout:fixed;
+}
+
+.table td {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
 /*============================================*/
 /*=========== WELCOME PAGE STYLING ============*/
 
