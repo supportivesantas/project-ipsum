@@ -140,6 +140,35 @@ module.exports = {
         res.status(500).send(error);
       });
 
+    // const id = req.session.passport.user.githubid;
+    // Server.where({ githubid: id})
+    //   .fetch()
+    //   .then((servers) => {
+    //     console.log(servers);
+           // const servData = [];
+           // for (let i = 0; i < servers.length; i++) {
+           //   servData.push(servers[i].attributes);
+           // }
+           // App.where({ githubid: id})
+           //   .fetch()
+           //   .then((apps) => {
+           //     console.log(apps);
+                  // const appData = [];
+                  // for (let i = 0; i < apps.length; i++) {
+                  //   appData.push(apps[i].attributes);
+                  // }
+                  // console.log(appData);
+                  // res.status(200).send({ servers: servData, apps: appData });
+           //   })
+           //   .catch((err) => {
+           //     res.send(401);
+           //   });
+    //   })
+    //   .catch((err) => {
+    //     res.send(401);
+    //   });
+
+
   },
 
 };

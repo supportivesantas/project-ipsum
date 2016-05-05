@@ -3,6 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import { Button, ButtonToolbar, Panel, Col } from 'react-bootstrap';
+import _ from 'underscore';
 
 class MainPageAppView extends React.Component {
   constructor(props) {
@@ -11,9 +12,19 @@ class MainPageAppView extends React.Component {
     };
   }
 
+  getNumServers() {
+    const appServers = _.filter(this.props.state.servers, (item) => {
+      return item.app === this.props.selected.appname;
+    });
+    const activeServers = _.filter(appServers, (item) => {
+      return item.active === 'active';
+    });
+    return { active: activeServers, total: appServers };
+  }
+
   generateHeader() {
     return (
-      <div className="AppViewHeaderText">DONALD TRUMP - {this.props.selected.appname} - 3/5 </div>
+      <div className="AppViewHeaderText">{this.props.selected.appname} - 3/5 </div>
 
     );
   }
@@ -30,8 +41,6 @@ class MainPageAppView extends React.Component {
               <Button bsSize="xsmall">Graph Option 1</Button>
               <Button bsSize="xsmall">Graph Option 2</Button>
               <Button bsSize="xsmall">Graph Option 3</Button>
-
-
             </ButtonToolbar>
 
             Panel content <br />
