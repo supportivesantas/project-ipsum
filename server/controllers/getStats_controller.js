@@ -7,7 +7,7 @@ var knex = require('knex')({
   connection: process.env.PG_CONNECTION_STRING,
 });
 
-exports.formatDataByHour = formatDataByHour = function(allRoutes, serverStats, dataRange) {
+const formatDataByHour = function(allRoutes, serverStats, dataRange) {
     // if no hits for all routes populate with data, hits = 0
   var models = serverStats.models;
   var graphData = [];
