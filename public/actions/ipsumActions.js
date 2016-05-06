@@ -70,5 +70,16 @@ module.exports = {
       title: title,
     };
   },
-
+  CHANGE_APP_SERVER_TOTALS(data) {
+    return {
+      type: 'CHANGE_APP_SERVER_TOTALS',
+      data: data,
+    };
+  },
+  CHANGE_CURRENT_APPNAME(data) {
+    return {
+      type: 'CHANGE_CURRENT_APPNAME',
+      appname: data,
+    };
+  }
 };

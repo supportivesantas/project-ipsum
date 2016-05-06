@@ -1,12 +1,8 @@
-
 module.exports = (state = [], action) => {
   switch (action.type) {
-
-    case 'ADD_WEEK_DATA':
-      return action.data;
-
+      case 'CHANGE_CURRENT_APPNAME':
+        return action.appname;
     default:
       return state;
   }
 };
-
