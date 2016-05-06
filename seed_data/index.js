@@ -172,7 +172,16 @@ client.connect()
   .then((result) => {
     /* */
     console.log('Initializing Servers and Apps');
-    initAppsServers();
+    client.query('INSERT INTO "users" ("id", "username", "githubid", "email") VALUES (1, \'somebody\', \'1234\', \'somebody@somewhere.com\') ON CONFLICT ("id") DO NOTHING')
+      .then((result) => {
+        console.log('Inserted user');
+        initAppsServers();
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to insert user.', error);
+        process.exit();
+      });
+    
   })
   .catch((error) => {
     console.log('ERROR: Failed to connect to Postgres!', error)

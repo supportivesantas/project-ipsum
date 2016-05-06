@@ -1,3 +1,4 @@
+var users = require('../db/collections/users');
 var clientApps = require('../db/collections/client-apps');
 var clientServers = require('../db/collections/client-server');
 var stats = require('../db/collections/stats');
@@ -24,8 +25,9 @@ var storeStats = function (statistics, foreignID) {
       statName: stat,
       statValue: statistics[stat],
       /* use attach for the foreign keys later? */
-      clientServers_id: foreignID[0],
-      clientApps_id: foreignID[1]
+      users_id: foreignID[0],
+      clientServers_id: foreignID[1],
+      clientApps_id: foreignID[2]
     }).save();
   }
 };
@@ -33,7 +35,7 @@ var storeStats = function (statistics, foreignID) {
 /* handler for post request of stats from client */
 statsController.processStats = function (req, res) {
   var hash = req.body.hash;
-  var token = req.body.token;
+  var username = req.body.username;
   var statistics = req.body.statistics;
   var foreignID = lookup.hash2ID(hash);
 
@@ -53,8 +55,8 @@ statsController.processStats = function (req, res) {
           res.status(409).send('Error: Hash not found.  Re-register the client');
           return;
         } else {
-          lookup.storeHash2ID(hash.hash, hash.clientServers_id, hash.clientApps_id);
-          foreignID = [hash.clientServers_id, hash.clientApps_id];
+          lookup.storeHash2ID(hash.hash, hash.users_id, hash.clientServers_id, hash.clientApps_id);
+          foreignID = [hash.hash, hash.clientServers_id, hash.clientApps_id];
         }
         storeStats(statistics, foreignID);
         res.status(200).end('');
@@ -71,26 +73,41 @@ statsController.processStats = function (req, res) {
 };
 
 statsController.registerClient = function (req, res) {
+  var username = req.body.username;
   var ip = req.body.ip;
   var hostname = req.body.hostname;
   var appname = req.body.appname;
   var computedHash = null;
-
+  console.log('username is ' + username);
   // must be a better way than this
   var serverID = null;
   var appID = null;
+  var userID = null;
 
-  /* put server ip and appname in db if it does't already exist */
-  clientServers.model.where('ip', ip).fetch().then(function (clientServer) {
-    if (!clientServer) {
-      return new clientServers.model({
-        ip: ip,
-        hostname: hostname
-      }).save();
-    } else {
-      return clientServer;
-    }
-  })
+  
+  users.model.where('username', username).fetch()
+    .then(function (user) {
+      if (!user) {
+        return new users.model({ username: username }).save();
+      } else {
+        return user;
+      }
+    })
+    .then(function (user) {
+      userID = user.id;
+      /* put server ip and appname in db if it does't already exist */
+      return clientServers.model.where('ip', ip).fetch();
+    })
+    .then(function (clientServer) {
+      if (!clientServer) {
+        return new clientServers.model({
+          ip: ip,
+          hostname: hostname
+        }).save();
+      } else {
+        return clientServer;
+      }
+    })
     .then(function (clientServer) {
       serverID = clientServer.id;
       return clientApps.model.where('appname', appname).fetch();
@@ -106,19 +123,21 @@ statsController.registerClient = function (req, res) {
       /* compute the hash for quicker ID lookups when storing stats     *
        * and send it to the client so they can use it in their post req */
       appID = clientApp.id;
-      
-      computedHash = lookup.storeName2Hash(ip, appname);
-      lookup.storeHash2ID(computedHash, serverID, appID);
-      
+
+      computedHash = lookup.storeName2Hash(username, ip, appname);
+      lookup.storeHash2ID(computedHash, userID, serverID, appID);
+      console.log('computedHash is ' + computedHash);
       return hashes.model.where('hash', computedHash).fetch();
     })
     .then(function (hash) {
       /* keep a backup copy of the hash in hash db if controller gets reloaded */
       if (!hash) {
         return new hashes.model({
+          users_id: userID,
           clientApps_id: appID,
           clientServers_id: serverID,
           hash: computedHash,
+          username: username,
           ip: ip,
           appname: appname
         }).save();
@@ -135,6 +154,6 @@ statsController.registerClient = function (req, res) {
       console.log('Stats Client Registration Failure', error);
       res.status(500).send('Stats Client Registration Failure');
     });
-}
+};
 
 module.exports = statsController;

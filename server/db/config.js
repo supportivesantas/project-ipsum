@@ -10,7 +10,7 @@ db.knex.schema.hasTable('users').then(function(exists) {
     db.knex.schema.createTable('users', function(user) {
       user.increments('id').primary();
       user.string('username', 20).unique();
-      user.string('email', 20).unique();
+      user.string('email').unique();
       user.string('phoneNumber', 20);
       user.string('password', 20);
       user.string('githubid');
@@ -26,7 +26,7 @@ db.knex.schema.hasTable('clientApps').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('clientApps', function(clientApp) {
       clientApp.increments('id').primary();
-      // clientApp.integer('user_id').references('users.id'); // comment out for now
+      clientApp.integer('users_id').references('users.id').onDelete('CASCADE');
       clientApp.string('appname');
     }).then(function(table) {
       console.log('Created Client App Table', table);
@@ -38,7 +38,7 @@ db.knex.schema.hasTable('clientServers').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('clientServers', function(clientServer) {
       clientServer.increments('id').primary();
-      // clientServer.integer('user_id').references('users.id'); // comment out for now
+      clientServer.integer('users_id').references('users.id').onDelete('CASCADE');
       clientServer.string('ip');
       clientServer.string('hostname');
       clientServer.string('platform');
@@ -75,6 +75,7 @@ db.knex.schema.hasTable('stats').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('stats', function(stat) {
       stat.increments('id').primary();
+      stat.integer('users_id').references('users.id').onDelete('CASCADE');
       stat.integer('clientApps_id').references('clientApps.id').onDelete('CASCADE');
       stat.integer('clientServers_id').references('clientServers.id').onDelete('CASCADE');
       stat.string('statName');
@@ -90,9 +91,11 @@ db.knex.schema.hasTable('hashes').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('hashes', function(stat) {
       stat.increments('id').primary();
+      stat.integer('users_id').references('users.id').onDelete('CASCADE');
       stat.integer('clientApps_id').references('clientApps.id').onDelete('CASCADE');
       stat.integer('clientServers_id').references('clientServers.id').onDelete('CASCADE');
       stat.string('hash').unique();
+      stat.string('username');
       stat.string('ip');
       stat.string('appname');
     }).then(function(table) {

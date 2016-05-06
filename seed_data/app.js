@@ -26,7 +26,7 @@ class app {
   save(client) {
     let self = this;
     if (!this.saved) {
-      client.query('INSERT INTO "clientApps" (appname) VALUES ($1) RETURNING id', [this.appname])
+      client.query('INSERT INTO "clientApps" (users_id, appname) VALUES (1, $1) RETURNING id', [this.appname])
         .then((result) => {
           self.id = result[0].id;
         })

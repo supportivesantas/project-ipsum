@@ -17,7 +17,7 @@ class stats {
       let thisQuery = '';
       let hits = Math.ceil(Math.random() * this.maxHits);
 
-      thisQuery = 'INSERT INTO "stats" ("clientApps_id", "clientServers_id", "statName", "statValue", created_at, updated_at) VALUES (' +
+      thisQuery = 'INSERT INTO "stats" ("users_id", "clientApps_id", "clientServers_id", "statName", "statValue", created_at, updated_at) VALUES (1, ' +
         this.statApp.id + ', ' + this.statServer.id + ', \'' + this.statApp.routes[i] + '\', ' + hits.toString() + ', $1, $1' + ')';
       this.stats.push(thisQuery);
     }
@@ -28,7 +28,7 @@ class stats {
   saveHash(client) {
     var hash = this.statServer.ip + this.statApp.appname;
     
-    client.query('INSERT INTO "hashes" ("clientApps_id", "clientServers_id", "hash", "ip", "appname") VALUES ($1, $2, $3, $4, $5) ON CONFLICT ("hash") DO NOTHING',
+    client.query('INSERT INTO "hashes" ("users_id", "clientApps_id", "clientServers_id", "hash", "username", "ip", "appname") VALUES (1, $1, $2, $3, (SELECT username FROM users WHERE id = 1) , $4, $5) ON CONFLICT ("hash") DO NOTHING',
       [this.statApp.id, this.statServer.id, hash, this.statServer.ip, this.statApp.appname])
       .then((results) => {
         // do nothing

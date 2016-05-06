@@ -27,14 +27,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 /*======== GITHUB AUTHENTICATION SETUP ===========*/
 const passport = require('passport');
+const configRoutes = require('./auth/configRoutes');//ensureAuthenticated
 require('./auth/passport')(passport); // pass passport for configuration
-require('./auth/configRoutes').configRoutes(app, passport); // pass app for configuration
+configRoutes.configRoutes(app, passport); // pass app for configuration
 /*================================================*/
 
 app.use(express.static('./dist'));
 app.use('/getStats', getStats_controller);
 app.use('/stats', stats_controller);
-app.use('/user', userRouter);
+app.use('/user', configRoutes.ensureAuthenticated, userRouter);
 
 // api interface for interacting with digital_ocean, et al.
 const configureRequest = require('./api/configure.js');

@@ -10,15 +10,15 @@ const Hashes = require('../db/collections/hashes');
 module.exports = {
 
   getUserId: (req, res) => {
-    console.log('IN USER DATA!!!!!')
+    console.log('IN USER DATA!!!!!');
     console.log(req.session.passport.user.githubid);
 
     res.send(req.session.passport.user.githubid);
   },
 
   getUserApps: (req, res) => {
-    console.log('IN USER APPS!!!!!')
-    Apps.fetch()
+    console.log('IN USER APPS!!!!!');
+    Apps.query('where', 'users_id', '=', req.user.id).fetch()
       .then(function(apps) {
         console.log(apps);
         var appData = [];
@@ -47,8 +47,8 @@ module.exports = {
   },
 
   getUserServers: (req, res) => {
-    console.log('IN USER SERVS!!!!!')
-    Servers.fetch()
+    console.log('IN USER SERVS!!!!!');
+    Servers.query('where', 'users_id', '=', req.user.id).fetch()
       .then((servers) => {
         console.log(servers);
         let servData = [];
@@ -77,10 +77,10 @@ module.exports = {
   },
 
   getInit: (req, res) => {
-    // const id = req.session.passport.user.githubid;
     let serverQuickLook = {};
     const servData = [];
-    Servers.query('orderBy', 'id', 'ASC').fetch()
+    
+    Servers.query('where', 'users_id', '=', req.user.id, 'orderBy', 'id', 'ASC').fetch()
       .then((servers) => {
         
         for (let i = 0; i < servers.models.length; i++) {
@@ -103,7 +103,7 @@ module.exports = {
         // console.log(servData);
         
         /* query hashes table and filter only server/app id and appnames */
-        return Hashes.query('orderBy', 'id', 'ASC')
+        return Hashes.query('where', 'users_id', '=', req.user.id, 'orderBy', 'id', 'ASC')
           .fetch({
             withRelated: [{
               'clientApps': (qb) => {
@@ -125,7 +125,7 @@ module.exports = {
           serverQuickLook[hashAttrib.clientServers_id].apps.push(appDescription);
         });
         
-        return Apps.fetch();
+        return Apps.query('where', 'users_id', '=', req.user.id).fetch();
       })
       .then((apps) => {
         const appData = [];
@@ -139,50 +139,6 @@ module.exports = {
         console.log('ERROR: Failed to get init data', error);
         res.status(500).send(error);
       });
-
-    // const id = req.session.passport.user.githubid;
-    // Server.where({ githubid: id})
-    //   .fetch()
-    //   .then((servers) => {
-    //     console.log(servers);
-           // const servData = [];
-           // for (let i = 0; i < servers.length; i++) {
-           //   servData.push(servers[i].attributes);
-           // }
-           // App.where({ githubid: id})
-           //   .fetch()
-           //   .then((apps) => {
-           //     console.log(apps);
-                  // const appData = [];
-                  // for (let i = 0; i < apps.length; i++) {
-                  //   appData.push(apps[i].attributes);
-                  // }
-                  // console.log(appData);
-                  // res.status(200).send({ servers: servData, apps: appData });
-           //   })
-           //   .catch((err) => {
-           //     res.send(401);
-           //   });
-    //   })
-    //   .catch((err) => {
-    //     res.send(401);
-    //   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   },
 

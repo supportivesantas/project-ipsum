@@ -43,12 +43,13 @@ module.exports = function(passport) {
       callbackURL: "http://localhost:1337/auth/github/callback",
     },
     function(token, refreshToken, profile, done) {
-      new User({githubid: profile.id}).fetch()
+      new User({username: profile.username}).fetch()
       .then(function(user){
         if (!user) { user = new User(); console.log('User not found, creating a new one!')}
         // if there is a user id already but no token (user was linked at one point and then removed)
         if (! (user.get('githubtoken') && user.get('githubemail') && user.get('githubid') )) {
           user.save({
+            username: profile.username,
             githubtoken: token,
             githubemail: (profile._json.email || '').toLowerCase(),
             githubid: profile.id
