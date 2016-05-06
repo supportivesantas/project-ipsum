@@ -146,6 +146,7 @@ button {
 
 svg.barGraph {
   width: 100%;
+  overflow:visible;
 }
 
 /* =========================================== */

@@ -16,11 +16,7 @@ class MyApp extends React.Component {
 
 
   componentDidMount(){
-    //For server totals bar graph
-    // d3.selection.prototype.first = function() {
-    //   return d3.select(this[0][0]);
-    // };
-    // var svgs
+    // for bar graph
     request.post('/getStats/serverTotalsForApp', {
       appid: this.props.appid || 5, // 'TODO:' remove the OR statement before deploying
       appname: this.props.currentAppname || "follower", // TODO: remove the OR statement before deploying
@@ -88,8 +84,8 @@ class MyApp extends React.Component {
           <Col xs={12} lg={4} >
             <Panel header={<div>Routes</div>} >
               <div className='server-route-list'>
-               {this.props.state.graphData.map(graph =>
-                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+               {this.props.state.graphData.map((graph, idx) =>
+                  <Panel key={idx} className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
                     <p>/{graph.route}</p>
                   </Panel>
                 )}
