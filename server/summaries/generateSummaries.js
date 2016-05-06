@@ -48,10 +48,10 @@ const generateSummaries = () => {
              VALUES($[serverid], $[route], $[value], $[day], $[month], $[year])`, l))))
           .then(data=> {
               // data = array of undefined
-              console.log('SUCCESS!');
-              console.log('Server summaries generation complete!');
-              console.log('Starting Generation of App Summaries');
-              count = 0;
+            console.log('SUCCESS!');
+            console.log('Server summaries generation complete!');
+            console.log('Starting Generation of App Summaries');
+            count = 0;
               ctrl.getAllAppIds((appIds) => {
                 for (let i = 0; i < appIds.length; i++) {
                   ctrl.singleApp(appIds[i], (data) => {
@@ -78,12 +78,12 @@ const generateSummaries = () => {
                         `INSERT INTO appsummaries(appid, route, value, day, month, year)
                          VALUES($[appid], $[route], $[value], $[day], $[month], $[year])`, l))))
                       .then(data=> {
-                          // data = array of undefined
-                          console.log('SUCCESS!');
-                          console.log('All Summaries Generated!');
-                          console.log('Hail Hydra!');
-                          process.exit(1);
-                        })
+                        // data = array of undefined
+                        console.log('SUCCESS!');
+                        console.log('All Summaries Generated!');
+                        console.log('Hail Hydra!');
+                        process.exit(1);
+                      })
                       .catch(error=> {
                           // ERROR;
                           console.log(error);
@@ -98,10 +98,6 @@ const generateSummaries = () => {
           });
     }, 20000);
   });
-};
-
-const populateDatabase = () => {
-
 };
 
 client.connect()
