@@ -101,6 +101,7 @@ statsController.registerClient = function (req, res) {
     .then(function (clientServer) {
       if (!clientServer) {
         return new clientServers.model({
+          users_id: userID,
           ip: ip,
           hostname: hostname
         }).save();
@@ -114,7 +115,7 @@ statsController.registerClient = function (req, res) {
     })
     .then(function (clientApp) {
       if (!clientApp) {
-        return new clientApps.model({ appname: appname }).save();
+        return new clientApps.model({ users_id: userID, appname: appname }).save();
       } else {
         return clientApp;
       }

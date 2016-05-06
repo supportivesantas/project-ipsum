@@ -179,11 +179,11 @@ client.connect()
     let username = null;
     username = process.argv[2];
     console.log('Initializing Servers and Apps');
-    client.query('INSERT INTO "users" ("username") VALUES (${username})',
+    client.query('INSERT INTO "users" ("username") VALUES (${username}) RETURNING id',
     {username: username})
       .then((result) => {
-        console.log('Inserted user');
-        userID = result.id;
+        console.log('Inserted user ' + username + ' ', result);
+        userID = result[0].id;
         initAppsServers();
       })
       .catch((error) => {
