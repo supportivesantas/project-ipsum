@@ -5,16 +5,22 @@ var stats = require('../db/collections/stats');
 var _ = require('underscore');
 var ctrl = require('../controllers/summaryController.js');
 const pgp = require('pg-promise')({});
+var Promise = require('bluebird');
 
 // var db = require('bookshelf')(knex);
 var client = pgp({
   connectionString: process.env.PG_CONNECTION_STRING,
 });
 
-const generateServerSummaries = () => {
+const generateSummaries = () => {
   let count = 0;
+  const servsummaries = [];
+  const appsummaries = [];
   ctrl.getAllServerIds((serverList) => {
-    const summaries = [];
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth();
+    const year = today.getFullYear();
     for (let i = 0; i < serverList.length; i++) {
       ctrl.singleServerSummary(serverList[i], (data) => {
         for (let j = 0; j < data.length; j++) {
@@ -22,13 +28,14 @@ const generateServerSummaries = () => {
             const hits = _.reduce(data[j].data, (memo, dataPoint) => {
               return memo + dataPoint.hits;
             }, 0);
-            count++;
-            console.log('Server Summary #' + count + ' generated');
-            summaries.push({
+            console.log('Server Summary #' + count++ + ' generated');
+            servsummaries.push({
               serverid: serverList[i],
               route: data[j].route,
               value: hits,
-              day: new Date(), //create stamp automagically by postgres?
+              day: day,
+              month: month,
+              year: year,
             });
           }
         }
@@ -36,21 +43,60 @@ const generateServerSummaries = () => {
     }
     //have to do timeout to wait for summaries to generate
     setTimeout(() => {
-      console.log(summaries.length);
-      client.tx(t=>t.batch(summaries.map(l=>t.none(
-            `INSERT INTO serversummaries(serverid, route, value, day)
-             VALUES($[serverid], $[route], $[value], $[day])`, l))))
+      client.tx(t=>t.batch(servsummaries.map(l=>t.none(
+            `INSERT INTO serversummaries(serverid, route, value, day, month, year)
+             VALUES($[serverid], $[route], $[value], $[day], $[month], $[year])`, l))))
           .then(data=> {
-              // SUCCESS;
               // data = array of undefined
               console.log('SUCCESS!');
+              console.log('Server summaries generation complete!');
+              console.log('Starting Generation of App Summaries');
+              count = 0;
+              ctrl.getAllAppIds((appIds) => {
+                for (let i = 0; i < appIds.length; i++) {
+                  ctrl.singleApp(appIds[i], (data) => {
+                    for (let j = 0; j < data.length; j++) {
+                      if (data[j].route !== 'Total') {
+                        const hits = _.reduce(data[j].data, (memo, dataPoint) => {
+                          return memo + dataPoint.hits;
+                        }, 0);
+                        console.log('App Summary #' + count++ + ' generated');
+                        appsummaries.push({
+                          appid: appIds[i],
+                          route: data[j].route,
+                          value: hits,
+                          day: day,
+                          month: month,
+                          year: year,
+                        });
+                      }
+                    }
+                  });
+                }
+                setTimeout(() => {
+                  client.tx(t=>t.batch(appsummaries.map(l=>t.none(
+                        `INSERT INTO appsummaries(appid, route, value, day, month, year)
+                         VALUES($[appid], $[route], $[value], $[day], $[month], $[year])`, l))))
+                      .then(data=> {
+                          // data = array of undefined
+                          console.log('SUCCESS!');
+                          console.log('All Summaries Generated!');
+                          console.log('Hail Hydra!');
+                          process.exit(1);
+                        })
+                      .catch(error=> {
+                          // ERROR;
+                          console.log(error);
+                          process.exit(0);
+                      });
+                }, 20000);
+              });
           })
           .catch(error=> {
               // ERROR;
               console.log(error);
           });
-      
-    }, 12000);
+    }, 20000);
   });
 };
 
@@ -63,7 +109,7 @@ client.connect()
     /* */
     console.log('Generating Server Summary Data');
     //function
-    generateServerSummaries();
+    generateSummaries();
 
   })
   .catch((error) => {
