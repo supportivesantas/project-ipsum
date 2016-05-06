@@ -17,7 +17,6 @@ class MyApp extends React.Component {
   componentDidMount(){
     // for bar graph
     request.post('/getStats/serverTotalsForApp', {
-      appid: this.props.appid || 5, // 'TODO:' remove the OR statement before deploying
       appname: this.props.currentAppname || "follower", // TODO: remove the OR statement before deploying
       hours: 168 // defaults to totals for 1 week
     }, (err, data) => {
