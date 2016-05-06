@@ -4,7 +4,11 @@ import React from 'react';
 class BarGraph extends React.Component {
   constructor(props) {
     super(props);
-  
+    /* this is currently necessary because d3 is directly 
+    manipulating the dom, and react's virtual dom is not updated acordingly.
+    we need to manually let react know the height of our graph. cannot do this before
+    mount because we need to grab the parent container width before we can start
+    drawing d3 elements */
     this.state = {height: 0};
   }
 

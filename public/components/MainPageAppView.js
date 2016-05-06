@@ -1,4 +1,5 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
@@ -24,8 +25,15 @@ class MainPageAppView extends React.Component {
 
   generateHeader() {
     return (
-      <div className="AppViewHeaderText">{this.props.selected.appname} - 3/5 </div>
+        <div onClick={this.goToApp.bind(this)} className="AppViewHeaderText">
+            {this.props.selected.appname}
+        </div>
     );
+  }
+
+  goToApp() {
+    this.props.dispatch(actions.CHANGE_CURRENT_APPNAME(this.props.selected.appname));
+    browserHistory.push('/myApp');
   }
 
   render() {

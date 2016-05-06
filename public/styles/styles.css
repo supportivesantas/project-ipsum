@@ -151,3 +151,8 @@ svg.barGraph {
 
 /* =========================================== */
 
+.MainPageAppView .panel-heading:hover {
+  color: white;
+  background-color: #FD971F;
+  cursor: pointer;
+}
