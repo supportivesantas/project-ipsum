@@ -107,7 +107,8 @@ nav.navbar a {
   transition: letter-spacing 0.5s ease;
 }
 .navbar-default .navbar-brand:hover {
-  letter-spacing: .1em;
+  letter-spacing: .05em;
+  color:white;
 }
 .panel {
   color: #272822;
@@ -146,7 +147,13 @@ button {
 
 svg.barGraph {
   width: 100%;
+  overflow:visible;
 }
 
 /* =========================================== */
 
+.MainPageAppView .panel-heading:hover {
+  color: white;
+  background-color: #FD971F;
+  cursor: pointer;
+}

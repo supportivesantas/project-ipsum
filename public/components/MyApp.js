@@ -14,17 +14,11 @@ class MyApp extends React.Component {
     };
   }
 
-
   componentDidMount(){
-    //For server totals bar graph
-    // d3.selection.prototype.first = function() {
-    //   return d3.select(this[0][0]);
-    // };
-    // var svgs
+    // for bar graph
     request.post('/getStats/serverTotalsForApp', {
-      appid: this.props.appid || 5, // 'TODO:' remove the OR statement before deploying
-      appname: this.props.currentAppname || "follower", // TODO: remove the OR statement before deploying
-      hours: 168 // defaults to totals for 1 week
+      appname: this.props.state.currentAppname, // TODO: remove the OR statement before deploying
+      hours: 48 // defaults to totals for 1 week
     }, (err, data) => {
       var data = JSON.parse(data.text);
       var output = [];
@@ -65,6 +59,7 @@ class MyApp extends React.Component {
   render() {
     return (
        <Grid>
+        <Row><Col xs={12} md={12}><h3>{this.props.state.currentAppname}</h3></Col></Row>
         <Row className="app-control-panel">
           <Col xs={12} md={12}>
             <Panel header={<h1>Application Control Panel</h1>}>

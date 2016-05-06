@@ -2,13 +2,26 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 class BarGraph extends React.Component {
+  constructor(props) {
+    super(props);
+    /* this is currently necessary because d3 is directly 
+    manipulating the dom, and react's virtual dom is not updated acordingly.
+    we need to manually let react know the height of our graph. cannot do this before
+    mount because we need to grab the parent container width before we can start
+    drawing d3 elements */
+    this.state = {height: 0};
+  }
 
   componentDidMount() {
     /* Taken from: https://bost.ocks.org/mike/bar/2/ */
-    var data = this.props.state.appServerTotals;
-
     var width = document.querySelector(".barGraph").clientWidth,
       barHeight = 20;
+
+    var data = this.props.state.appServerTotals;
+
+    /* Manaully set the height of the svg element to prevent spillover,
+    since React doesn't know d3 is appending the bars to the svg element */
+    this.setState({height: barHeight * data.length })
 
     var x = d3.scale.linear()
     .range([0, width]);
@@ -36,7 +49,7 @@ class BarGraph extends React.Component {
 
   render() {
     return (
-        <svg className="barGraph"></svg>
+        <svg style={{height: this.state.height}} className="barGraph"></svg>
       );
   }
 }
