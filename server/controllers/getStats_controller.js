@@ -169,7 +169,7 @@ exports.serverTotalsForApp = function(req, res, next) {
     .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
     .fetchAll()
     .then(function(data) {
-      console.log('Application stats received. Processing...');
+      console.log('Application stats request received. Processing...');
       
       var serverStats = {}; // the results that will eventuall be send back
       var serverIds = []; // store server ids for which we need to look up hostnames & ips
