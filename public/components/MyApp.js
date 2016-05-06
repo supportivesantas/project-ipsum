@@ -17,8 +17,8 @@ class MyApp extends React.Component {
   componentDidMount(){
     // for bar graph
     request.post('/getStats/serverTotalsForApp', {
-      appname: this.props.currentAppname || "follower", // TODO: remove the OR statement before deploying
-      hours: 168 // defaults to totals for 1 week
+      appname: this.props.state.currentAppname, // TODO: remove the OR statement before deploying
+      hours: 48 // defaults to totals for 1 week
     }, (err, data) => {
       var data = JSON.parse(data.text);
       var output = [];
@@ -83,8 +83,8 @@ class MyApp extends React.Component {
           <Col xs={12} lg={4} >
             <Panel header={<div>Routes</div>} >
               <div className='server-route-list'>
-               {this.props.state.graphData.map((graph, idx) =>
-                  <Panel key={idx} className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+               {this.props.state.graphData.map(graph =>
+                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
                     <p>/{graph.route}</p>
                   </Panel>
                 )}

@@ -156,6 +156,7 @@ exports.serverTotalsForApp = function(req, res, next) {
   var appname = req.body.appname;
   var appid = req.body.appid;
   var hoursvar = req.body.hours || 168;
+  var userid = req.user.id;
 
   if (!req.body.appname && ! req.body.appid) {
     var message = 'Bad Request! No appname or appid supplied';
@@ -166,7 +167,7 @@ exports.serverTotalsForApp = function(req, res, next) {
 
   var getStatsWithAppId = function(appid) {
     // get stats for this app with a valid appid
-    stats.model.where('clientApps_id', appid)
+    stats.model.where({clientApps_id: appid, users_id: userid})
     .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
     .fetchAll()
     .then(function(data) {
