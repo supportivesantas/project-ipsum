@@ -1,7 +1,8 @@
 "use strict";
 
 class stats {
-  constructor(statServer, statApp, maxHits, time) {
+  constructor(userID, statServer, statApp, maxHits, time) {
+    this.userID = userID;
     this.statServer = statServer;
     this.statApp = statApp;
     this.maxHits = maxHits;
@@ -17,8 +18,8 @@ class stats {
       let thisQuery = '';
       let hits = Math.ceil(Math.random() * this.maxHits);
 
-      thisQuery = 'INSERT INTO "stats" ("clientApps_id", "clientServers_id", "statName", "statValue", created_at, updated_at) VALUES (' +
-        this.statApp.id + ', ' + this.statServer.id + ', \'' + this.statApp.routes[i] + '\', ' + hits.toString() + ', $1, $1' + ')';
+      thisQuery = 'INSERT INTO "stats" ("users_id", "clientApps_id", "clientServers_id", "statName", "statValue", created_at, updated_at) VALUES ($1, ' +
+        this.statApp.id + ', ' + this.statServer.id + ', \'' + this.statApp.routes[i] + '\', ' + hits.toString() + ', $2, $2' + ')';
       this.stats.push(thisQuery);
     }
 
@@ -28,8 +29,8 @@ class stats {
   saveHash(client) {
     var hash = this.statServer.ip + this.statApp.appname;
     
-    client.query('INSERT INTO "hashes" ("clientApps_id", "clientServers_id", "hash", "ip", "appname") VALUES ($1, $2, $3, $4, $5) ON CONFLICT ("hash") DO NOTHING',
-      [this.statApp.id, this.statServer.id, hash, this.statServer.ip, this.statApp.appname])
+    client.query('INSERT INTO "hashes" ("users_id", "clientApps_id", "clientServers_id", "hash", "username", "ip", "appname") VALUES ($1, $2, $3, $4, (SELECT username FROM users WHERE id = 1) , $4, $5) ON CONFLICT ("hash") DO NOTHING',
+      [this.userID, this.statApp.id, this.statServer.id, hash, this.statServer.ip, this.statApp.appname])
       .then((results) => {
         // do nothing
       })
@@ -43,7 +44,7 @@ class stats {
       let completedTransactions = 0;
       
       for (let i = 0; i < this.stats.length; i++) {
-        client.query(this.stats[i], [this.time])
+        client.query(this.stats[i], [this.userID, this.time])
           .then((result) => {
             if (++completedTransactions >= this.stats.length - 1) {
               completed();

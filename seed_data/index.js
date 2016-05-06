@@ -49,6 +49,7 @@ var randomRoute = [
   'money'
 ];
 
+var userID = null;
 var servers = [];
 var apps = [];
 
@@ -110,7 +111,7 @@ var compileStats = () => {
 
       // for each app generate some stats on this server
       for (var i = 0; i < numApps; i++) {
-        var testStat = new stats(servers[currentServer], apps[theseApps[i]], 1000, timeStamps[currentStamp]);
+        var testStat = new stats(userID, servers[currentServer], apps[theseApps[i]], 1000, timeStamps[currentStamp]);
 
         // save hash        
         testStat.saveHash(client);
@@ -145,14 +146,14 @@ var initAppsServers = () => {
   
   /* save apps and servers */
   for (var serverName of serverNames) {
-    var thisServer = new server(serverName);
+    var thisServer = new server(userID, serverName);
     thisServer.randomizeIP();
     thisServer.save(client);
     servers.push(thisServer);
   }
 
   for (var appName of appNames) {
-    var thisApp = new app(appName);
+    var thisApp = new app(userID, appName);
     var maxRoutesApp = Math.ceil(Math.random() * maxRoutes); // max 50 routes
     var maxDepthApp = Math.ceil(Math.random() * maxDepth); // max 5 depth
     thisApp.buildRoutes(maxRoutesApp, maxDepthApp, randomRoute);
@@ -168,11 +169,28 @@ var client = pgp({
   connectionString: process.env.PG_CONNECTION_STRING
 });
 
+if (process.argv.length < 3) {
+  console.log('Usage node ./seed_data/index.js github_user_name');
+  process.exit();
+}
+
 client.connect()
   .then((result) => {
-    /* */
+    let username = null;
+    username = process.argv[2];
     console.log('Initializing Servers and Apps');
-    initAppsServers();
+    client.query('INSERT INTO "users" ("username") VALUES (${username}) RETURNING id',
+    {username: username})
+      .then((result) => {
+        console.log('Inserted user ' + username + ' ', result);
+        userID = result[0].id;
+        initAppsServers();
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to insert user.', error);
+        process.exit();
+      });
+    
   })
   .catch((error) => {
     console.log('ERROR: Failed to connect to Postgres!', error)

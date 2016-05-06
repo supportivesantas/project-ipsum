@@ -1,7 +1,8 @@
 "use strict";
 
 class app {
-  constructor(appname) {
+  constructor(userID, appname) {
+    this.userID = userID;
     this.id = null;
     this.appname = appname;
     this.routes = [];
@@ -26,7 +27,7 @@ class app {
   save(client) {
     let self = this;
     if (!this.saved) {
-      client.query('INSERT INTO "clientApps" (appname) VALUES ($1) RETURNING id', [this.appname])
+      client.query('INSERT INTO "clientApps" (users_id, appname) VALUES ($1, $2) RETURNING id', [this.userID, this.appname])
         .then((result) => {
           self.id = result[0].id;
         })

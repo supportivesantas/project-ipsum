@@ -19,6 +19,7 @@ exports.version = '0.0.1';
 
 /* options object containing user overwritable options */
 var options = {
+  username: null,
   name: null,
   url: 'http://localhost:8000/stats',
   interval: 30000,       /* 30 seconds */
@@ -35,7 +36,7 @@ var statistics = {};
 /* payload is what is sent to the controller */
 var payload = {
   hash: null,
-  token: null,
+  username: null,
   statistics: statistics
 };
 
@@ -87,6 +88,7 @@ var registerClient = function () {
   console.log('Trying to Register Client');
 
   var registerInfo = {
+    username: options.username,
     ip: options.ip,
     hostname: options.hostname,
     appname: options.name

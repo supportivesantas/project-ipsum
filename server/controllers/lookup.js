@@ -13,14 +13,14 @@ lookup.name2Hash = function (hash) {
   return this._name2Hash[hash] || null;
 };
 
-lookup.storeName2Hash = function (ip, appname) {
-  if (!ip || !appname) {
+lookup.storeName2Hash = function (username, ip, appname) {
+  if (username === undefined || ip === undefined || appname === undefined) {
     return null;
   }
 
   // fix me later?  
-  var hash = ip + appname;
-  var result = [ip, appname];
+  var hash = username + ip + appname;
+  var result = [username, ip, appname];
   
   lookup._name2Hash[hash] = result;
 
@@ -35,12 +35,13 @@ lookup.hash2ID = function (hash) {
   return this._hash2ID[hash] || null;
 };
 
-lookup.storeHash2ID = function (hash, serverID, appID) {
-  if (!hash || !serverID || !appID) {
+lookup.storeHash2ID = function (hash, userID, serverID, appID) {
+  if (!hash || userID === undefined ||
+    serverID === undefined || appID === undefined) {
     return null;
   }
   
-  var result = [serverID, appID];
+  var result = [userID, serverID, appID];
   this._hash2ID[hash] = result;
   
   return result;

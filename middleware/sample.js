@@ -3,6 +3,7 @@ var libstats = require('./lib/libstats');
 var app = express();
 
 app.use(libstats.initClient(app, {
+  username: 'zelifus',
   name: 'test',
   url: 'http://localhost:1337/stats',
   interval: 5000
