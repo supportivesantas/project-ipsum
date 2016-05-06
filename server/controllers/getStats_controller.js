@@ -7,7 +7,7 @@ var knex = require('knex')({
   connection: process.env.PG_CONNECTION_STRING,
 });
 
-const formatDataByHour = function(allRoutes, serverStats, dataRange) {
+exports.formatDataByHour = formatDataByHour = function(allRoutes, serverStats, dataRange) {
     // if no hits for all routes populate with data, hits = 0
   var models = serverStats.models;
   var graphData = [];
@@ -158,7 +158,7 @@ exports.serverTotalsForApp = function(req, res, next) {
 
   if (!req.body.appname && ! req.body.appid) {
     var message = 'Bad Request! No appname or appid supplied';
-    console.log(message); 
+    console.log(message);
     res.status(400).send(message);
     return;
   }
@@ -170,7 +170,7 @@ exports.serverTotalsForApp = function(req, res, next) {
     .fetchAll()
     .then(function(data) {
       console.log('Application stats request received. Processing...');
-      
+
       var serverStats = {}; // the results that will eventuall be send back
       var serverIds = []; // store server ids for which we need to look up hostnames & ips
 
@@ -217,7 +217,7 @@ exports.serverTotalsForApp = function(req, res, next) {
     .fetch()
     .then(function(appObject) {
       appid = appObject.id;
-      getStatsWithAppId(appid); 
+      getStatsWithAppId(appid);
     })
     .catch(function(err) {
       var message = 'Bad Request! Could not find an application with the supplied information. ';

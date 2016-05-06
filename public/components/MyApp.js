@@ -5,7 +5,7 @@ import { renderChart } from '../D3graphTemplate';
 import { Panel, Grid, Row, Col, Clearfix } from 'react-bootstrap';
 import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import BarGraph from './BarGraph'
+import BarGraph from './BarGraph';
 
 class MyApp extends React.Component {
   constructor(props) {
@@ -14,7 +14,9 @@ class MyApp extends React.Component {
     };
   }
 
+
   componentDidMount(){
+    //For server totals bar graph
     request.post('/getStats/serverTotalsForApp', {
       appid: this.props.appid || 5, // 'TODO:' remove the OR statement before deploying
       appname: this.props.currentAppname || "follower", // TODO: remove the OR statement before deploying
@@ -24,30 +26,80 @@ class MyApp extends React.Component {
       var output = [];
       Object.keys(data).forEach((server) => {
         output.push({
-          value: data[server].statValue, 
+          value: data[server].statValue,
           label: data[server].hostname || data[server].ip
         });
+      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
-      // this.setState({data: output});
-      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output))
     });
+    //For line Graph
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
+    var appId = appId || 2; //1 for testing, will need to connect with clicked server
+    request.post('/getStats/app',
+      {appId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
+      (err, res) => {
+        if (err) { console.log("Error getting Server Data", err); }
+        this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
+        renderChart('Graph', this.props.state.graphData[0].data);
+    });
+  }
+
+  updateGraph(graph) {
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
+    var graphData = this.props.state.graphData;
+    d3.selectAll('svg').remove();
+    var routeIndex;
+    for (var i = 0; i < graphData.length; i++) {
+      if (graphData[i].route === graph.route) {
+        routeIndex = i;
+        break;
+      }
+    }
+    renderChart('Graph', graphData[routeIndex].data);
   }
 
   render() {
     return (
-      <Grid>
-        <Row className="app-control-panel">
-          <Col xs={12} md={12}>
-            <h3>{this.props.state.currentAppname || 'Test App Name'}</h3>
-          </Col>
-        </Row>
-
+       <Grid>
         <Row className="app-control-panel">
           <Col xs={12} md={12}>
             <Panel header={<h1>Application Control Panel</h1>}>
             <i>Note: Route traffic info aggregates across all servers running the app</i> <br/>
+            Summary: 9/10 servers for this application are running
+
+            <div><button>Refresh</button></div>
             </Panel>
           </Col>
+        </Row>
+
+        <Row>
+          <Col xs={12} md={12}>
+            <Panel header={<div>Summary</div>} >
+
+            </Panel>
+          </Col>
+        </Row>
+
+        <Row className='serverStatContainer'>
+          <Col xs={12} lg={4} >
+            <Panel header={<div>Routes</div>} >
+              <div className='server-route-list'>
+               {this.props.state.graphData.map(graph =>
+                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+                    <p>/{graph.route}</p>
+                  </Panel>
+                )}
+             </div>
+           </Panel>
+          </Col>
+          <Col xs={12} lg={8}>
+            <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
+              <h5 className="xAxis-title">Hits Per Hour</h5>
+              <div id="Graph"></div>
+              <h5 className="xAxis-title">Hours Ago</h5>
+            </Panel>
+          </Col>
+
         </Row>
 
         <Row>

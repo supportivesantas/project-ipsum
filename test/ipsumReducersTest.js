@@ -6,23 +6,10 @@ const actions = require('../public/actions/ipsumActions.js');
 const userReducer = require('../public/reducers/userReducer.js');
 const appReducer = require('../public/reducers/applicationReducer.js');
 const servReducer = require('../public/reducers/serverReducer.js');
+const getDataReducer = require('../public/reducers/getDataReducer.js');
+const lineGraphTitleReducer = require('../public/reducers/lineGraphTitleReducer');
+const serverSelectReducer = require('../public/reducers/serverSelectReducer.js');
 
-describe('User Reducer Tests ', () => {
-
-  it('Return the current state if no action is given', (done) => {
-    const initState = userReducer({}, {});
-    assert.isObject(initState);
-    done();
-  });
-
-  it('Should handle POPULATE_USER_DATA', (done) => {
-    const test = userReducer({ user: { handle: '', isLogged: false } },
-      actions.POPULATE_USER_DATA('mbresnan1701'));
-    expect(test.handle).to.equal('mbresnan1701');
-    expect(test.isLogged).to.equal(true);
-    done();
-  });
-});
 
 describe('Application Reducer Tests', () => {
 
@@ -41,6 +28,39 @@ describe('Application Reducer Tests', () => {
   it('Should handle REMOVE_APPLICATION', (done) => {
     expect(appReducer([{ id: 0, thing: 'mwb' }, { id: 1, thing: 'QQ' }], actions.REMOVE_APPLICATION(1))[1])
       .be.undefined;
+    done();
+  });
+});
+
+describe('Get Data Reducer Tests ', () => {
+
+  it('Return the current state if no action is given', (done) => {
+    const initState = getDataReducer([], []);
+    assert.isArray(initState);
+    done();
+  });
+
+  it('Should handle ADD_SERVER_DATA', (done) => {
+    const test = getDataReducer([],
+      actions.ADD_SERVER_DATA([{route: 'Total', data: ['test']}]));
+    expect(test[0].route).to.equal('Total');
+    expect(test[0].data[0]).to.equal('test');
+    done();
+  });
+});
+
+describe('Line Graph Title Reducer Tests ', () => {
+
+  it('Return the current state if no action is given', (done) => {
+    const initState = lineGraphTitleReducer([], []);
+    assert.isArray(initState);
+    done();
+  });
+
+  it('Should handle ADD_LINE_GRAPH_TITLE', (done) => {
+    const test = lineGraphTitleReducer([],
+      actions.ADD_LINE_GRAPH_TITLE('/Total'));
+    expect(test[0]).to.equal('/Total');
     done();
   });
 });
@@ -74,4 +94,37 @@ describe('Server Reducer Tests', () => {
     done();
   });
 
+});
+
+describe('Server Select Reducer Tests ', () => {
+
+  it('Return the current state if no action is given', (done) => {
+    const initState = serverSelectReducer({}, {});
+    assert.isObject(initState);
+    done();
+  });
+
+  it('Should handle ADD_SERVER_SELECTION', (done) => {
+    const test = serverSelectReducer({id: 1},
+      actions.ADD_SERVER_SELECTION({id: 2}));
+    expect(test.id).to.equal(2);
+    done();
+  });
+});
+
+describe('User Reducer Tests ', () => {
+
+  it('Return the current state if no action is given', (done) => {
+    const initState = userReducer({}, {});
+    assert.isObject(initState);
+    done();
+  });
+
+  it('Should handle POPULATE_USER_DATA', (done) => {
+    const test = userReducer({ user: { handle: '', isLogged: false } },
+      actions.POPULATE_USER_DATA('mbresnan1701'));
+    expect(test.handle).to.equal('mbresnan1701');
+    expect(test.isLogged).to.equal(true);
+    done();
+  });
 });
