@@ -15,7 +15,6 @@ class MyApp extends React.Component {
   }
 
   componentDidMount(){
-    // for bar graph
     request.post('/getStats/serverTotalsForApp', {
       appname: this.props.state.currentAppname, // TODO: remove the OR statement before deploying
       hours: 48 // defaults to totals for 1 week
@@ -45,7 +44,7 @@ class MyApp extends React.Component {
   updateGraph(graph) {
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
     var graphData = this.props.state.graphData;
-    d3.select('#lineGraph').remove();
+    d3.select('#lineGraph > svg').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
       if (graphData[i].route === graph.route) {
