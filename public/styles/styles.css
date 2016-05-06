@@ -110,6 +110,8 @@ nav.navbar a {
   letter-spacing: .05em;
   color:white;
 }
+nav.navbar-default a {
+}
 .panel {
   color: #272822;
 }

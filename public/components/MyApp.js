@@ -2,7 +2,7 @@ import React from 'react';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import { renderChart } from '../D3graphTemplate';
-import { Panel, Grid, Row, Col, Clearfix } from 'react-bootstrap';
+import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
 import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import BarGraph from './BarGraph';
@@ -15,9 +15,10 @@ class MyApp extends React.Component {
   }
 
   componentDidMount(){
+    // for bar graph
     request.post('/getStats/serverTotalsForApp', {
-      appname: this.props.state.currentAppname, // TODO: remove the OR statement before deploying
-      hours: 48 // defaults to totals for 1 week
+      appname: this.props.state.currentAppname, 
+      hours: 24
     }, (err, data) => {
       var data = JSON.parse(data.text);
       var output = [];
@@ -58,40 +59,31 @@ class MyApp extends React.Component {
   render() {
     return (
        <Grid>
-        <Row><Col xs={12} md={12}><h3>{this.props.state.currentAppname}</h3></Col></Row>
+        <Row><Col xs={12} md={12}><PageHeader>{this.props.state.currentAppname} <small>at a glance</small></PageHeader></Col></Row>
         <Row className="app-control-panel">
           <Col xs={12} md={12}>
-            <Panel header={<h1>Application Control Panel</h1>}>
-            <i>Note: Route traffic info aggregates across all servers running the app</i> <br/>
-            Summary: 9/10 servers for this application are running
-
-            <div><button>Refresh</button></div>
+            <Panel header={<h1>Control Panel</h1>}>
+            Cool controls to come! Scale up, scale down, emergency shut down, etc.
             </Panel>
           </Col>
         </Row>
 
-        <Row>
-          <Col xs={12} md={12}>
-            <Panel header={<div>Summary</div>} >
-
-            </Panel>
-          </Col>
-        </Row>
-
+        <h2>Todays Traffic</h2>
         <Row className='serverStatContainer'>
+
           <Col xs={12} lg={4} >
             <Panel header={<div>Routes</div>} >
-              <div className='server-route-list'>
+              <ListGroup className='server-route-list'>
                {this.props.state.graphData.map(graph =>
-                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
-                    <p>/{graph.route}</p>
-                  </Panel>
+                  <ListGroupItem className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+                    /{graph.route}
+                  </ListGroupItem>
                 )}
-             </div>
+             </ListGroup>
            </Panel>
           </Col>
           <Col xs={12} lg={8}>
-            <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
+            <Panel header={<div>Route: <strong>{this.props.state.lineGraphTitle[0]}</strong></div>} >
               <h5 className="xAxis-title">Hits Per Hour</h5>
               <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
@@ -99,10 +91,15 @@ class MyApp extends React.Component {
           </Col>
 
         </Row>
-
+        <hr />
         <Row>
-          <Col xs={12} md={4}>
-            <Panel header={<h1>Server Status</h1>} id="yadda">
+          <Col xs={6} md={6}>
+            <Panel header={<h1>Relative Server Load</h1>} id="appGraph">
+              {this.props.state.appServerTotals ? <BarGraph /> : <div>Loading...</div> }
+            </Panel>
+          </Col>
+          <Col xs={6} md={6}>
+            <Panel header={<h1>Server Statuses</h1>} id="yadda">
               <div>
                 <div>SFO1: green (well under max)</div>
                 <div>NYC2: yellow (close to max)</div>
@@ -110,13 +107,9 @@ class MyApp extends React.Component {
               </div>
             </Panel>
           </Col>
-          <Col xs={12} md={8}>
-            <Panel header={<h1>Relative Server Load</h1>} id="appGraph">
-              {this.props.state.appServerTotals ? <BarGraph /> : <div>Loading...</div> }
-            </Panel>
-          </Col>
+         
         </Row>
-
+        <h2>History</h2>
       </Grid>
     )
   }
