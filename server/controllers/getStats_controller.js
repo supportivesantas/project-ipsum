@@ -1,4 +1,5 @@
 var clientApps = require('../db/collections/client-apps');
+var clientServer = require('../db/models/client-server');
 var clientServers = require('../db/collections/client-server');
 var stats = require('../db/collections/stats');
 var _ = require('underscore');
@@ -229,3 +230,4 @@ exports.serverTotalsForApp = function(req, res, next) {
     getStatsWithAppId(appid);
   }
 }
+

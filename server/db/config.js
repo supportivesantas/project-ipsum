@@ -104,4 +104,19 @@ db.knex.schema.hasTable('hashes').then(function(exists) {
   }
 });
 
+db.knex.schema.hasTable('serversummaries').then(function(exists) {
+  if (!exists) {
+    db.knex.schema.createTable('serversummaries', function(serversummaries) {
+      serversummaries.increments('id').primary();
+      // serversummaries.integer('githubid').references('users.githubid'); // comment out for now
+      serversummaries.string('serverid');
+      serversummaries.string('route');
+      serversummaries.string('value');
+      serversummaries.string('day');
+    }).then(function(table) {
+      console.log('Created Server Summaries Table', table);
+    });
+  }
+});
+
 module.exports = db;
