@@ -83,18 +83,10 @@ const formatDataByHour = function(allRoutes, serverStats, dataRange) {
 const getAllServerIds = (callback) => {
   console.log('getting server ids');
   const serverIds = [];
-  // Server.fetchAll()
-  //   .then((servers) => {
-  //     _.each(servers.models, (item) => {
-  //       serverIds.push(item.attributes.id);
-  //     });
-  //     callback(serverIds);
-  //   });
-  client.query("select * from 'clientServers'")
+  client.query('select "id" from "clientServers"')
     .then((servers) => {
-      console.log(servers);
-      _.each(servers.models, (item) => {
-        serverIds.push(item.attributes.id);
+      _.each(servers, (item) => {
+        serverIds.push(item.id);
       });
       callback(serverIds);
     });
