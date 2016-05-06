@@ -26,11 +26,7 @@ const getInitialState = () => {
         handle: '',
       },
       servers: [],
-      serverSelection: {
-        serverId: 0,
-        hostName: '',
-        ip: '',
-      },
+      serverSelection: {},
       lineGraphTitle: [],
       graphData: []
     };

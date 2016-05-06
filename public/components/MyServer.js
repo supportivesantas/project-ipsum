@@ -28,14 +28,14 @@ class MyServer extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-      renderChart('serverGraph', this.props.state.graphData[0].data);
+      renderChart('lineGraph', this.props.state.graphData[0].data);
       });
   }
 
   updateGraph(graph) {
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
     var graphData = this.props.state.graphData;
-    d3.selectAll('svg').remove();
+    d3.select('#lineGraph').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
       if (graphData[i].route === graph.route) {
@@ -43,7 +43,7 @@ class MyServer extends React.Component {
         break;
       }
     }
-    renderChart('serverGraph', graphData[routeIndex].data);
+    renderChart('lineGraph', graphData[routeIndex].data);
   }
 
   render() {
@@ -75,7 +75,7 @@ class MyServer extends React.Component {
           <Col xs={12} lg={8}>
             <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
               <h5 className="xAxis-title">Hits Per Hour</h5>
-              <div id="serverGraph"></div>
+              <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
             </Panel>
           </Col>

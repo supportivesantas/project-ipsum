@@ -16,12 +16,12 @@ describe('Client Integration Tests', () => {
     connectionString: process.env.PG_CONNECTION_STRING
   });
 
-  // stuff we need to keep track of  
+  // stuff we need to keep track of
   var hash = null;
   var userID = null;
   var appID = null;
   var serverID = null;
-  
+
   // describe setup
   before((next) => {
     // creating listener with random port
@@ -29,7 +29,7 @@ describe('Client Integration Tests', () => {
       // store port when its ready
       port = server.address().port;
 
-      // setup db connection      
+      // setup db connection
       client.connect()
         .then((result) => {
           return client.query('DELETE FROM "clientServers" WHERE ip = ${ip};' +
@@ -46,7 +46,7 @@ describe('Client Integration Tests', () => {
         })
         .catch((error) => {
           console.log('ERROR: Failed in setting up database connection.', error);
-        });    
+        });
     });
   });
 
@@ -89,7 +89,7 @@ describe('Client Integration Tests', () => {
         done();
       });
   });
-  
+
   it('should find an entry for the server', (done) => {
     client.one('SELECT * FROM "clientServers" WHERE "ip" = ${ip}', { ip: '127.0.0.1' })
       .then((result) => {
@@ -144,6 +144,44 @@ describe('Client Integration Tests', () => {
         expect(error).to.not.exist;
         done();
       });
+  });
+
+  it('should accept single server stats POST', (done) => {
+    requestP({
+      method: 'POST',
+      uri: 'http://localhost:' + port + '/getStats/server',
+      json: true,
+      body: {
+        serverId: 1,
+        hours: 24
+      }
+    })
+      .then((response) => {
+        expect(response[0].route).to.equal('Total');
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+      });
+      done();
+  });
+
+    it('should accept single app stats POST', (done) => {
+    requestP({
+      method: 'POST',
+      uri: 'http://localhost:' + port + '/getStats/app',
+      json: true,
+      body: {
+        appId: 1,
+        hours: 24
+      }
+    })
+      .then((response) => {
+        expect(response[0].route).to.equal('Total');
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+      });
+      done();
   });
 
   it('should store statistics in stats table', (done) => {
