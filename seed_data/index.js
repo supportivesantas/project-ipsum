@@ -50,6 +50,7 @@ var randomRoute = [
 ];
 
 var userID = null;
+var username = null;
 var servers = [];
 var apps = [];
 
@@ -111,7 +112,7 @@ var compileStats = () => {
 
       // for each app generate some stats on this server
       for (var i = 0; i < numApps; i++) {
-        var testStat = new stats(userID, servers[currentServer], apps[theseApps[i]], 1000, timeStamps[currentStamp]);
+        var testStat = new stats(userID, username, servers[currentServer], apps[theseApps[i]], 1000, timeStamps[currentStamp]);
 
         // save hash        
         testStat.saveHash(client);
@@ -176,10 +177,9 @@ if (process.argv.length < 3) {
 
 client.connect()
   .then((result) => {
-    let username = null;
     username = process.argv[2];
     console.log('Initializing Servers and Apps');
-    client.query('INSERT INTO "users" ("username") VALUES (${username}) RETURNING id',
+    client.query('INSERT INTO "users" ("username") VALUES (${username}) ON CONFLICT ("username") DO UPDATE SET username = ${username} RETURNING id',
     {username: username})
       .then((result) => {
         console.log('Inserted user ' + username + ' ', result);

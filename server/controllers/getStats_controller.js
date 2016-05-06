@@ -141,7 +141,7 @@ exports.singleServer = function(req, res) {
       .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
       .fetchAll()
         .then(function(serverStats) {
-          var response = formatDataByHour(allRoutes, serverStats, dataRange);
+          var response = exports.formatDataByHour(allRoutes, serverStats, dataRange);
           res.send(response);
         })
         .catch(function(error) {

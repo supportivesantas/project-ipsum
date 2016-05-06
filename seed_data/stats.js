@@ -1,8 +1,9 @@
 "use strict";
 
 class stats {
-  constructor(userID, statServer, statApp, maxHits, time) {
+  constructor(userID, username, statServer, statApp, maxHits, time) {
     this.userID = userID;
+    this.username = username,
     this.statServer = statServer;
     this.statApp = statApp;
     this.maxHits = maxHits;
@@ -29,8 +30,8 @@ class stats {
   saveHash(client) {
     var hash = this.statServer.ip + this.statApp.appname;
     
-    client.query('INSERT INTO "hashes" ("users_id", "clientApps_id", "clientServers_id", "hash", "username", "ip", "appname") VALUES ($1, $2, $3, $4, (SELECT username FROM users WHERE id = 1) , $4, $5) ON CONFLICT ("hash") DO NOTHING',
-      [this.userID, this.statApp.id, this.statServer.id, hash, this.statServer.ip, this.statApp.appname])
+    client.query('INSERT INTO "hashes" ("users_id", "clientApps_id", "clientServers_id", "hash", "username", "ip", "appname") VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT ("hash") DO NOTHING',
+      [this.userID, this.statApp.id, this.statServer.id, hash, this.username, this.statServer.ip, this.statApp.appname])
       .then((results) => {
         // do nothing
       })
