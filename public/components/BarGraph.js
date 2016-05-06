@@ -1,18 +1,14 @@
+import { connect } from 'react-redux';
 import React from 'react';
 
-export default class BarGraph extends React.Component {
-  constructor(props) {
-    super(props);
-    this.displayName = 'd3BarGraph';
-  }
+class BarGraph extends React.Component {
 
   componentDidMount() {
     /* Taken from: https://bost.ocks.org/mike/bar/2/ */
-    var data = this.props.data;
+    var data = this.props.state.appServerTotals;
 
     var width = document.querySelector(".barGraph").clientWidth,
       barHeight = 20;
-      console.log(width);
 
     var x = d3.scale.linear()
     .range([0, width]);
@@ -40,10 +36,10 @@ export default class BarGraph extends React.Component {
 
   render() {
     return (
-        <svg className="barGraph"></svg>   
+        <svg className="barGraph"></svg>
       );
   }
 }
 
-// ensure the data is present before trying to render
-BarGraph.propTypes = { data: React.PropTypes.array.isRequired };
+BarGraph = connect(state => ({ state: state }))(BarGraph);
+export default BarGraph;

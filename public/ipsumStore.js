@@ -3,11 +3,12 @@ import userReducer from './reducers/userReducer.js';
 import applicationReducer from './reducers/applicationReducer.js';
 import serverReducer from './reducers/serverReducer.js';
 import getDataReducer from './reducers/getDataReducer.js';
-import weekDataReducer from './reducers/weekDataReducer.js';
 import logger from 'redux-logger';
 import { routerReducer } from 'react-router-redux';
 import lineGraphTitleReducer from './reducers/lineGraphTitleReducer.js';
 import serverSelectReducer from './reducers/serverSelectReducer.js';
+import changeAppServerTotalsReducer from './reducers/changeAppServerTotalsReducer.js';
+import changeAppnameReducer from './reducers/currentAppnameReducer.js';
 
 
 const middleware = [logger()];
@@ -31,10 +32,7 @@ const getInitialState = () => {
         ip: '',
       },
       lineGraphTitle: [],
-      graphData: [],
-      weekData: [] /* an array of integers containing the number
-                    of hits over one week for one app (across
-                    all serves for all relevantrelated routes) */
+      graphData: []
     };
   }
 };
@@ -49,11 +47,14 @@ export default function configureStore(browserHistory, initialState = getInitial
     serverSelection: serverSelectReducer,
     servers: serverReducer,
     graphData: getDataReducer,
-    weekData: weekDataReducer
+    graphData: getDataReducer,
+    currentAppname: changeAppnameReducer,
+    appServerTotals: changeAppServerTotalsReducer
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f
     ));
   return store;
 }
+
 

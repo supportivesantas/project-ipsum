@@ -7,19 +7,17 @@ import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import BarGraph from './BarGraph'
 
-export default class MyApp extends React.Component {
+class MyApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      hours: 168,
-      data: null
     };
   }
 
   componentDidMount(){
-    request.post('http://localhost:1337/getStats/serverTotalsForApp', {
+    request.post('/getStats/serverTotalsForApp', {
       appid: this.props.appid || 5, // 'TODO:' remove the OR statement before deploying
-      appname: this.props.appname || "follower", // TODO: remove the OR statement before deploying
+      appname: this.props.currentAppname || "follower", // TODO: remove the OR statement before deploying
       hours: 168 // defaults to totals for 1 week
     }, (err, data) => {
       var data = JSON.parse(data.text);
@@ -29,9 +27,10 @@ export default class MyApp extends React.Component {
           value: data[server].statValue, 
           label: data[server].hostname || data[server].ip
         });
-      }); 
-      this.setState({data: output});
-    })
+      });
+      // this.setState({data: output});
+      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output))
+    });
   }
 
   render() {
@@ -39,25 +38,39 @@ export default class MyApp extends React.Component {
       <Grid>
         <Row className="app-control-panel">
           <Col xs={12} md={12}>
+            <h3>{this.props.state.currentAppname || 'Test App Name'}</h3>
+          </Col>
+        </Row>
+
+        <Row className="app-control-panel">
+          <Col xs={12} md={12}>
             <Panel header={<h1>Application Control Panel</h1>}>
             <i>Note: Route traffic info aggregates across all servers running the app</i> <br/>
             </Panel>
           </Col>
         </Row>
+
         <Row>
           <Col xs={12} md={4}>
-            <Panel header={<div>Some Other Info</div>} id="yadda">
-              <strong>Some Other Info</strong>
+            <Panel header={<h1>Server Status</h1>} id="yadda">
+              <div>
+                <div>SFO1: green (well under max)</div>
+                <div>NYC2: yellow (close to max)</div>
+                <div>HKG3: red (down)</div>
+              </div>
             </Panel>
           </Col>
           <Col xs={12} md={8}>
-            <Panel header={<div>{this.props.appname || 'Test App Name'}</div>} id="appGraph">
-              <strong>Relative Server Load</strong>
-              {this.state.data ? <BarGraph data={this.state.data}/> : <div>Loading...</div> }
+            <Panel header={<h1>Relative Server Load</h1>} id="appGraph">
+              {this.props.state.appServerTotals ? <BarGraph /> : <div>Loading...</div> }
             </Panel>
           </Col>
         </Row>
+
       </Grid>
     )
   }
 }
+
+MyApp = connect(state => ({ state: state }))(MyApp);
+export default MyApp
