@@ -18,6 +18,7 @@ describe('Client Integration Tests', () => {
 
   // stuff we need to keep track of  
   var hash = null;
+  var userID = null;
   var appID = null;
   var serverID = null;
   
@@ -31,10 +32,12 @@ describe('Client Integration Tests', () => {
       // setup db connection      
       client.connect()
         .then((result) => {
-          return client.query('DELETE FROM "clientServers" WHERE ip = ${ip}' +
-            '; DELETE FROM "clientApps" WHERE "appname" = ${appname}', {
+          return client.query('DELETE FROM "clientServers" WHERE ip = ${ip};' +
+            'DELETE FROM "clientApps" WHERE "appname" = ${appname};' +
+            'DELETE FROM "users" WHERE "username" = ${username}', {
               ip: '127.0.0.1',
-              appname: 'testapp'
+              appname: 'testapp',
+              username: 'testuser'
             });
         })
         .then((result) => {
@@ -55,6 +58,7 @@ describe('Client Integration Tests', () => {
       uri: 'http://localhost:' + port + '/stats/register',
       json: true,
       body: {
+        username: 'testuser',
         ip: '127.0.0.1',
         hostname: 'testhost',
         appname: 'testapp'
@@ -66,6 +70,21 @@ describe('Client Integration Tests', () => {
         done();
       })
       .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
+  it('should find an entry for the user', (done) => {
+    client.one('SELECT * FROM "users" WHERE "username" = ${username}', { username: 'testuser' })
+      .then((result) => {
+        expect(result).to.exist;
+        expect(result.username).to.equal('testuser');
+        userID = result.id;
+        done();
+      })
+      .catch((error) => {
+        console.log(error);
         expect(error).to.not.exist;
         done();
       });
@@ -147,10 +166,12 @@ describe('Client Integration Tests', () => {
   // teardown
   after(() => {
     // stop listening that port
-    client.query('DELETE FROM "clientServers" WHERE ip = ${ip}' +
-      '; DELETE FROM "clientApps" WHERE "appname" = ${appname}', {
+    client.query('DELETE FROM "clientServers" WHERE ip = ${ip};' +
+      'DELETE FROM "clientApps" WHERE "appname" = ${appname};' +
+      'DELETE FROM "users" WHERE "username" = ${username}', {
         ip: '127.0.0.1',
-        appname: 'testapp'
+        appname: 'testapp',
+        username: 'testuser'
       });
     server.close();
   });
