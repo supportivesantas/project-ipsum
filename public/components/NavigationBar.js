@@ -32,5 +32,4 @@ const NavigationBar = () => {
   );
 };
 
-// ReactDOM.render(NavigationBar, document.getElementById('nav'));
 export default NavigationBar;

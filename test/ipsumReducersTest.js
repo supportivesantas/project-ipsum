@@ -30,6 +30,12 @@ describe('Application Reducer Tests', () => {
       .be.undefined;
     done();
   });
+  
+  it('Should handle MASS_POPULATE_APPS', (done) => {
+    expect(appReducer([], actions.MASS_POPULATE_APPS([{ id: 0, thing: 'mwb' }, { id: 1, thing: 'QQ' }])).length)
+      .to.equal(2);
+    done();
+  });
 });
 
 describe('Get Data Reducer Tests ', () => {

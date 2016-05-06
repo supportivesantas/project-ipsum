@@ -104,4 +104,38 @@ db.knex.schema.hasTable('hashes').then(function(exists) {
   }
 });
 
+db.knex.schema.hasTable('serversummaries').then(function(exists) {
+  if (!exists) {
+    db.knex.schema.createTable('serversummaries', function(serversummaries) {
+      serversummaries.increments('id').primary();
+      // serversummaries.integer('githubid').references('users.githubid'); // comment out for now
+      serversummaries.string('serverid');
+      serversummaries.string('route');
+      serversummaries.string('value');
+      serversummaries.string('day');
+      serversummaries.string('month');
+      serversummaries.string('year');
+    }).then(function(table) {
+      console.log('Created Server Summaries Table', table);
+    });
+  }
+});
+
+db.knex.schema.hasTable('appsummaries').then(function(exists) {
+  if (!exists) {
+    db.knex.schema.createTable('appsummaries', function(appsummaries) {
+      appsummaries.increments('id').primary();
+      // appsummaries.integer('githubid').references('users.githubid'); // comment out for now
+      appsummaries.string('appid');
+      appsummaries.string('route');
+      appsummaries.string('value');
+      appsummaries.string('day');
+      appsummaries.string('month');
+      appsummaries.string('year');
+    }).then(function(table) {
+      console.log('Created App Summaries Table', table);
+    });
+  }
+});
+
 module.exports = db;

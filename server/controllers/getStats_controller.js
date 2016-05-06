@@ -1,4 +1,5 @@
 var clientApps = require('../db/collections/client-apps');
+var clientServer = require('../db/models/client-server');
 var clientServers = require('../db/collections/client-server');
 var stats = require('../db/collections/stats');
 var _ = require('underscore');
@@ -7,7 +8,7 @@ var knex = require('knex')({
   connection: process.env.PG_CONNECTION_STRING,
 });
 
-const formatDataByHour = function(allRoutes, serverStats, dataRange) {
+exports.formatDataByHour = function(allRoutes, serverStats, dataRange) {
     // if no hits for all routes populate with data, hits = 0
   var models = serverStats.models;
   var graphData = [];
@@ -101,7 +102,7 @@ exports.singleApp = function(req, res) {
       .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
       .fetchAll()
         .then(function(serverStats) {
-          var response = formatDataByHour(allRoutes, serverStats, dataRange);
+          var response = exports.formatDataByHour(allRoutes, serverStats, dataRange);
           res.send(response);
         })
         .catch(function(error) {
@@ -229,3 +230,4 @@ exports.serverTotalsForApp = function(req, res, next) {
     getStatsWithAppId(appid);
   }
 }
+

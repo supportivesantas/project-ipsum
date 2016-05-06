@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
 import MainPageAppView from './MainPageAppView.js';
-import {Grid, Row} from 'react-bootstrap';
+import { Grid, Row } from 'react-bootstrap';
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -14,14 +14,8 @@ class MainPage extends React.Component {
   }
 
   componentWillMount() {
+    // Get app and server data and place in store
     restHandler.get('/user/init', (err, res) => {
-      // const servers = JSON.parse(res.text).servers;
-      // const serversArr = [];
-      // for (let i = 0; i < servers.length; i++) {
-      //   serversArr.push(actions.ADD_SERVER(servers[i].server_id, servers[i].ip,
-      //     servers[i].platform, servers[i].name, servers[i].platformSpecific.status));
-      // }
-      // this.props.dispatch(actions.MASS_POPULATE_SERVERS(serversArr));
       const data = JSON.parse(res.text);
       console.log(data);
       this.props.dispatch(actions.MASS_POPULATE_APPS(data.apps));
@@ -30,6 +24,7 @@ class MainPage extends React.Component {
   }
 
   appList() {
+    // Create a view for each app
     return this.props.state.applications.map((app, index) => {
       return (
         <MainPageAppView selected={app} />
