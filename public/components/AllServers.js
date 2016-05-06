@@ -23,7 +23,7 @@ class AllServers extends React.Component {
     return (
       <Link to="/myServer">
         <div onClick={this.goToServer.bind(this, cell)}>
-        Click Me!
+        ===>
         </div>
       </Link>
       );
@@ -68,7 +68,7 @@ class AllServers extends React.Component {
           <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
           <TableHeaderColumn dataField="active" dataSort={true}>Status</TableHeaderColumn>
           <TableHeaderColumn dataField="apps" dataFormat={this.enumFormatter} formatExtraData={this.tableAppsLinkForm.bind(this)}>Application</TableHeaderColumn>
-          <TableHeaderColumn dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm.bind(this)}>Link</TableHeaderColumn>
+          <TableHeaderColumn dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm.bind(this)}>See Stats</TableHeaderColumn>
         </BootstrapTable>
       </Col></Row></Grid>
     );

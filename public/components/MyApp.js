@@ -17,6 +17,10 @@ class MyApp extends React.Component {
 
   componentDidMount(){
     //For server totals bar graph
+    // d3.selection.prototype.first = function() {
+    //   return d3.select(this[0][0]);
+    // };
+    // var svgs
     request.post('/getStats/serverTotalsForApp', {
       appid: this.props.appid || 5, // 'TODO:' remove the OR statement before deploying
       appname: this.props.currentAppname || "follower", // TODO: remove the OR statement before deploying
@@ -40,14 +44,14 @@ class MyApp extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        renderChart('Graph', this.props.state.graphData[0].data);
+        renderChart('lineGraph', this.props.state.graphData[0].data);
     });
   }
 
   updateGraph(graph) {
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
     var graphData = this.props.state.graphData;
-    d3.selectAll('svg').remove();
+    d3.select('#lineGraph').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
       if (graphData[i].route === graph.route) {
@@ -55,7 +59,7 @@ class MyApp extends React.Component {
         break;
       }
     }
-    renderChart('Graph', graphData[routeIndex].data);
+    renderChart('lineGraph', graphData[routeIndex].data);
   }
 
   render() {
@@ -95,7 +99,7 @@ class MyApp extends React.Component {
           <Col xs={12} lg={8}>
             <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
               <h5 className="xAxis-title">Hits Per Hour</h5>
-              <div id="Graph"></div>
+              <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
             </Panel>
           </Col>
