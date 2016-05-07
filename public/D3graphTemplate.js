@@ -1,6 +1,6 @@
 export function renderChart(graphId, data) {
   // element.clientWidth to adjust graph size to div
-  var m = [20, 80, 20, 80]; // margins
+  var m = [20, 120, 20, 60]; // margins
   var w = document.querySelector("#lineGraph").clientWidth - m[1] - m[3]; // width
   var h = 400 - m[0] - m[2]; // height
 

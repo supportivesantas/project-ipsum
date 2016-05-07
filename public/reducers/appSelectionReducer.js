@@ -1,7 +1,7 @@
 module.exports = (state = [], action) => {
   switch (action.type) {
-      case 'CHANGE_CURRENT_APPNAME':
-        return action.appname;
+      case 'ADD_APP_SELECTION':
+        return action.data;
     default:
       return state;
   }

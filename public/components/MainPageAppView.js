@@ -13,9 +13,9 @@ class MainPageAppView extends React.Component {
     };
   }
 
-  getNumServers() {
+  getNumServers(id) {
     const appServers = _.filter(this.props.state.servers, (item) => {
-      return item.app === this.props.selected.appname;
+      return _.pluck(item.apps, 0).indexOf(id) !== -1;
     });
     const activeServers = _.filter(appServers, (item) => {
       return item.active === 'active';
@@ -23,16 +23,18 @@ class MainPageAppView extends React.Component {
     return { active: activeServers, total: appServers };
   }
 
-  generateHeader() {
+  generateHeader(id) {
+    var ratio = this.getNumServers(id);
+    console.log(ratio);
     return (
         <div onClick={this.goToApp.bind(this)} className="AppViewHeaderText">
-            {this.props.selected.appname}
+            {this.props.selected.appname} <span className="pull-right">{ratio.active.length}/{ratio.total.length} active</span>
         </div>
     );
   }
 
   goToApp() {
-    this.props.dispatch(actions.CHANGE_CURRENT_APPNAME(this.props.selected.appname));
+    this.props.dispatch(actions.ADD_APP_SELECTION(this.props.selected));
     browserHistory.push('/myApp');
   }
 
@@ -40,7 +42,7 @@ class MainPageAppView extends React.Component {
     return (
       <Col xs={12} sm={6} md={6}>
         <div className="MainPageAppView">
-          <Panel header={this.generateHeader()}>
+          <Panel header={this.generateHeader(this.props.selected.id)}>
             <Panel>
               GRAPH GOES HERE
             </Panel>

@@ -6,6 +6,7 @@ import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem }
 import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import BarGraph from './BarGraph';
+import _ from 'underscore';
 
 class MyApp extends React.Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class MyApp extends React.Component {
   componentDidMount(){
     // for bar graph
     request.post('/getStats/serverTotalsForApp', {
-      appname: this.props.state.currentAppname, 
+      appname: this.props.state.appSelection.id, 
       hours: 24
     }, (err, data) => {
       var data = JSON.parse(data.text);
@@ -25,14 +26,14 @@ class MyApp extends React.Component {
       Object.keys(data).forEach((server) => {
         output.push({
           value: data[server].statValue,
-          label: data[server].hostname || data[server].ip
+          label: data[server].hostname
         });
       this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
     });
     //For line Graph
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
-    var appId = appId || 2; //1 for testing, will need to connect with clicked server
+    var appId = this.props.state.appSelection.id;
     request.post('/getStats/app',
       {appId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
       (err, res) => {
@@ -59,7 +60,7 @@ class MyApp extends React.Component {
   render() {
     return (
        <Grid>
-        <Row><Col xs={12} md={12}><PageHeader>{this.props.state.currentAppname} <small>at a glance</small></PageHeader></Col></Row>
+        <Row><Col xs={12} md={12}><PageHeader>{this.props.state.appSelection.appname} <small>at a glance</small></PageHeader></Col></Row>
         <Row className="app-control-panel">
           <Col xs={12} md={12}>
             <Panel header={<h1>Control Panel</h1>}>
@@ -71,40 +72,44 @@ class MyApp extends React.Component {
         <h2>Todays Traffic</h2>
         <Row className='serverStatContainer'>
 
-          <Col xs={12} lg={4} >
+          <Col xs={12} lg={12} >
             <Panel header={<div>Routes</div>} >
+            <Grid>
+            <Row>
+            <Col xs={4} lg={4}>
               <ListGroup className='server-route-list'>
-               {this.props.state.graphData.map(graph =>
-                  <ListGroupItem className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+               {this.props.state.graphData.map((graph, idx) =>
+                  <ListGroupItem key={idx} className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
                     /{graph.route}
                   </ListGroupItem>
                 )}
              </ListGroup>
-           </Panel>
-          </Col>
-          <Col xs={12} lg={8}>
-            <Panel header={<div>Route: <strong>{this.props.state.lineGraphTitle[0]}</strong></div>} >
+            </Col>
+            <Col xs={8} lg={8}>
               <h5 className="xAxis-title">Hits Per Hour</h5>
               <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
+
+            </Col>
+            </Row>
+            </Grid>
             </Panel>
           </Col>
 
         </Row>
-        <hr />
         <Row>
           <Col xs={6} md={6}>
-            <Panel header={<h1>Relative Server Load</h1>} id="appGraph">
+            <Panel header={<h1>Relative Server Load (last 24 hrs)</h1>} id="appGraph">
               {this.props.state.appServerTotals ? <BarGraph /> : <div>Loading...</div> }
             </Panel>
           </Col>
           <Col xs={6} md={6}>
             <Panel header={<h1>Server Statuses</h1>} id="yadda">
-              <div>
-                <div>SFO1: green (well under max)</div>
-                <div>NYC2: yellow (close to max)</div>
-                <div>HKG3: red (down)</div>
-              </div>
+              <ListGroup>
+                {this.props.state.servers.map((server, idx) => 
+                  _.pluck(server.apps, 0).indexOf(this.props.state.appSelection.id) !== -1 ? <ListGroupItem key={idx}>{server.hostname} {server.active}</ListGroupItem> : null
+                )}
+              </ListGroup>
             </Panel>
           </Col>
          
