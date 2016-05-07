@@ -15,19 +15,18 @@ var db = pgp(process.env.PG_CONNECTION_STRING);
 
 const generateServSummaries = () => {
 // const generateServSummaries = new Promise((resolve, reject) => {
-  let count = 0;
   return new Promise((resolve, reject) => {
     ctrl.getAllServerIds((serverList) => {
       for (let i = 0; i < serverList.length; i++) {
-        ctrl.singleServerSummary(serverList[i], (data) => {
+        ctrl.singleServerSummary(serverList[i].id, (data) => {
           for (let j = 0; j < data.length; j++) {
             if (data[j].route !== 'Total') {
               const hits = _.reduce(data[j].data, (memo, dataPoint) => {
                 return memo + dataPoint.hits;
               }, 0);
-              console.log('Server Summary #' + count++ + ' generated');
               servsummaries.push({
-                serverid: serverList[i],
+                serverid: serverList[i].id,
+                users_id: serverList[i].owner,
                 route: data[j].route,
                 value: hits,
                 day: day,
@@ -46,26 +45,25 @@ const generateServSummaries = () => {
 };
 // const generateAppSummaries = new Promise((resolve, reject) => {
 const generateAppSummaries = () => {
-  let count = 0;
   return new Promise((resolve, reject) => {
-    ctrl.getAllAppIds((appIds) => {
-      for (let i = 0; i < appIds.length; i++) {
-        ctrl.singleApp(appIds[i], (data) => {
+    ctrl.getAllAppIds((appList) => {
+      for (let i = 0; i < appList.length; i++) {
+        ctrl.singleApp(appList[i].id, (data) => {
           for (let j = 0; j < data.length; j++) {
             if (data[j].route !== 'Total') {
               const hits = _.reduce(data[j].data, (memo, dataPoint) => {
                 return memo + dataPoint.hits;
               }, 0);
-              console.log('App Summary #' + count++ + ' generated');
               appsummaries.push({
-                appid: appIds[i],
+                appid: appList[i].id,
+                users_id: appList[i].owner,
                 route: data[j].route,
                 value: hits,
                 day: day,
                 month: month,
                 year: year,
               });
-              if (i === appIds.length - 1 && j === data.length - 1) {
+              if (i === appList.length - 1 && j === data.length - 1) {
                 resolve();
               }
             }
@@ -96,14 +94,14 @@ db.connect()
         generateAppSummaries()
           .then(() => {
             db.tx((t) => t.batch(servsummaries.map((l) => t.none(
-                  `INSERT INTO serversummaries(serverid, route, value, day, month, year)
-                   VALUES($[serverid], $[route], $[value], $[day], $[month], $[year])`, l))))
+                  `INSERT INTO serversummaries(serverid, users_id, route, value, day, month, year)
+                   VALUES($[serverid], $[users_id], $[route], $[value], $[day], $[month], $[year])`, l))))
                 .then((data) => {
                     // data = array of undefined
                   console.log('Server summaries added to DB!');
                   db.tx((t1) => t1.batch(appsummaries.map((l) => t1.none(
-                        `INSERT INTO appsummaries(appid, route, value, day, month, year)
-                         VALUES($[appid], $[route], $[value], $[day], $[month], $[year])`, l))))
+                        `INSERT INTO appsummaries(appid, users_id, route, value, day, month, year)
+                         VALUES($[appid], $[users_id], $[route], $[value], $[day], $[month], $[year])`, l))))
                       .then((data) => {
                         // data = array of undefined
                         result.done(); // must release the connection here;
