@@ -1,5 +1,6 @@
 import React from 'react';
 import actions from '../actions/ipsumActions.js';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { renderChart } from '../D3graphTemplate';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
@@ -63,6 +64,24 @@ class MyApp extends React.Component {
     renderChart('lineGraph', graphData[routeIndex].data);
   }
 
+  tableLinkForm(cell) {
+    return (
+      <Link to="/myServer">
+        <div onClick={this.goToServer.bind(this, cell)}>
+          {_.findWhere(this.props.state.servers, {id: cell}).active}
+        </div>
+      </Link>
+      );
+  }
+
+  goToServer(cell) {
+    this.props.dispatch(actions.ADD_SERVER_SELECTION(_.findWhere(this.props.state.servers, {id: cell})));
+  }
+
+  enumFormatter(cell, row, enumObject) {
+    return enumObject(cell);
+  }
+
   render() {
     var sortedServerTotals = _.sortBy(this.props.state.appServerTotals, (obj) => {
         return -obj.value;
@@ -70,11 +89,10 @@ class MyApp extends React.Component {
     var statusData = sortedServerTotals.map((total, idx) => {
       return {
         label: total.label,
-        status: _.findWhere(this.props.state.servers, {id: total.id}).active
+        status: _.findWhere(this.props.state.servers, {id: total.id}).active,
+        id: total.id
       }
     })
-
-    console.log(statusData);
 
     return (
        <Grid>
@@ -131,7 +149,7 @@ class MyApp extends React.Component {
                 <h4>Status</h4>
                 <BootstrapTable ref='table' data={statusData} striped={true} hover={true} >
                   <TableHeaderColumn isKey={true} dataField="label" dataAlign="center">Hostname</TableHeaderColumn>
-                  <TableHeaderColumn dataField='status' dataAlign="center">Status</TableHeaderColumn>
+                  <TableHeaderColumn dataAlign="center" dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm.bind(this)}>See Stats</TableHeaderColumn>
                 </BootstrapTable>
 
               </Col>
