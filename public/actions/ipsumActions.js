@@ -46,6 +46,12 @@ module.exports = {
       id: id,
     };
   },
+  ADD_ALL_APP_SUMMARIES(data) {
+    return {
+      type: 'ADD_ALL_APP_SUMMARIES',
+      data: data,
+    }
+  },
   ADD_SERVER_SELECTION(data) {
     return {
       type: 'ADD_SERVER_SELECTION',

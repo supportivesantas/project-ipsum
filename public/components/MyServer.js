@@ -35,7 +35,7 @@ class MyServer extends React.Component {
   updateGraph(graph) {
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
     var graphData = this.props.state.graphData;
-    d3.select('#lineGraph').remove();
+    d3.select('#lineGraph > svg').remove();
     var routeIndex;
     for (var i = 0; i < graphData.length; i++) {
       if (graphData[i].route === graph.route) {

@@ -1,8 +1,8 @@
 const db = require('../config.js');
-const serversummary = require('../models/serversummary.js');
+const ServerSummary = require('../models/serversummary.js');
 
 const ServerSummaries = new db.Collection();
 
-ServerSummaries.model = serversummary;
+ServerSummaries.model = ServerSummary;
 
 module.exports = ServerSummaries;

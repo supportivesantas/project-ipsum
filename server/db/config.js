@@ -115,6 +115,7 @@ db.knex.schema.hasTable('serversummaries').then(function(exists) {
       serversummaries.string('day');
       serversummaries.string('month');
       serversummaries.string('year');
+      serversummaries.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
     }).then(function(table) {
       console.log('Created Server Summaries Table', table);
     });
@@ -132,6 +133,7 @@ db.knex.schema.hasTable('appsummaries').then(function(exists) {
       appsummaries.string('day');
       appsummaries.string('month');
       appsummaries.string('year');
+      appsummaries.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
     }).then(function(table) {
       console.log('Created App Summaries Table', table);
     });
