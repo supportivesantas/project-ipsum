@@ -78,6 +78,7 @@ exports.singleApp = function(req, res) {
   var appId = req.body.appId || 3; //TODO: leave until server IDs are fixed
   var hoursvar = req.body.hours || 12; //default to last twelve hours
   var dataRange = _.range(hoursvar + 1);
+ // var userId = req.user.id;//======================================================Put check in Later
 
   if (!appId) {
     console.log('Error, could not get appID', error);

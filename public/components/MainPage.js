@@ -21,6 +21,10 @@ class MainPage extends React.Component {
       this.props.dispatch(actions.MASS_POPULATE_APPS(data.apps));
       this.props.dispatch(actions.MASS_POPULATE_SERVERS(data.servers));
     });
+
+    restHandler.post('getStats/allAppSummaries', {}, (err, res) => {
+      this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
+    });
   }
 
   appList() {

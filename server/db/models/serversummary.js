@@ -1,7 +1,8 @@
 const db = require('../config.js');
 
-const serversummary = db.Model.extend({
+const ServerSummary = db.Model.extend({
   tableName: 'serversummaries',
+  hasTimestamps: true,
 });
 
-module.exports = serversummary;
+module.exports = ServerSummary;

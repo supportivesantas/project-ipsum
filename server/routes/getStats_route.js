@@ -1,14 +1,12 @@
 var getStatsRoutes = require('express').Router();
 var getStatsController = require('../controllers/getStats_controller');
+var getSummaryStatsController = require('../controllers/getSummaryStats_controller');
 
 getStatsRoutes.route('/server').post(getStatsController.singleServer);
 getStatsRoutes.route('/app').post(getStatsController.singleApp);
 getStatsRoutes.route('/serverTotalsForApp').post(getStatsController.serverTotalsForApp);
-// getStatsRoutes.route('/allAppSummaries').post(getStatsController.allAppSummaries);
-//yesterday/the week/  the month
-//total routes of app
-//total hits of apps
-//total servers / active or inactive
-//graph total hits per day over last week
+getStatsRoutes.route('/allAppSummaries').post(getSummaryStatsController.allAppSummaries);
+getStatsRoutes.route('/myServerSummary').post(getSummaryStatsController.myServerSummary);
+
 
 module.exports = getStatsRoutes;

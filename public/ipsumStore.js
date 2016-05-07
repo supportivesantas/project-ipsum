@@ -9,7 +9,7 @@ import lineGraphTitleReducer from './reducers/lineGraphTitleReducer.js';
 import serverSelectReducer from './reducers/serverSelectReducer.js';
 import changeAppServerTotalsReducer from './reducers/changeAppServerTotalsReducer.js';
 import changeAppnameReducer from './reducers/currentAppnameReducer.js';
-
+import allAppSummariesReducer from './reducers/allAppSummariesReducer.js';
 
 const middleware = [logger()];
 const getInitialState = () => {
@@ -21,6 +21,7 @@ const getInitialState = () => {
     return {
       routing: [],
       applications: [],
+      allAppSummaries: [],
       user: {
         isLogged: 'false',
         handle: '',
@@ -41,6 +42,7 @@ export default function configureStore(browserHistory, initialState = getInitial
     user: userReducer,
     lineGraphTitle: lineGraphTitleReducer,
     serverSelection: serverSelectReducer,
+    allAppSummaries: allAppSummariesReducer,
     servers: serverReducer,
     graphData: getDataReducer,
     graphData: getDataReducer,

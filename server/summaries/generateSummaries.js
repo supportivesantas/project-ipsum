@@ -1,3 +1,4 @@
+'use strict';
 var clientApps = require('../db/collections/client-apps');
 var Server = require('../db/models/client-server');
 var Servers = require('../db/collections/client-server');
