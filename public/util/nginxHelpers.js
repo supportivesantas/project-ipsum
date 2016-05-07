@@ -6,20 +6,23 @@ var log = function(error, stdout, stderr) {
 };
 
 module.exports = {
+
+  //NEED TO GET ID FOR REMOVE
+
   list(nginxipandport, zone) {
-    exec("wget http://" + nginxipandport + "/dynamic?upstream=" + zone, log);
+    exec("curl http://" + nginxipandport + "/upstream_conf?upstream=" + zone + "&verbose=", log);
   },
   enable(nginxipandport, targetipandport, zone) {
-    exec("wget http://" + nginxipandport + "/dynamic?upstream=" + zone + "&server=" + targetipandport + "&up=", log);
+    exec("curl http://" + nginxipandport + "/upstream_conf?upstream=" + zone + "&server=" + targetipandport + "&up=", log);
   },
   disable(nginxipandport, targetipandport, zone) {
-    exec("wget http://" + nginxipandport + "/dynamic?upstream=" + zone + "&server=" + targetipandport + "&down=", log);
+    exec("curl http://" + nginxipandport + "/upstream_conf?upstream=" + zone + "&server=" + targetipandport + "&down=", log);
   },
   add(nginxipandport, targetipandport, zone) {
-    exec("wget http://" + nginxipandport + "/dynamic?upstream=" + zone + "&add=&server=" + targetipandport, log);
+    exec("curl http://" + nginxipandport + "/upstream_conf?add=&upstream=" + zone + "&server=" + targetipandport, log);
   },
-  remove(nginxipandport, targetipandport, zone) {
-    exec("wget http://" + nginxipandport + "/dynamic?upstream=" + zone + "&remove=&server=" + targetipandport + "&down=", log);
+  remove(nginxipandport, id, zone) {
+    exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
   }
 
 };
