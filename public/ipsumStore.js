@@ -8,8 +8,8 @@ import { routerReducer } from 'react-router-redux';
 import lineGraphTitleReducer from './reducers/lineGraphTitleReducer.js';
 import serverSelectReducer from './reducers/serverSelectReducer.js';
 import changeAppServerTotalsReducer from './reducers/changeAppServerTotalsReducer.js';
-import changeAppnameReducer from './reducers/currentAppnameReducer.js';
 import allAppSummariesReducer from './reducers/allAppSummariesReducer.js';
+import appSelectionReducer from './reducers/appSelectionReducer.js';
 
 const middleware = [logger()];
 const getInitialState = () => {
@@ -46,7 +46,7 @@ export default function configureStore(browserHistory, initialState = getInitial
     servers: serverReducer,
     graphData: getDataReducer,
     graphData: getDataReducer,
-    currentAppname: changeAppnameReducer,
+    appSelection: appSelectionReducer,
     appServerTotals: changeAppServerTotalsReducer
   }), initialState, compose(
     applyMiddleware(...middleware),

@@ -1,54 +1,46 @@
 /*=========== GRAPH STYLING  ===========*/
 path {
-  stroke: green;
-  stroke-width: 2;
+  stroke: #A6E22E;
+  stroke-width: 3;
   fill: none;
 }
 
 .axis {
   shape-rendering: crispEdges;
 }
-
 svg#serverGraph {
   position: relative;
   align-content: center;
 }
-
-h5.xAxis-title {
+.xAxis-title {
   text-align: center;
 }
-
+.xAxis-subtitle {
+  text-align: center;
+  color: gray;
+}
+.linegraph-title{
+  text-align: center;
+}
 .x.axis line {
   stroke: lightgrey;
 }
-
 .x.axis .minor {
   stroke-opacity: .5;
 }
-
 .x.axis path {
   /*display: none;*/
   stroke: #000;
 }
-
 .y.axis line, .y.axis path {
   fill: none;
   stroke: #000;
 }
-
-.MainPageAppView {
-  background-color: light-green;
-  /*border: 2px solid red;*/
-}
-
 .AppViewHeaderText {
   /*color: red;*/
   text-align: left;
 }
 
-.panel-heading {
-
-}
 /*=======================================*/
 
 /*========= My Server Styling =============*/
@@ -102,6 +94,9 @@ nav.navbar {
 nav.navbar a {
   color: white;
 }
+nav.navbar a:active {
+  color: white;
+}
 .navbar-default .navbar-brand {
   color: white;
   transition: letter-spacing 0.5s ease;
@@ -110,21 +105,17 @@ nav.navbar a {
   letter-spacing: .05em;
   color:white;
 }
+nav.navbar-default a {
+}
 .panel {
   color: #272822;
 }
-/*.panel-heading:hover {
-  background-color: #FD971F;
-  color: white;
-}*/
 button {
   color: #272822;
 }
-
 .table {
   table-layout:fixed;
 }
-
 .table td {
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -137,7 +128,7 @@ button {
 
 /* ============== BAR GRAPH STYLING ============= */
 .barGraph rect {
-  fill: steelblue;
+  fill: #66D9EF;
 }
 .barGraph text {
   fill: white;
@@ -156,4 +147,7 @@ svg.barGraph {
   color: white;
   background-color: #FD971F;
   cursor: pointer;
+}
+.loading {
+  visibility: hidden;
 }

@@ -82,10 +82,10 @@ module.exports = {
       data: data,
     };
   },
-  CHANGE_CURRENT_APPNAME(data) {
+  ADD_APP_SELECTION(data) {
     return {
-      type: 'CHANGE_CURRENT_APPNAME',
-      appname: data,
+      type: 'ADD_APP_SELECTION',
+      data: data,
     };
   }
 };

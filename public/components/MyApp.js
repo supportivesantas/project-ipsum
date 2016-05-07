@@ -2,10 +2,11 @@ import React from 'react';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import { renderChart } from '../D3graphTemplate';
-import { Panel, Grid, Row, Col, Clearfix } from 'react-bootstrap';
+import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
 import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import BarGraph from './BarGraph';
+import barGraph from './BarGraph';
+import _ from 'underscore';
 
 class MyApp extends React.Component {
   constructor(props) {
@@ -15,23 +16,28 @@ class MyApp extends React.Component {
   }
 
   componentDidMount(){
+
+    // call 24 hr bar graph data and render
     request.post('/getStats/serverTotalsForApp', {
-      appname: this.props.state.currentAppname, // TODO: remove the OR statement before deploying
-      hours: 48 // defaults to totals for 1 week
+      appid: this.props.state.appSelection.id, 
+      hours: 24
     }, (err, data) => {
       var data = JSON.parse(data.text);
       var output = [];
-      Object.keys(data).forEach((server) => {
+      Object.keys(data).forEach((serverId) => {
         output.push({
-          value: data[server].statValue,
-          label: data[server].hostname || data[server].ip
+          value: data[serverId].statValue,
+          label: data[serverId].hostname,
+          id: Number(serverId)
         });
       this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
+      barGraph.render('todayBarGraph', this.props.state.appServerTotals);
     });
+
     //For line Graph
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
-    var appId = appId || 2; //1 for testing, will need to connect with clicked server
+    var appId = this.props.state.appSelection.id;
     request.post('/getStats/app',
       {appId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
       (err, res) => {
@@ -56,67 +62,82 @@ class MyApp extends React.Component {
   }
 
   render() {
+    var statusData = this.props.state.appServerTotals.map((total, idx) => {
+      return {
+        label: total.label,
+        status: _.findWhere(this.props.state.servers, {id: total.id}).active
+      }
+    })
+
+    console.log(statusData);
+
     return (
        <Grid>
-        <Row><Col xs={12} md={12}><h3>{this.props.state.currentAppname}</h3></Col></Row>
+        <Row><Col xs={12} md={12}><PageHeader>{this.props.state.appSelection.appname} <small>at a glance</small></PageHeader></Col></Row>
         <Row className="app-control-panel">
           <Col xs={12} md={12}>
-            <Panel header={<h1>Application Control Panel</h1>}>
-            <i>Note: Route traffic info aggregates across all servers running the app</i> <br/>
-            Summary: 9/10 servers for this application are running
-
-            <div><button>Refresh</button></div>
-            </Panel>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col xs={12} md={12}>
-            <Panel header={<div>Summary</div>} >
-
+            <Panel header={<h1>Control Panel</h1>}>
+            Cool controls to come! Scale up, scale down, emergency shut down, etc.
             </Panel>
           </Col>
         </Row>
 
         <Row className='serverStatContainer'>
-          <Col xs={12} lg={4} >
+
+          <Col xs={12} lg={12} >
+            <h2>Today{'\''}s Traffic</h2>
             <Panel header={<div>Routes</div>} >
-              <div className='server-route-list'>
-               {this.props.state.graphData.map(graph =>
-                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
-                    <p>/{graph.route}</p>
-                  </Panel>
+            <Grid fluid>
+            <Row>
+            <Col xs={4} lg={4}>
+              <ListGroup className='server-route-list'>
+               {this.props.state.graphData.map((graph, idx) =>
+                  <ListGroupItem key={idx} className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+                    /{graph.route}
+                  </ListGroupItem>
                 )}
-             </div>
-           </Panel>
-          </Col>
-          <Col xs={12} lg={8}>
-            <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
-              <h5 className="xAxis-title">Hits Per Hour</h5>
+             </ListGroup>
+            </Col>
+            <Col xs={8} lg={8}>
+              <h3 className="linegraph-title">Hits Per Hour Today</h3>
+              <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p> 
+
               <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
+
+            </Col>
+            </Row>
+            </Grid>
             </Panel>
           </Col>
 
         </Row>
-
         <Row>
-          <Col xs={12} md={4}>
-            <Panel header={<h1>Server Status</h1>} id="yadda">
-              <div>
-                <div>SFO1: green (well under max)</div>
-                <div>NYC2: yellow (close to max)</div>
-                <div>HKG3: red (down)</div>
-              </div>
-            </Panel>
-          </Col>
-          <Col xs={12} md={8}>
-            <Panel header={<h1>Relative Server Load</h1>} id="appGraph">
-              {this.props.state.appServerTotals ? <BarGraph /> : <div>Loading...</div> }
-            </Panel>
-          </Col>
-        </Row>
+          <Col xs={12} md={12}>
+            <Panel header={<h1>Server Information</h1>}>
+              <Grid fluid>
+              <Row>
+                <Col xs={12} md={6}>
+                <h4>Relative load (24 hr)</h4>
+                <div><svg className="barGraph" id="todayBarGraph"></svg></div>
+                </Col>
 
+                <Col xs={12} md={6}>
+                <h4>Status</h4>
+                <BootstrapTable ref='table' data={statusData} striped={true} hover={true} >
+                  <TableHeaderColumn isKey={true} dataField="label" dataAlign="center">Hostname</TableHeaderColumn>
+                  <TableHeaderColumn dataField='status' dataAlign="center">Status</TableHeaderColumn>
+                </BootstrapTable>
+
+              </Col>
+              </Row>
+              </Grid>
+            </Panel>
+          </Col>
+      
+         
+        </Row>
+        <h2>History</h2>
       </Grid>
     )
   }

@@ -153,83 +153,63 @@ exports.singleServer = function(req, res) {
 };
 
 exports.serverTotalsForApp = function(req, res, next) {
-  // check if appname or appid is specified
-  var appname = req.body.appname;
+  // check if appid is specified
   var appid = req.body.appid;
-  var hoursvar = req.body.hours || 168;
-  var userid = req.user.id;
+  var hoursvar = req.body.hours || 24;
+  // var userid = req.user.id;
 
-  if (!req.body.appname && ! req.body.appid) {
-    var message = 'Bad Request! No appname or appid supplied';
+  if (!appid) {
+    var message = 'Bad Request! No appid supplied';
     console.log(message);
     res.status(400).send(message);
     return;
   }
 
-  var getStatsWithAppId = function(appid) {
-    // get stats for this app with a valid appid
-    stats.model.where({clientApps_id: appid, users_id: userid})
-    .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
-    .fetchAll()
-    .then(function(data) {
-      console.log('Application stats request received. Processing...');
+  stats.model.where({clientApps_id: appid})
+  .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
+  .fetchAll()
+  .then(function(data) {
+    console.log('Application stats request received. Processing...');
 
-      var serverStats = {}; // the results that will eventuall be send back
-      var serverIds = []; // store server ids for which we need to look up hostnames & ips
+    var serverStats = {}; // the results that will eventuall be send back
+    var serverIds = []; // store server ids for which we need to look up hostnames & ips
 
-      data.forEach(function(stat, idx, data) {
-        var id = stat.get('clientServers_id');
-        if (!serverStats.hasOwnProperty(id)) {
-          // initialize a server object. keys will be added for the ip and hostname (see below)
-          serverStats[id] = {ip: null, hostname: null, statValue: 0};
-          serverIds.push(id);
-        } else {
-          // server hostname and ip already exist in our results, so just increment
-          serverStats[id].statValue += stat.get('statValue');
-        }
-      });
-
-      knex('clientServers')
-      .select('id', 'ip', 'hostname')
-      .whereIn('id', serverIds)
-      .then(function(serversData) {
-        serversData.forEach(function(serverInfo) {
-          serverStats[serverInfo.id].ip = serverInfo.ip;
-          serverStats[serverInfo.id].hostname = serverInfo.hostname;
-        });
-        res.status(200).json(serverStats);
-        console.log('Done processing.')
-      })
-      .catch(function(err) {
-        var message = 'Error while processing server totals. ';
-        console.log(message, err);
-        res.status(500).send(message)
-      });
-
-    })
-    .catch(function(err){
-      var message = 'Error while fetching app stats from database. ';
-      console.log(err);
-      res.status(500).send(message);
+    // combile the stats, summed by clientServers_id
+    data.forEach(function(stat, idx, data) {
+      var id = stat.get('clientServers_id');
+      if (!serverStats.hasOwnProperty(id)) {
+        // initialize a server object. keys will be added for the ip and hostname (see below)
+        serverStats[id] = {id: Number(id), ip: null, hostname: null, statValue: stat.get('statValue')};
+        // save the id # to retrive hostname and ip in second step
+        serverIds.push(id);
+      } else {
+        // server hostname and ip already exist in the results, so just increment statValue
+        serverStats[id].statValue += stat.get('statValue');
+      }
     });
-  }
 
-  // fetch the appid from the db if only the appname is supplied
-  if (!appid && appname) {
-    clientApps.model.where('appname', appname)
-    .fetch()
-    .then(function(appObject) {
-      appid = appObject.id;
-      getStatsWithAppId(appid);
+    knex('clientServers')
+    .select('id', 'ip', 'hostname')
+    .whereIn('id', serverIds)
+    .then(function(serversData) {
+      serversData.forEach(function(serverInfo) {
+        serverStats[serverInfo.id].ip = serverInfo.ip;
+        serverStats[serverInfo.id].hostname = serverInfo.hostname;
+      });
+      res.status(200).json(serverStats);
+      console.log('Done processing.')
     })
     .catch(function(err) {
-      var message = 'Bad Request! Could not find an application with the supplied information. ';
+      var message = 'Error while processing server totals. ';
       console.log(message, err);
-      res.status(400).send(message);
-      return;
+      res.status(500).send(message)
     });
-  } else {
-    getStatsWithAppId(appid);
-  }
+
+  })
+  .catch(function(err){
+    var message = 'Error while fetching app stats from database. ';
+    console.log(err);
+    res.status(500).send(message);
+  });
 }
 
