@@ -108,8 +108,8 @@ db.knex.schema.hasTable('serversummaries').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('serversummaries', function(serversummaries) {
       serversummaries.increments('id').primary();
-      // serversummaries.integer('githubid').references('users.githubid'); // comment out for now
       serversummaries.string('serverid');
+      serversummaries.integer('users_id').references('users.id').onDelete('CASCADE');
       serversummaries.string('route');
       serversummaries.string('value');
       serversummaries.string('day');
@@ -126,7 +126,7 @@ db.knex.schema.hasTable('appsummaries').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('appsummaries', function(appsummaries) {
       appsummaries.increments('id').primary();
-      // appsummaries.integer('githubid').references('users.githubid'); // comment out for now
+      appsummaries.integer('users_id').references('users.id').onDelete('CASCADE');
       appsummaries.string('appid');
       appsummaries.string('route');
       appsummaries.string('value');

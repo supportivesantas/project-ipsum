@@ -16,7 +16,7 @@ exports.getAllServerIds = (callback) => {
   Servers.fetch()
     .then((servers) => {
       _.each(servers.models, (item) => {
-        serverIds.push(item.attributes.id);
+        serverIds.push({ id: item.attributes.id, owner: item.attributes.users_id });
       });
       callback(serverIds);
     });
@@ -28,7 +28,7 @@ exports.getAllAppIds = (callback) => {
   clientApps.fetch()
     .then((apps) => {
       _.each(apps.models, (item) => {
-        appIds.push(item.attributes.id);
+        appIds.push({ id: item.attributes.id, owner: item.attributes.users_id });
       });
       callback(appIds);
     });
@@ -65,7 +65,6 @@ exports.singleApp = function(appId, callback) {
 };
 
 exports.singleServerSummary = function(serverId, callback) {
-  console.log('geting a single server summary for ', serverId);
   var hoursvar = 24; //default to last twelve hours
   var dataRange = _.range(hoursvar + 1);
 
