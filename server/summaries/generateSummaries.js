@@ -19,7 +19,7 @@ const generateSummaries = () => {
   ctrl.getAllServerIds((serverList) => {
     const today = new Date();
     const day = today.getDate();
-    const month = today.getMonth();
+    const month = today.getMonth() + 1;
     const year = today.getFullYear();
     for (let i = 0; i < serverList.length; i++) {
       ctrl.singleServerSummary(serverList[i], (data) => {
