@@ -5,13 +5,12 @@ var Servers = require('../db/collections/client-server');
 var stats = require('../db/collections/stats');
 var _ = require('underscore');
 var ctrl = require('../controllers/summaryController.js');
-const pgp = require('pg-promise')({});
-var Promise = require('bluebird');
 
-// var db = require('bookshelf')(knex);
-var client = pgp({
-  connectionString: process.env.PG_CONNECTION_STRING,
+var promise = require('bluebird');
+const pgp = require('pg-promise')({
+  promiseLib: promise
 });
+var db = pgp(process.env.PG_CONNECTION_STRING);
 
 const generateSummaries = () => {
   let count = 0;
@@ -44,7 +43,7 @@ const generateSummaries = () => {
     }
     //have to do timeout to wait for summaries to generate
     setTimeout(() => {
-      client.tx(t=>t.batch(servsummaries.map(l=>t.none(
+      db.tx(t=>t.batch(servsummaries.map(l=>t.none(
             `INSERT INTO serversummaries(serverid, route, value, day, month, year)
              VALUES($[serverid], $[route], $[value], $[day], $[month], $[year])`, l))))
           .then(data=> {
@@ -75,7 +74,7 @@ const generateSummaries = () => {
                   });
                 }
                 setTimeout(() => {
-                  client.tx(t=>t.batch(appsummaries.map(l=>t.none(
+                  t.tx(t1=>t1.batch(appsummaries.map(l=>t1.none(
                         `INSERT INTO appsummaries(appid, route, value, day, month, year)
                          VALUES($[appid], $[route], $[value], $[day], $[month], $[year])`, l))))
                       .then(data=> {
@@ -101,13 +100,13 @@ const generateSummaries = () => {
   });
 };
 
-client.connect()
-  .then((result) => {
+db.connect()
+  .then(result => {
     /* */
     console.log('Generating Server Summary Data');
     //function
+    result.done(); // must release the connection here;
     generateSummaries();
-
   })
   .catch((error) => {
     console.log('ERROR: Failed to connect to Postgres!', error)
