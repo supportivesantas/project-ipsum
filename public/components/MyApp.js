@@ -5,7 +5,7 @@ import { renderChart } from '../D3graphTemplate';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
 import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import BarGraph from './BarGraph';
+import barGraph from './BarGraph';
 import _ from 'underscore';
 
 class MyApp extends React.Component {
@@ -16,9 +16,10 @@ class MyApp extends React.Component {
   }
 
   componentDidMount(){
-    // for bar graph
+
+    // call 24 hr bar graph data and render
     request.post('/getStats/serverTotalsForApp', {
-      appname: this.props.state.appSelection.id, 
+      appid: this.props.state.appSelection.id, 
       hours: 24
     }, (err, data) => {
       var data = JSON.parse(data.text);
@@ -30,7 +31,9 @@ class MyApp extends React.Component {
         });
       this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
+      barGraph.render('todayBarGraph', this.props.state.appServerTotals);
     });
+
     //For line Graph
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
     var appId = this.props.state.appSelection.id;
@@ -99,12 +102,12 @@ class MyApp extends React.Component {
         </Row>
         <Row>
           <Col xs={6} md={6}>
-            <Panel header={<h1>Relative Server Load (last 24 hrs)</h1>} id="appGraph">
-              {this.props.state.appServerTotals ? <BarGraph /> : <div>Loading...</div> }
+            <Panel header={<h1>Relative Server Load (last 24 hrs)</h1>}>
+              <div><svg className="barGraph" id="todayBarGraph"></svg></div>
             </Panel>
           </Col>
           <Col xs={6} md={6}>
-            <Panel header={<h1>Server Statuses</h1>} id="yadda">
+            <Panel header={<h1>Server Status</h1>}>
               <ListGroup>
                 {this.props.state.servers.map((server, idx) => 
                   _.pluck(server.apps, 0).indexOf(this.props.state.appSelection.id) !== -1 ? <ListGroupItem key={idx}>{server.hostname} {server.active}</ListGroupItem> : null

@@ -25,7 +25,6 @@ class MainPageAppView extends React.Component {
 
   generateHeader(id) {
     var ratio = this.getNumServers(id);
-    console.log(ratio);
     return (
         <div onClick={this.goToApp.bind(this)} className="AppViewHeaderText">
             {this.props.selected.appname} <span className="pull-right">{ratio.active.length}/{ratio.total.length} active</span>

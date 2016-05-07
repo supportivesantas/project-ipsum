@@ -159,3 +159,6 @@ svg.barGraph {
   background-color: #FD971F;
   cursor: pointer;
 }
+.loading {
+  visibility: hidden;
+}
