@@ -24,10 +24,11 @@ class MyApp extends React.Component {
     }, (err, data) => {
       var data = JSON.parse(data.text);
       var output = [];
-      Object.keys(data).forEach((server) => {
+      Object.keys(data).forEach((serverId) => {
         output.push({
-          value: data[server].statValue,
-          label: data[server].hostname
+          value: data[serverId].statValue,
+          label: data[serverId].hostname,
+          id: Number(serverId)
         });
       this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
@@ -61,6 +62,15 @@ class MyApp extends React.Component {
   }
 
   render() {
+    var statusData = this.props.state.appServerTotals.map((total, idx) => {
+      return {
+        label: total.label,
+        status: _.findWhere(this.props.state.servers, {id: total.id}).active
+      }
+    })
+
+    console.log(statusData);
+
     return (
        <Grid>
         <Row><Col xs={12} md={12}><PageHeader>{this.props.state.appSelection.appname} <small>at a glance</small></PageHeader></Col></Row>
@@ -72,12 +82,12 @@ class MyApp extends React.Component {
           </Col>
         </Row>
 
-        <h2>Todays Traffic</h2>
         <Row className='serverStatContainer'>
 
           <Col xs={12} lg={12} >
+            <h2>Today{'\''}s Traffic</h2>
             <Panel header={<div>Routes</div>} >
-            <Grid>
+            <Grid fluid>
             <Row>
             <Col xs={4} lg={4}>
               <ListGroup className='server-route-list'>
@@ -89,7 +99,9 @@ class MyApp extends React.Component {
              </ListGroup>
             </Col>
             <Col xs={8} lg={8}>
-              <h5 className="xAxis-title">Hits Per Hour</h5>
+              <h3 className="linegraph-title">Hits Per Hour Today</h3>
+              <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p> 
+
               <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
 
@@ -101,20 +113,28 @@ class MyApp extends React.Component {
 
         </Row>
         <Row>
-          <Col xs={6} md={6}>
-            <Panel header={<h1>Relative Server Load (last 24 hrs)</h1>}>
-              <div><svg className="barGraph" id="todayBarGraph"></svg></div>
+          <Col xs={12} md={12}>
+            <Panel header={<h1>Server Information</h1>}>
+              <Grid fluid>
+              <Row>
+                <Col xs={12} md={6}>
+                <h4>Relative load (24 hr)</h4>
+                <div><svg className="barGraph" id="todayBarGraph"></svg></div>
+                </Col>
+
+                <Col xs={12} md={6}>
+                <h4>Status</h4>
+                <BootstrapTable ref='table' data={statusData} striped={true} hover={true} >
+                  <TableHeaderColumn isKey={true} dataField="label" dataAlign="center">Hostname</TableHeaderColumn>
+                  <TableHeaderColumn dataField='status' dataAlign="center">Status</TableHeaderColumn>
+                </BootstrapTable>
+
+              </Col>
+              </Row>
+              </Grid>
             </Panel>
           </Col>
-          <Col xs={6} md={6}>
-            <Panel header={<h1>Server Status</h1>}>
-              <ListGroup>
-                {this.props.state.servers.map((server, idx) => 
-                  _.pluck(server.apps, 0).indexOf(this.props.state.appSelection.id) !== -1 ? <ListGroupItem key={idx}>{server.hostname} {server.active}</ListGroupItem> : null
-                )}
-              </ListGroup>
-            </Panel>
-          </Col>
+      
          
         </Row>
         <h2>History</h2>

@@ -179,7 +179,7 @@ exports.serverTotalsForApp = function(req, res, next) {
       var id = stat.get('clientServers_id');
       if (!serverStats.hasOwnProperty(id)) {
         // initialize a server object. keys will be added for the ip and hostname (see below)
-        serverStats[id] = {ip: null, hostname: null, statValue: stat.get('statValue')};
+        serverStats[id] = {id: Number(id), ip: null, hostname: null, statValue: stat.get('statValue')};
         // save the id # to retrive hostname and ip in second step
         serverIds.push(id);
       } else {
