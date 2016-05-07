@@ -11,7 +11,6 @@ const pgp = require('pg-promise')({
   promiseLib: Promise,
 });
 var db = pgp(process.env.PG_CONNECTION_STRING);
-Promise.promisifyAll(ctrl);
 
 
 const generateServSummaries = () => {
