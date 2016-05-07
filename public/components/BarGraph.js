@@ -1,10 +1,16 @@
-exports.render = function(divId, data) {
+import d3 from 'd3'; 
 
+module.exports = function(divId, data) {
+
+  // clear out the old graph
+  var outerDiv = document.getElementById(divId);
+  outerDiv.innerHTML  = '<svg class="barGraph"></svg>';
+  
+  var chart = d3.select('#' + divId).select('svg')
   var height = null; 
-  var divIdString = '#' + divId;
 
   /* Taken from: https://bost.ocks.org/mike/bar/2/ */
-  var width = document.getElementById(divId).parentNode.clientWidth,
+  var width = outerDiv.clientWidth,
     barHeight = 25;
 
   height = barHeight * data.length;
@@ -15,8 +21,7 @@ exports.render = function(divId, data) {
 
   x.domain([0, d3.max(data, function(d) { return d.value; })]);
 
-  var chart = d3.select(divIdString)
-  .attr("width", width);
+  chart.attr("width", width);
 
   var bar = chart.selectAll("g")
     .data(data)
@@ -32,10 +37,4 @@ exports.render = function(divId, data) {
     .attr("y", barHeight / 2)
     .attr("dy", ".35em")
     .text(function(d) { return d.label; }); 
-
-}
-
-exports.update = function(divId, data) {
-  d3.select(divIdString).remove();
-  exports.render(divId, data);
 }

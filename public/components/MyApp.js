@@ -8,6 +8,7 @@ import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import barGraph from './BarGraph';
 import _ from 'underscore';
+import MyAppHistory from './MyAppHistory';
 
 class MyApp extends React.Component {
   constructor(props) {
@@ -33,7 +34,7 @@ class MyApp extends React.Component {
         });
       this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
-      barGraph.render('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
+      barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
         return -obj.value;
       }));
     });
@@ -108,7 +109,7 @@ class MyApp extends React.Component {
         <Row className='serverStatContainer'>
 
           <Col xs={12} lg={12} >
-            <h2>Today{'\''}s Traffic</h2>
+            <h2>What{'\''}s Happening</h2>
             <Panel header={<div>Routes</div>} >
             <Grid fluid>
             <Row>
@@ -142,7 +143,7 @@ class MyApp extends React.Component {
               <Row>
                 <Col xs={12} md={6}>
                 <h4>Relative load (24 hr)</h4>
-                <div><svg className="barGraph" id="todayBarGraph"></svg></div>
+                <div id="todayBarGraph"></div>
                 </Col>
 
                 <Col xs={12} md={6}>
@@ -157,10 +158,13 @@ class MyApp extends React.Component {
               </Grid>
             </Panel>
           </Col>
+<<<<<<< 57268b2cdd5af561f4db372c64218084a8dbf728
 
 
+=======
+>>>>>>> cleanup bargraph function
         </Row>
-        <h2>History</h2>
+        <MyAppHistory />
       </Grid>
     )
   }
