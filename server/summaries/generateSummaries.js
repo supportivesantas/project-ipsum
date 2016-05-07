@@ -5,8 +5,11 @@ var Servers = require('../db/collections/client-server');
 var stats = require('../db/collections/stats');
 var _ = require('underscore');
 var ctrl = require('../controllers/summaryController.js');
-const pgp = require('pg-promise')({});
+
 var Promise = require('bluebird');
+const pgp = require('pg-promise')({
+  promiseLib: Promise  
+});
 
 // var db = require('bookshelf')(knex);
 var client = pgp({
