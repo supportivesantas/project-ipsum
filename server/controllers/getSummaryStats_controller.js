@@ -63,6 +63,7 @@ exports.allAppSummaries = function(req, res) {
 
 exports.myServerSummary = function(req, res) {
 //WILL BE FOR INDIVIDUAL SERVERS ON MY SERVER PAGE
+//Filter By User ID and SERVER ID and have req.body for time interval (1-30 days)
   myServerSums.model.fetchAll()
   .then(function(serverSummary) {
     console.log(serverSummary);
@@ -74,10 +75,22 @@ exports.myServerSummary = function(req, res) {
   });
 };
 
-
+exports.myAppSummary = function(req, res) {
+  //Filter By User ID and APP ID and have req.body for time interval (1-30 days)
+  myServerSums.model.fetchAll()
+  .then(function(serverSummary) {
+    console.log(serverSummary);
+    res.send(serverSummary.models);
+  })
+  .catch(function(error) {
+    console.log('Error getting all Server Summaries', error);
+    res.send(500);
+  });
+};
 
 //   {
-//     appid: 1,
-//     routes: [{ routename: "Ex", hits: 20}],
-//     date: "dateobj"
+//     Total: [{data:[{ dayago: 1, day: 'date', totalHits: ''}]
+//     Routes: [{route: "aroute", data:[{dayago: 1, day: 'date', totalHits: ''}]}],
+//     Servers: [{server: 'aserverid', data:[{dayago: 1, day: 'date', totalHits: ''}]}]
 //   }
+// data looks the same in each [{dayago: 1, day: 'date', totalHits: ''}, {dayago: 1, day: 'date', totalHits: ''}]

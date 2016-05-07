@@ -17,6 +17,7 @@ class MainPage extends React.Component {
     // Get app and server data and place in store
     restHandler.get('/user/init', (err, res) => {
       const data = JSON.parse(res.text);
+      console.log(data.apps)
       this.props.dispatch(actions.MASS_POPULATE_APPS(data.apps));
       this.props.dispatch(actions.MASS_POPULATE_SERVERS(data.servers));
     });

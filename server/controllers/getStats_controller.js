@@ -27,7 +27,7 @@ exports.formatDataByHour = function(allRoutes, serverStats, dataRange) {
       var route = model.attributes;
       //put together all data with time: hours ago from now     (below): floor or ciel??
       allRoutes[route.statName.slice(1)].data.push({
-          time: Math.ceil(Math.abs(route.created_at - Date.now()) / 36e5),
+          time: Math.round(Math.abs(route.created_at - Date.now()) / 36e5),
           hits: route.statValue
         });
     });
