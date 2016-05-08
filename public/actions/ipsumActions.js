@@ -87,5 +87,11 @@ module.exports = {
       type: 'ADD_APP_SELECTION',
       data: data,
     };
+  },
+  POPULATE_TOKENS(data) {
+    return {
+      type: 'POPULATE_TOKENS',
+      data: data
+    };
   }
 };

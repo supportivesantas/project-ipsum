@@ -123,9 +123,7 @@ module.exports = {
 
   authorize: function(req) {
     req.options.headers = (function(username, server_id) {
-      // TODO: get the token based on username and server_id / token join table
-      var token = '3d378deef838cafa1647d6572d99efb50522395a692a33e59bbb8249ae202e50'
-      //
+      var token = req.token;
       return {'Authorization': 'Bearer ' + token};
     })();
   }

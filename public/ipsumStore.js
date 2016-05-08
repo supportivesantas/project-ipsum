@@ -10,6 +10,7 @@ import serverSelectReducer from './reducers/serverSelectReducer.js';
 import changeAppServerTotalsReducer from './reducers/changeAppServerTotalsReducer.js';
 import allAppSummariesReducer from './reducers/allAppSummariesReducer.js';
 import appSelectionReducer from './reducers/appSelectionReducer.js';
+import tokensReducer from './reducers/tokensReducer.js';
 
 const middleware = [logger()];
 const getInitialState = () => {
@@ -29,7 +30,8 @@ const getInitialState = () => {
       servers: [],
       serverSelection: {},
       lineGraphTitle: [],
-      graphData: []
+      graphData: [],
+      tokens: []
     };
   }
 };
@@ -45,9 +47,9 @@ export default function configureStore(browserHistory, initialState = getInitial
     allAppSummaries: allAppSummariesReducer,
     servers: serverReducer,
     graphData: getDataReducer,
-    graphData: getDataReducer,
     appSelection: appSelectionReducer,
-    appServerTotals: changeAppServerTotalsReducer
+    appServerTotals: changeAppServerTotalsReducer,
+    tokens: tokensReducer
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f

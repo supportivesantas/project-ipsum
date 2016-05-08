@@ -43,6 +43,7 @@ db.knex.schema.hasTable('clientServers').then(function(exists) {
       clientServer.string('hostname');
       clientServer.string('platform');
       clientServer.string('server_id');
+      clientServer.integer('serviceCreds_id').references('serviceCreds.id').onDelete('SET NULL');
     }).then(function(table) {
       console.log('Created Client Server Table', table);
     });
@@ -64,7 +65,9 @@ db.knex.schema.hasTable('serviceCreds').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('serviceCreds', function(serviceCred) {
       serviceCred.increments('id').primary();
-      serviceCred.integer('userId');
+      serviceCred.integer('users_id');
+      serviceCred.string('platform');
+      serviceCred.string('value');
     }).then(function(table) {
       console.log('Created Service Cred Table', table);
     });
