@@ -33,10 +33,7 @@ class MainPageAppView extends React.Component {
   }
 
   generateAppStats(id) {
-    console.log('APP STATS', id)
     var app = this.props.state.allAppSummaries[id];
-    console.log(this.props.state.allAppSummaries[id])
-
     return (
       <div>
         <h4>Date: {app.data} (just display in chart)</h4>

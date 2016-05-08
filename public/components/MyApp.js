@@ -19,7 +19,7 @@ class MyApp extends React.Component {
 
     // call 24 hr bar graph data and render
     request.post('/getStats/serverTotalsForApp', {
-      appid: this.props.state.appSelection.id, 
+      appid: this.props.state.appSelection.id,
       hours: 24
     }, (err, data) => {
       var data = JSON.parse(data.text);
@@ -32,7 +32,9 @@ class MyApp extends React.Component {
         });
       this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
-      barGraph.render('todayBarGraph', this.props.state.appServerTotals);
+      barGraph.render('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
+        return -obj.value;
+      }));
     });
 
     //For line Graph
@@ -62,7 +64,10 @@ class MyApp extends React.Component {
   }
 
   render() {
-    var statusData = this.props.state.appServerTotals.map((total, idx) => {
+    var sortedServerTotals = _.sortBy(this.props.state.appServerTotals, (obj) => {
+        return -obj.value;
+      });
+    var statusData = sortedServerTotals.map((total, idx) => {
       return {
         label: total.label,
         status: _.findWhere(this.props.state.servers, {id: total.id}).active
@@ -100,7 +105,7 @@ class MyApp extends React.Component {
             </Col>
             <Col xs={8} lg={8}>
               <h3 className="linegraph-title">Hits Per Hour Today</h3>
-              <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p> 
+              <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
 
               <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
@@ -134,8 +139,8 @@ class MyApp extends React.Component {
               </Grid>
             </Panel>
           </Col>
-      
-         
+
+
         </Row>
         <h2>History</h2>
       </Grid>
