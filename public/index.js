@@ -13,6 +13,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import MainPage from './components/MainPage.js';
 import actions from './actions/ipsumActions.js';
 import auth from './util/authHelpers.js';
+import tokens from './components/tokens.js';
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
@@ -43,6 +44,7 @@ render(
         <Route path="/allServers" component={AllServers} onEnter={auth.requireAuth} />
         <Route path="/myServer" component={MyServer} onEnter={auth.requireAuth} />
         <Route path="/myApp" component={MyApp} onEnter={auth.requireAuth} />
+        <Route path="/tokens" component={tokens} onEnter={auth.requireAuth} />
       </Route>
 
     </Router>

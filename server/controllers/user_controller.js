@@ -6,6 +6,8 @@ const Apps = require('../db/collections/client-apps.js');
 const Server = require('../db/models/client-server.js');
 const Servers = require('../db/collections/client-server.js');
 const Hashes = require('../db/collections/hashes');
+const Creds = require('../db/collections/service-creds');
+const internalTasks = require('./internal_tasks');
 
 module.exports = {
 
@@ -19,7 +21,6 @@ module.exports = {
   getUserApps: (req, res) => {
     console.log('IN USER APPS!!!!!');
     Apps.query('where', 'users_id', '=', req.user.id).fetch()
-    Apps.fetch()
       .then(function(apps) {
         var appData = [];
         for (var i = 0; i < apps.models.length; i++) {
@@ -48,7 +49,6 @@ module.exports = {
   getUserServers: (req, res) => {
     console.log('IN USER SERVS!!!!!');
     Servers.query('where', 'users_id', '=', req.user.id).fetch()
-    Servers.fetch()
       .then((servers) => {
         let servData = [];
         for (let i = 0; i < servers.models.length; i++) {
@@ -73,6 +73,165 @@ module.exports = {
     //     res.send(401);
     //   });
   },
+
+  postUserServers: (req, res) => {
+    console.log('Post to user servers');
+    var userID = req.user.id;
+    var serverID = req.body.server_id;
+
+    if (userID === undefined || serverID === undefined) {
+      console.log('ERROR: Missing parameter in postUserServers');
+      res.status(404).end();
+      return;
+    }
+    
+    Servers.query('where', 'users_id', '=', req.user.id, 'AND',
+      'clientServers_id', '=', serverID).fetch()
+      .then((result_servers) => {
+        if (!result_servers || !result_servers.length) {
+          throw 'No Server Found';
+        }
+        // only care about the first result
+        let server = result_servers[0];
+        
+        
+      });
+  },
+
+  postUserCreds: (req, res) => {
+    console.log('post user creds');
+    // var userID = req.user.id;
+    var userID = 1;
+    var platform = req.body.platform;
+    var value = req.body.value;
+
+    if (userID === undefined || platform === undefined || value === undefined) {
+      console.log('ERROR: Missing parameter in postUserCreds');
+      res.status(404).end();
+      return;
+    }
+
+    Creds.model.where({
+      users_id: userID,
+      platform: platform,
+      value: value
+    }).fetch()
+      .then((credential) => {
+        if (!credential) {
+          return new Creds.model({
+            users_id: userID,
+            platform: platform,
+            value: value
+          }).save();
+        } else {
+          return credential;
+        }
+      })
+      .then((credential) => {
+        res.status(200).json(credential.id);
+        internalTasks.syncServersToPlatforms(userID);
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to insert into userCreds table', error);
+        res.status(500).end();
+      });
+  },
+
+  putUserCreds: (req, res) => {
+    console.log('put user creds');
+    // var userID = req.user.id;
+    var userID = 1;
+    var id = req.body.id;
+    var platform = req.body.platform;
+    var value = req.body.value;
+
+    if (userID === undefined || platform === undefined || value === undefined) {
+      console.log('ERROR: Missing parameter in postUserCreds');
+      res.status(404).end();
+      return;
+    }
+
+    Creds.model.where({
+      users_id: userID,
+      id: id
+    }).fetch()
+      .then((credential) => {
+        if (!credential) {
+          throw 'Credential Not Found';
+        } else {
+          credential.set('platform', platform);
+          credential.set('value', value);
+          return credential.save();
+        }
+      })
+      .then((credential) => {
+        res.status(200).json(credential.id);
+        internalTasks.syncServersToPlatforms(userID);
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to insert into userCreds table', error);
+        res.status(500).end();
+      });
+  },
+
+  getUserCreds: (req, res) => {
+    console.log('Get user creds');
+    // var userID = req.user.id;
+    var userID = 1;
+
+    if (userID === undefined) {
+      console.log('ERROR: Missing Parameter');
+      res.status(404).end();
+      return;
+    }
+
+    Creds.model.where({ users_id: userID }).fetchAll()
+      .then((results) => {
+        let credentials = [];
+        
+        results.each((credential) => {
+          credentials.push({
+            id: credential.get('id'),
+            platform: credential.get('platform'),
+            value: credential.get('value')
+          });
+        });
+        res.status(200).json(credentials);
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to retrieve credentials for user', error);
+        res.status(500).end();
+      });
+  },
+
+deleteUserCreds: (req, res) => {
+  console.log('Delete user creds');
+    // let userID = req.user.id;
+    let userID = 1;
+    let credsIDs = req.body.ids;
+
+    if (userID === undefined || credsIDs == undefined) {
+      console.log('ERROR: Missing Parameters');
+      res.status(404).end();
+      return;
+    }
+
+    for (let credID of credsIDs) {
+      Creds.model.where({ users_id: userID, id: credID }).fetch()
+        .then((cred) => {
+          return cred.destroy();
+        })
+        .then((result) => {
+          // res.status(200).end();
+        })
+        .catch((error) => {
+          console.log('ERROR: Failed to retrieve credentials for user', error);
+          res.status(500).end();
+        });
+    }
+    res.status(200).end();
+  },
+
 
   getInit: (req, res) => {
     let serverQuickLook = {};

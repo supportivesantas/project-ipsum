@@ -93,14 +93,14 @@ describe('Models Test', function() {
 
   it('should save an serviceCreds to the database', function (done) {
     var serviceCred = new ServiceCred({
-      userId: 1234,
+      users_id: 1234,
     }).save()
     .then(function(){
-      return ServiceCred.where({userId: 1234}).fetch();
+      return ServiceCred.where({users_id: 1234}).fetch();
     })
     .then(function(serviceCred){
-      expect(serviceCred.get('userId')).to.equal(1234);
-      knex('serviceCreds').where('userId', 1234).del().then(function(results){
+      expect(serviceCred.get('users_id')).to.equal(1234);
+      knex('serviceCreds').where('users_id', 1234).del().then(function(results){
         expect(results).to.be.at.least(1);
         done();
       });

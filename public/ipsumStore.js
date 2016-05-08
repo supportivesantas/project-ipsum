@@ -10,6 +10,7 @@ import serverSelectReducer from './reducers/serverSelectReducer.js';
 import changeAppServerTotalsReducer from './reducers/changeAppServerTotalsReducer.js';
 import allAppSummariesReducer from './reducers/allAppSummariesReducer.js';
 import appSelectionReducer from './reducers/appSelectionReducer.js';
+import tokensReducer from './reducers/tokensReducer.js';
 
 const middleware = [logger()];
 const getInitialState = () => {
@@ -29,7 +30,8 @@ const getInitialState = () => {
       servers: [],
       serverSelection: {},
       lineGraphTitle: [],
-      graphData: []
+      graphData: [],
+      tokens: []
     };
   }
 };
@@ -45,9 +47,15 @@ export default function configureStore(browserHistory, initialState = getInitial
     allAppSummaries: allAppSummariesReducer,
     servers: serverReducer,
     graphData: getDataReducer,
+<<<<<<< 7448d142766139a1ac1de5ba3b6f949ef0572d6f
     graphData: getDataReducer,
     appSelection: appSelectionReducer,
     appServerTotals: changeAppServerTotalsReducer
+=======
+    currentAppname: changeAppnameReducer,
+    appServerTotals: changeAppServerTotalsReducer,
+    tokens: tokensReducer
+>>>>>>> adds interface to enter new platform tokens.  fixed some tests.
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f

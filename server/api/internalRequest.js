@@ -1,3 +1,4 @@
+"use strict";
 var Promise = require('bluebird');
 var configureRequest = require('./configure.js');
 var makeRequest = require('./makeRequest');
@@ -7,7 +8,12 @@ var internalRequest = {};
 var configureRequestAsync = function (req) {
   return new Promise(function (resolve, reject) {
     // for this purpose we don't care about response
-    var res = {};
+    // stub out the response
+    var res = {
+      status: () => { return res; },
+      send: () => { },
+      end: () => { }
+    };
     
     configureRequest(req, res, function () {
       resolve(req);
@@ -18,7 +24,12 @@ var configureRequestAsync = function (req) {
 var makeRequestAsync = function (req) {
   return new Promise(function (resolve, reject) {
     // for this purpose we don't care about response
-    var res = {};
+    // stub out the response
+    var res = {
+      status: () => { return res; },
+      send: () => { },
+      end: () => { }
+    };
     
     makeRequest(req, res, function () {
       resolve(req);
@@ -26,12 +37,12 @@ var makeRequestAsync = function (req) {
   });
 };
 
-internalRequest.getServerList = function(user) {
-  // do something with user to get all creds
-  // then loop thru all creds to get entire list
+internalRequest.getServerList = function(cred) {
+  let platform = cred.get('platform');
   /* build request object */
   var req = {
-    platform: 'digital_ocean', // should come from db
+    platform: platform,
+    token: cred.get('value'),
     params: {
       action: 'list_all_servers'
     },

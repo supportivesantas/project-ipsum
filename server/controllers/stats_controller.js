@@ -94,7 +94,7 @@ statsController.registerClient = function (req, res) {
       }
     })
     .then(function (user) {
-      userID = user.id;
+      userID = user.get('id');
       /* put server ip and appname in db if it does't already exist */
       return clientServers.model.where('ip', ip).fetch();
     })
@@ -149,7 +149,7 @@ statsController.registerClient = function (req, res) {
     .then(function (hash) {
       console.log('Stats Client Successfully Registered for IP: ' + ip);
       res.status(200).send(computedHash);
-      internalTasks.syncServersToPlatforms();
+      internalTasks.syncServersToPlatforms(userID);
     })
     .catch(function (error) {
       console.log('Stats Client Registration Failure', error);
