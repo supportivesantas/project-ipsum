@@ -9,12 +9,7 @@ var knex = require('knex')({
 });
 
 
-//===================================================
-//  TODO: Will want to sort by userId, so must include in table
-//  ALSO search for last seven days -- maybe use date.now minus created_at and convert to days
-//  ALSO want to add server Ids in here (and server status??) so can total up and relate server to app
-//====================================================
-
+//TODO: Reformat allAppSummaries to include seven day graph data, (x=date, y=totalHits), and total routes
 exports.allAppSummaries = function(req, res) {
   AppSums.model.fetchAll()
   .then(function(appSummaries) {
@@ -29,7 +24,6 @@ exports.allAppSummaries = function(req, res) {
       result.totalHits = hits;
       return result;
     };
-
     _.each(appRoutes, (appRoute) => {
       appRoute = appRoute.attributes;
       var appId = appRoute.appid;
@@ -63,6 +57,7 @@ exports.allAppSummaries = function(req, res) {
   });
 };
 
+//TODO: MyServerSummary, basically the inverse of myAppSummary
 exports.myServerSummary = function(req, res) {
 //WILL BE FOR INDIVIDUAL SERVERS ON MY SERVER PAGE
 //Filter By User ID and SERVER ID and have req.body for time interval (1-30 days)
@@ -77,70 +72,141 @@ exports.myServerSummary = function(req, res) {
   });
 };
 
-
-// exports.myAppSummary = function(req, res) {
-//   //add numDays later (raw search)
-//   ServerSums.model.where({'users_id': 1, 'serverid': 2})
-//   .fetchAll()
-//   .then((serverSummaries) => {
-//     console.log(serverSummaries);
-//     res.send(serverSummaries);
-//   })
-//   .catch((error) => {
-//     console.error('Error getting servers for app', error);
-//     res.send(error);
-//   });
-// };
-
 exports.myAppSummary = (req, res) => {
-  //Filter By User ID and APP ID and have req.body for time interval (1-30 days)
+//update to req.body variables below
   var userId = 1;
   var appId = 1;
-  var days = 1;
-  //add days later (raw search)
-  Hash.model.where({'users_id': userId, 'clientApps_id': appId }).fetchAll().then((appServers) => {
-    // res.send(appServers);
-    var appServerModels = appServers.models;
-    var getAppServersIds = [];
-    //Put getServersForApp function in array with each correct server Id so we can promise.all
-    _.each(appServerModels, (appServer) => {
-      getAppServersIds.push(appServer.attributes.clientServers_id);
+  var days = 2;
+  //appRoutes defined in this scope so servers can cross reference and total up just the hits for this app.
+  //Assumes apps do not share route names, only way to pull out app hits for each server
+  //Server summaries is totaled by route not by app (so would need to let customers know routes must be unique across apps)
+  var appRoutes = {};
+ AppSums.model.where({'users_id': userId, 'appid': appId })
+ .where(knex.raw("created_at > (NOW() - INTERVAL '" + (days * 24) + " hour'" + ")"))
+  .fetchAll()
+  .then(function(appSummary) {
+    appModels = appSummary.models;
+    //Object to keep track of total hits for each day
+    var appTotalHits = {};
+    //Sort each route, with sorted dates within each route
+    //ie. appRoutes = { route: {dateid:[routeModel, routeModel ...], dateid: []...}, route: {}... }
+    _.each(appModels, (appModel) => {
+      appRoute = appModel.attributes;
+      var dateId = appRoute.day + appRoute.month + appRoute.year;
+      //Initialize Totals for each date
+      if (!appTotalHits[dateId]) {
+        //=====Change to timestamp or days ago, currently day+month+year (ie '852016' for may 8 2016)?
+        appTotalHits[dateId] = 0;
+      }
+      //Sorting by route and date
+      var routeName = appRoute.route;
+      if (!appRoutes[routeName]) {
+        appRoutes[routeName] = {};
+        appRoutes[routeName][dateId] = [appRoute];
+      } else if (appRoutes[routeName] && !appRoutes[routeName][dateId]) {
+        appRoutes[routeName][dateId] = [appRoute];
+      } else {
+        appRoutes[appId][dateId].push(appRoute);
+      }
     });
-
-    var promises = _.map(getAppServersIds, (serverId) => {
-      return ServerSums.model.where({'users_id': userId, 'serverid': serverId }) ///INCLUDE HOURS HERE LATER
-              .fetchAll()
-              .then((serverSumPromises) => {
-                return serverSumPromises;
-              })
-              .catch((error) => {
-                console.error("Error in finding server summaries", error);
-              });
+    //For each route, compile total hits for each day within
+    var appRouteSums = [];
+    //Go through Routes
+    _.each(appRoutes, (appRoute) => {
+      var routeDateSum = [];
+      //Go through each day
+      _.each(appRoute, (routeDateArr) => {
+        //Total up all hits for each day
+        var totalHits = _.reduce(routeDateArr, (memo, routeDate) => {
+          return memo + +routeDate.value;
+        }, 0);
+        //======DAYS AGO GO HERE??
+        var date = routeDateArr[0].day + routeDateArr[0].month + routeDateArr[0].year;
+        appTotalHits[date] += totalHits;
+        routeDateSum.push({route: routeDateArr[0].route, date: date, timestamp: routeDateArr[0].created_at, totalHits: totalHits});
+      });
+      appRouteSums.push({route: routeDateSum[0].route, data: routeDateSum});
     });
-    return Promise.all(promises).then((serverSummariesPromise) => {
-      return serverSummariesPromise;
-    })
-    .then((serverSummaries) => {
-
-      res.send(serverSummaries);
+    //Create response object with data available so far
+    var appCompleteSummary = {
+      Total : appTotalHits,
+      Routes: appRouteSums,
+      Servers: null,
+    };
+    return appCompleteSummary;
+  })
+  .then((appCompleteSummary) => {
+    //Find all servers belonging to this app
+    Hash.model.where({'users_id': userId, 'clientApps_id': appId })
+      .fetchAll()
+      .then((appServers) => {
+        var appServerModels = appServers.models;
+        //Put all server ids in an array to iterate over
+        var getAppServersIds = [];
+        _.each(appServerModels, (appServer) => {
+          getAppServersIds.push(appServer.attributes.clientServers_id);
+        });
+        //Create an array of queries to pull summaries for each server belonging to this app
+        var promises = _.map(getAppServersIds, (serverId) => {
+          return ServerSums.model.where({'users_id': userId, 'serverid': serverId })
+                  .where(knex.raw("created_at > (NOW() - INTERVAL '" + (days * 24) + " hour'" + ")"))
+                  .fetchAll()
+                  .then((serverSumPromises) => {
+                    return serverSumPromises;
+                  })
+                  .catch((error) => {
+                    console.error("Error in finding server summaries", error);
+                  });
+        });
+        //Promise all to properly wait for array of promises to resolve
+        return Promise.all(promises).then((serverSummariesPromise) => {
+          return serverSummariesPromise;
+      })
+      .then((serverSummaries) => {
+        //Sort each server, with sorted dates within:
+        //ie. appServers = { serverId: {dateid:[serverModel, serverModel ...], dateid: []...}, serverId: {}... }
+        var appServers = {};
+        _.each(serverSummaries, (serverArr) => {
+          _.each(serverArr.models, (server) => {
+            var serverModel = server.attributes;
+            //If route does not belonge to this app, skip it
+            if (!appRoutes[serverModel.route]) { return; }
+            //Sort by server and date
+            var dateId = serverModel.day + serverModel.month + serverModel.year;
+            var serverId = serverModel.serverid;
+            if (!appServers[serverId]) {
+              appServers[serverId] = {};
+              appServers[serverId][dateId] = [serverModel];
+            } else if (appServers[serverId] && !appServers[serverId][dateId]) {
+              appServers[serverId][dateId] = [serverModel];
+            } else {
+              appServers[serverId][dateId].push(serverModel);
+            }
+          });
+        });
+        //Compile total hits for each day and format for graphs
+        var appServerSums = [];
+        _.each(appServers, (appServer) => {
+          var serverDateSum = [];
+          _.each(appServer, (serverDateArr) => {
+            var totalHits = _.reduce(serverDateArr, (memo, serverDate) => {
+              return memo + +serverDate.value;
+            }, 0);
+            //=====DAYS AGO GO HERE??
+            var date = serverDateArr[0].day + serverDateArr[0].month + serverDateArr[0].year;
+            serverDateSum.push({serverid: serverDateArr[0].serverid, date: date, timestamp: serverDateArr[0].created_at, totalHits: totalHits});
+          });
+          appServerSums.push({server: serverDateSum[0].serverid, data: serverDateSum});
+        });
+        //Add server summaries to response object before sending
+        appCompleteSummary.Servers = appServerSums;
+        res.send(appCompleteSummary);
+      });
     });
   })
-
-  // AppSums.model.where({'users_id': userId, 'id': appId })
-  // .fetchAll()
-  // .then(function(serverSummary) {
-  //   // console.log(serverSummary);
-  //   res.send(serverSummary.models);
-  // })
   .catch(function(error) {
     console.log('Error getting app summary', error);
     res.send(500);
   });
 };
 
-//   {
-//     Total: [{data:[{ dayago: 1, day: 'date', totalHits: ''}]
-//     Routes: [{route: "aroute", data:[{dayago: 1, day: 'date', totalHits: ''}]}],
-//     Servers: [{server: 'aserverid', data:[{dayago: 1, day: 'date', totalHits: ''}]}]
-//   }
-// data looks the same in each [{dayago: 1, day: 'date', totalHits: ''}, {dayago: 1, day: 'date', totalHits: ''}]
