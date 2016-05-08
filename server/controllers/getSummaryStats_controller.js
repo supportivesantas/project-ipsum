@@ -1,6 +1,8 @@
-var allAppSums = require('../db/collections/appsummaries.js');
-var myServerSums = require('../db/collections/serversummaries.js');
+var AppSums = require('../db/collections/appsummaries.js');
+var ServerSums = require('../db/collections/serversummaries.js');
+var Hash = require('../db/collections/hashes.js');
 var _ = require('underscore');
+var Promise = require('bluebird');
 var knex = require('knex')({
   client: 'pg',
   connection: process.env.PG_CONNECTION_STRING,
@@ -14,7 +16,7 @@ var knex = require('knex')({
 //====================================================
 
 exports.allAppSummaries = function(req, res) {
-  allAppSums.model.fetchAll()
+  AppSums.model.fetchAll()
   .then(function(appSummaries) {
     var appRoutes = appSummaries.models;
     var apps = {};
@@ -64,26 +66,74 @@ exports.allAppSummaries = function(req, res) {
 exports.myServerSummary = function(req, res) {
 //WILL BE FOR INDIVIDUAL SERVERS ON MY SERVER PAGE
 //Filter By User ID and SERVER ID and have req.body for time interval (1-30 days)
-  myServerSums.model.fetchAll()
+  ServerSums.model.fetchAll()
   .then(function(serverSummary) {
-    console.log(serverSummary);
+    // console.log(serverSummary);
     res.send(serverSummary.models);
   })
   .catch(function(error) {
-    console.log('Error getting all Server Summaries', error);
+    console.log('Error getting server summary', error);
     res.send(500);
   });
 };
 
-exports.myAppSummary = function(req, res) {
+
+// exports.myAppSummary = function(req, res) {
+//   //add numDays later (raw search)
+//   ServerSums.model.where({'users_id': 1, 'serverid': 2})
+//   .fetchAll()
+//   .then((serverSummaries) => {
+//     console.log(serverSummaries);
+//     res.send(serverSummaries);
+//   })
+//   .catch((error) => {
+//     console.error('Error getting servers for app', error);
+//     res.send(error);
+//   });
+// };
+
+exports.myAppSummary = (req, res) => {
   //Filter By User ID and APP ID and have req.body for time interval (1-30 days)
-  myServerSums.model.fetchAll()
-  .then(function(serverSummary) {
-    console.log(serverSummary);
-    res.send(serverSummary.models);
+  var userId = 1;
+  var appId = 1;
+  var days = 1;
+  //add days later (raw search)
+  Hash.model.where({'users_id': userId, 'clientApps_id': appId }).fetchAll().then((appServers) => {
+    // res.send(appServers);
+    var appServerModels = appServers.models;
+    var getAppServersIds = [];
+    //Put getServersForApp function in array with each correct server Id so we can promise.all
+    _.each(appServerModels, (appServer) => {
+      getAppServersIds.push(appServer.attributes.clientServers_id);
+    });
+
+    var promises = _.map(getAppServersIds, (serverId) => {
+      return ServerSums.model.where({'users_id': userId, 'serverid': serverId }) ///INCLUDE HOURS HERE LATER
+              .fetchAll()
+              .then((serverSumPromises) => {
+                return serverSumPromises;
+              })
+              .catch((error) => {
+                console.error("Error in finding server summaries", error);
+              });
+    });
+    return Promise.all(promises).then((serverSummariesPromise) => {
+      return serverSummariesPromise;
+    })
+    .then((serverSummaries) => {
+
+      res.send(serverSummaries);
+    });
   })
+
+  // AppSums.model.where({'users_id': userId, 'id': appId })
+  // .fetchAll()
+  // .then(function(serverSummary) {
+  //   // console.log(serverSummary);
+  //   res.send(serverSummary.models);
+  // })
   .catch(function(error) {
-    console.log('Error getting all Server Summaries', error);
+    console.log('Error getting app summary', error);
     res.send(500);
   });
 };

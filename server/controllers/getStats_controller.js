@@ -27,7 +27,7 @@ exports.formatDataByHour = function(allRoutes, serverStats, dataRange) {
       var route = model.attributes;
       //put together all data with time: hours ago from now     (below): floor or ciel??
       allRoutes[route.statName.slice(1)].data.push({
-          time: Math.round(Math.abs(route.created_at - Date.now()) / 36e5),
+          time: Math.ceil(Math.abs(route.created_at - Date.now()) / 36e5),
           hits: route.statValue
         });
     });
@@ -77,7 +77,7 @@ exports.formatDataByHour = function(allRoutes, serverStats, dataRange) {
 exports.singleApp = function(req, res) {
   var appId = req.body.appId || 3; //TODO: leave until server IDs are fixed
   var hoursvar = req.body.hours || 12; //default to last twelve hours
-  var dataRange = _.range(hoursvar + 1);
+  var dataRange = _.range(1, hoursvar + 1);
  // var userId = req.user.id;//======================================================Put check in Later
 
   if (!appId) {
@@ -117,7 +117,7 @@ exports.singleApp = function(req, res) {
 exports.singleServer = function(req, res) {
   var serverId = req.body.serverId || 1; //TODO: leave until server IDs are fixed
   var hoursvar = req.body.hours || 12; //default to last twelve hours
-  var dataRange = _.range(hoursvar + 1);
+  var dataRange = _.range(1, hoursvar + 1);
 
   if (!serverId) {
     console.log('Error, could not get serverID', error);
