@@ -148,3 +148,12 @@ svg.barGraph {
 .loading {
   visibility: hidden;
 }
+
+
+/*=========== Add Load Balancer ============*/
+
+.sampleSnippet {
+  display: inline-block;
+  padding: 30px;
+  background-color: #FFEBEB;
+}
