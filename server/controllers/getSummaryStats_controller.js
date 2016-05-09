@@ -255,9 +255,13 @@ exports.myAppSummary = (req, res) => {
       });
       appRouteSums.push({route: routeDateSum[0].route, data: routeDateSum});
     });
+    appTotalHitsFormatted = [];
+    for (var date in appTotalHits) {
+      appTotalHitsFormatted.push({date: +date, value: appTotalHits[date]});
+    }
     //Create response object with data available so far
     var appCompleteSummary = {
-      Total : appTotalHits,
+      Total : appTotalHitsFormatted,
       Routes: appRouteSums,
       Servers: null,
     };
