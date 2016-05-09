@@ -23,7 +23,7 @@ module.exports = {
   },
   remove(nginxipandport, id, zone) {
     exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
-  }
+  },
 
 };
 

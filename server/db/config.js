@@ -148,6 +148,9 @@ db.knex.schema.hasTable('loadbalancers').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('loadbalancers', function(loadbalancers) {
       loadbalancers.increments('id').primary();
+      loadbalancers.string('ip');
+      loadbalancers.string('port');
+      loadbalancers.string('zone');
       loadbalancers.integer('users_id').references('users.id').onDelete('CASCADE');
       loadbalancers.integer('clientServers_id').references('clientServers.id').onDelete('CASCADE');
       loadbalancers.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
