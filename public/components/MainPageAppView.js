@@ -32,6 +32,17 @@ class MainPageAppView extends React.Component {
     );
   }
 
+  generateAppStats(id) {
+    var app = this.props.state.allAppSummaries[id];
+    return (
+      <div>
+        <h4>Date: {app.data} (just display in chart)</h4>
+        <h4>Total Hits: {app.totalHits} (just display in chart)</h4>
+        <h4>Total Routes: {app.totalRoutes} </h4>
+      </div>
+    )
+  }
+
   goToApp() {
     this.props.dispatch(actions.ADD_APP_SELECTION(this.props.selected));
     browserHistory.push('/myApp');
@@ -45,17 +56,7 @@ class MainPageAppView extends React.Component {
             <Panel>
               GRAPH GOES HERE
             </Panel>
-            <ButtonToolbar>
-              <Button bsSize="xsmall">Graph Option 1</Button>
-              <Button bsSize="xsmall">Graph Option 2</Button>
-              <Button bsSize="xsmall">Graph Option 3</Button>
-            </ButtonToolbar>
-
-            Panel content <br />
-            Panel content<br />
-            Panel content<br />
-            Panel content<br />
-            Panel content<br />
+            {this.generateAppStats(this.props.selected.id)}
           </Panel>
         </div>
       </Col>

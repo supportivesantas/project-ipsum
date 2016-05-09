@@ -7,6 +7,6 @@ getStatsRoutes.route('/app').post(getStatsController.singleApp);
 getStatsRoutes.route('/serverTotalsForApp').post(getStatsController.serverTotalsForApp);
 getStatsRoutes.route('/allAppSummaries').post(getSummaryStatsController.allAppSummaries);
 getStatsRoutes.route('/myServerSummary').post(getSummaryStatsController.myServerSummary);
-
+getStatsRoutes.route('/myAppSummary').post(getSummaryStatsController.myAppSummary);
 
 module.exports = getStatsRoutes;

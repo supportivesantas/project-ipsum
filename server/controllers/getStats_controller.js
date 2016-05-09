@@ -77,7 +77,7 @@ exports.formatDataByHour = function(allRoutes, serverStats, dataRange) {
 exports.singleApp = function(req, res) {
   var appId = req.body.appId || 3; //TODO: leave until server IDs are fixed
   var hoursvar = req.body.hours || 12; //default to last twelve hours
-  var dataRange = _.range(hoursvar + 1);
+  var dataRange = _.range(1, hoursvar + 1);
  // var userId = req.user.id;//======================================================Put check in Later
 
   if (!appId) {
@@ -117,7 +117,7 @@ exports.singleApp = function(req, res) {
 exports.singleServer = function(req, res) {
   var serverId = req.body.serverId || 1; //TODO: leave until server IDs are fixed
   var hoursvar = req.body.hours || 12; //default to last twelve hours
-  var dataRange = _.range(hoursvar + 1);
+  var dataRange = _.range(1, hoursvar + 1);
 
   if (!serverId) {
     console.log('Error, could not get serverID', error);

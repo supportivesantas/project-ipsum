@@ -86,7 +86,7 @@ exports.singleServerSummary = function(serverId, callback) {
       .fetchAll()
         .then(function(serverStats) {
           callback(ctrl.formatDataByHour(allRoutes, serverStats, dataRange));
-          
+
         })
         .catch(function(error) {
           console.error("Get stats error", error);
