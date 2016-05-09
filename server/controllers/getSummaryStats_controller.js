@@ -109,7 +109,7 @@ exports.myServerSummary = (req, res) => {
           (routeDateArr[0].month.length > 1 ? routeDateArr[0].month : '0' + routeDateArr[0].month) +
           (routeDateArr[0].day.length > 1 ? routeDateArr[0].day : '0' + routeDateArr[0].day);
         serverTotalHits[date] += totalHits;
-        routeDateSum.push({route: routeDateArr[0].route, date: date, timestamp: routeDateArr[0].created_at, value: totalHits});
+        routeDateSum.push({route: routeDateArr[0].route, date: +date, value: totalHits});
       });
       serverRouteSums.push({route: routeDateSum[0].route, data: routeDateSum});
     });
@@ -181,7 +181,7 @@ exports.myServerSummary = (req, res) => {
             var date = appDateArr[0].year +
               (appDateArr[0].month.length > 1 ? appDateArr[0].month : '0' + appDateArr[0].month) +
               (appDateArr[0].day.length > 1 ? appDateArr[0].day : '0' + appDateArr[0].day);
-            appDateSum.push({appid: appDateArr[0].appid, date: date, timestamp: appDateArr[0].created_at, value: totalHits});
+            appDateSum.push({appid: appDateArr[0].appid, date: +date, value: totalHits});
           });
           serverAppSums.push({app: appDateSum[0].appid, data: appDateSum});
         });
@@ -251,7 +251,7 @@ exports.myAppSummary = (req, res) => {
           (routeDateArr[0].month.length > 1 ? routeDateArr[0].month : '0' + routeDateArr[0].month) +
           (routeDateArr[0].day.length > 1 ? routeDateArr[0].day : '0' + routeDateArr[0].day);
         appTotalHits[date] += totalHits;
-        routeDateSum.push({route: routeDateArr[0].route, date: date, timestamp: routeDateArr[0].created_at, value: totalHits});
+        routeDateSum.push({route: routeDateArr[0].route, date: +date, value: totalHits});
       });
       appRouteSums.push({route: routeDateSum[0].route, data: routeDateSum});
     });
@@ -325,7 +325,7 @@ exports.myAppSummary = (req, res) => {
             var date = serverDateArr[0].year +
               (serverDateArr[0].month.length > 1 ? serverDateArr[0].month : '0' + serverDateArr[0].month) +
               (serverDateArr[0].day.length > 1 ? serverDateArr[0].day : '0' + serverDateArr[0].day);
-            serverDateSum.push({serverid: serverDateArr[0].serverid, date: date, timestamp: serverDateArr[0].created_at, value: totalHits});
+            serverDateSum.push({serverid: serverDateArr[0].serverid, date: +date, value: totalHits});
           });
           appServerSums.push({server: serverDateSum[0].serverid, data: serverDateSum});
         });
