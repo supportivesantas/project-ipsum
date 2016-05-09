@@ -77,7 +77,8 @@ internalTasks.syncServersToLB = function (userID, overwriteAll) {
         let zone = LB.get('zone');
         
         let host = ip + ':' + port;
-        return nginxController.list(host, zone);
+        /* make this generic later for other load balancers */
+        return nginxController.listParsed(host, zone);
       }));
     })
     .then((results) => {
@@ -96,6 +97,7 @@ internalTasks.syncServersToLB = function (userID, overwriteAll) {
       Promise.all(servers.map((server) => {
         if (quickLook[server.get('ip')] && (!server.get('master') || overwriteAll)) {
           server.set('master', quickLook[server.get('ip')].lbID);
+          server.set('lb_id', quickLook[server.get('ip')].id);
           return server.save();
         } else {
           return;

@@ -16,7 +16,7 @@ module.exports = {
 
   //NEED TO GET ID FOR REMOVE
 
-  list(nginxipandport, zone) {
+  listParsed(nginxipandport, zone) {
     let options = {
       uri: 'http://' + nginxipandport + '/upstream_conf',
       qs: {
@@ -28,12 +28,13 @@ module.exports = {
     return requestP(options)
       .then((result) => {
         let servers = [];
-        let parseServerInfo = /server ([0-9\.]+):([0-9]+)/g;
+        let parseServerInfo = /server ([0-9\.]+):([0-9]+).*id=([0-9]+)/g;
         let serverInfo = null;
         while (serverInfo = parseServerInfo.exec(result)) {
           servers.push({
             ip: serverInfo[1],
-            port: serverInfo[2]
+            port: serverInfo[2],
+            id: serverInfo[3]
           });
         }
 
@@ -43,6 +44,9 @@ module.exports = {
         console.log(error);
         return;
       });
+  },
+  list(nginxipandport, zone) {
+    exec("curl http://" + nginxipandport + "/upstream_conf?upstream=" + zone + "&verbose=", log);
   },
   enable(nginxipandport, targetipandport, zone) {
     exec("curl http://" + nginxipandport + "/upstream_conf?upstream=" + zone + "&server=" + targetipandport + "&up=", log);
