@@ -1,19 +1,13 @@
-<<<<<<< 5f294149d33e18fc403a90725744eed3f118a388
+"use strict";
 const util = require('util');
 const exec = require('child_process').exec;
 const LoadBalancer = require('../db/models/loadbalancer.js');
 const LoadBalancers = require('../db/collections/loadbalancers.js');
 const Server = require('../db/models/client-server.js');
 const Servers = require('../db/collections/client-server.js');
-const log = function(error, stdout, stderr) {
-=======
-"use strict";
-var sys = require('sys');
-var exec = require('child_process').exec;
 var requestP = require('request-promise');
 
 var log = function(error, stdout, stderr) {
->>>>>>> auto discovery for load balancer.
   console.log(stdout);
 };
 const _ = require('underscore');
