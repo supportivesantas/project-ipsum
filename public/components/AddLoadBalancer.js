@@ -51,23 +51,23 @@ class AddLoadBalancer extends React.Component {
                   <h3 style={{textDecoration:'underline'}}> Sample File: </h3>
                   <pre className='sampleSnippet'>
                     <code>
-                    {"upstream project {"}{"\n"}
-                      &nbsp;&nbsp;zone upstream_project 64k;{"\n"}
-                      &nbsp;&nbsp;server 104.131.128.174:4568;{"\n"}
-                      &nbsp;&nbsp;server 107.170.219.23:4568;{"\n"}
+                    {"upstream ZONE_NAME_HERE {"}{"\n"}
+                      &nbsp;&nbsp;zone upstream_ZONE_NAME_HERE 64k;{"\n"}
+                      &nbsp;&nbsp;server 1.1.1.1:3000;{"\n"}
+                      &nbsp;&nbsp;server 2.2.2.2:3000;{"\n"}
                      }{"\n"}
 
                      {"server {"}{"\n"}
-                      &nbsp;&nbsp;listen 80;{"\n"}
+                      &nbsp;&nbsp;listen YOUR_PORT_HERE;{"\n"}
 
                       &nbsp;&nbsp;{"location {"}{"\n"}
-                        &nbsp;&nbsp;&nbsp;&nbsp;proxy_pass http://project;{"\n"}
+                        &nbsp;&nbsp;&nbsp;&nbsp;proxy_pass http://ZONE_NAME_HERE;{"\n"}
                       &nbsp;&nbsp;}{"\n"}
 
                       &nbsp;&nbsp;{"location /upstream_conf {"}{"\n"}
                           &nbsp;&nbsp;&nbsp;&nbsp;upstream_conf;{"\n"}
                           &nbsp;&nbsp;&nbsp;&nbsp;allow 127.0.0.1;{"\n"}
-                          &nbsp;&nbsp;&nbsp;&nbsp;allow 173.247.199.46;{"\n"}
+                          &nbsp;&nbsp;&nbsp;&nbsp;allow OUR_DEPLOYMENT_SERVER_HERE;{"\n"}
                           &nbsp;&nbsp;&nbsp;&nbsp;deny all;{"\n"}
                       &nbsp;&nbsp;}{"\n"}
                      }
@@ -80,12 +80,10 @@ class AddLoadBalancer extends React.Component {
                 </Col>
               </Row>
               <Form horizontal ref="laodInputs">
-                <h4 style={{textDecoration:'underline'}}>Enter Your Load Balancer Information:</h4>
+                <h4 style={{textDecoration:'underline', marginTop: "50px"}}>Enter Your Load Balancer Information:</h4>
                   <Col xs={6} lg={3}>
-                <FormGroup>
                       <ControlLabel>NGINX IP Address:</ControlLabel>
                       <FormControl onChange={this.handleIp.bind(this)} value={this.state.nginxIp}/>
-                </FormGroup>
                   </Col>
                   <Col xs={6} lg={3}>
                       <ControlLabel>NGINX Port:</ControlLabel>
