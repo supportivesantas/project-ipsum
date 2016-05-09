@@ -2,7 +2,10 @@
 const clientApps = require('../db/collections/client-apps');
 const clientServers = require('../db/collections/client-server');
 const Creds = require('../db/collections/service-creds');
+const LoadBalancers = require('../db/collections/loadbalancers');
 const internalRequest = require('../api/internalRequest');
+const Promise = require('bluebird');
+const nginxController = require('./nginxController');
 var internalTasks = {};
 
 internalTasks.syncServersToPlatforms = function (userID, overwriteAll) {
@@ -58,6 +61,54 @@ internalTasks.syncServersToPlatforms = function (userID, overwriteAll) {
         processServerForCreds(cred);
       });
     });
+};
+
+internalTasks.syncServersToLB = function (userID, overwriteAll) {
+  let lbArray = null;
+  let quickLook = {};
+  
+  return LoadBalancers.model.where({ users_id: userID }).fetchAll()
+    .then((LBs) => {
+      lbArray = LBs;
+      
+      return Promise.all(LBs.map((LB) => {
+        let ip = LB.get('ip');
+        let port = LB.get('port');
+        let zone = LB.get('zone');
+        
+        let host = ip + ':' + port;
+        /* make this generic later for other load balancers */
+        return nginxController.listParsed(host, zone);
+      }));
+    })
+    .then((results) => {
+      
+      /* modify server object for each LB attaching LB id */
+      results.forEach((LB, lbIdx) => {
+        LB.forEach((server) => {
+          server.lbID = lbArray.at(lbIdx).get('id');
+          quickLook[server.ip] = server;
+        });
+      });
+
+      return clientServers.model.where({ users_id: userID }).fetchAll();
+    })
+    .then((servers) => {
+      Promise.all(servers.map((server) => {
+        if (quickLook[server.get('ip')] && (!server.get('master') || overwriteAll)) {
+          server.set('master', quickLook[server.get('ip')].lbID);
+          server.set('lb_id', quickLook[server.get('ip')].id);
+          return server.save();
+        } else {
+          return;
+        }
+      }));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+
 };
 
 module.exports = internalTasks;

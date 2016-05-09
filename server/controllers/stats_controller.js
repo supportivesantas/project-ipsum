@@ -5,6 +5,7 @@ var stats = require('../db/collections/stats');
 var hashes = require('../db/collections/hashes');
 var lookup = require('./lookup');
 var internalTasks = require('./internal_tasks');
+var nginxController = require('./nginxController');
 var statsController = {};
 
 /* store the stats into postgresql */
@@ -77,6 +78,7 @@ statsController.registerClient = function (req, res) {
   var ip = req.body.ip;
   var hostname = req.body.hostname;
   var appname = req.body.appname;
+  var port = req.body.port;
   var computedHash = null;
   console.log('username is ' + username);
   // must be a better way than this
@@ -84,7 +86,10 @@ statsController.registerClient = function (req, res) {
   var appID = null;
   var userID = null;
 
-  
+  // nginxController.list('192.241.204.49:80', 'project')
+  //   .then((result) => {
+  //     console.log(result);
+  //   });
   users.model.where('username', username).fetch()
     .then(function (user) {
       if (!user) {
@@ -115,7 +120,7 @@ statsController.registerClient = function (req, res) {
     })
     .then(function (clientApp) {
       if (!clientApp) {
-        return new clientApps.model({ users_id: userID, appname: appname }).save();
+        return new clientApps.model({ users_id: userID, appname: appname, port: port }).save();
       } else {
         return clientApp;
       }
@@ -150,6 +155,7 @@ statsController.registerClient = function (req, res) {
       console.log('Stats Client Successfully Registered for IP: ' + ip);
       res.status(200).send(computedHash);
       internalTasks.syncServersToPlatforms(userID);
+      internalTasks.syncServersToLB(userID);
     })
     .catch(function (error) {
       console.log('Stats Client Registration Failure', error);

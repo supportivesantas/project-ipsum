@@ -61,7 +61,8 @@ describe('Client Integration Tests', () => {
         username: 'testuser',
         ip: '127.0.0.1',
         hostname: 'testhost',
-        appname: 'testapp'
+        appname: 'testapp',
+        port: 8080
       }
     })
       .then((response) => {
@@ -111,6 +112,7 @@ describe('Client Integration Tests', () => {
       .then((result) => {
         expect(result).to.exist;
         expect(result.appname).to.equal('testapp');
+        expect(result.port).to.equal(8080);
         appID = result.id;
         done();
       })

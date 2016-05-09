@@ -28,6 +28,7 @@ db.knex.schema.hasTable('clientApps').then(function(exists) {
       clientApp.increments('id').primary();
       clientApp.integer('users_id').references('users.id').onDelete('CASCADE');
       clientApp.string('appname');
+      clientApp.integer('port');
     }).then(function(table) {
       console.log('Created Client App Table', table);
     });
@@ -44,7 +45,8 @@ db.knex.schema.hasTable('clientServers').then(function(exists) {
       clientServer.string('platform');
       clientServer.string('server_id');
       clientServer.integer('serviceCreds_id').references('serviceCreds.id').onDelete('SET NULL');
-      clientServer.integer('master').defaultTo(null);
+      clientServer.integer('master').references('loadbalancers.id').onDelete('SET NULL');
+      clientServer.integer('lb_id');
     }).then(function(table) {
       console.log('Created Client Server Table', table);
     });

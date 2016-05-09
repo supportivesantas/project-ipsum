@@ -26,7 +26,8 @@ var options = {
   token: '',             /*    token   */
   hostname: os.hostname(),
   ip: null,
-  enableIPv6: false,
+  port: null,
+  enableIPv6: false,     /* enables grabbing ipv6 if it's first -> experimental <- */
   timeout: 10000
 };
 
@@ -90,6 +91,7 @@ var registerClient = function () {
   var registerInfo = {
     username: options.username,
     ip: options.ip,
+    port: options.port,
     hostname: options.hostname,
     appname: options.name
   };
