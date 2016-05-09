@@ -24,6 +24,7 @@ class MyApp extends React.Component {
       appid: this.props.state.appSelection.id,
       hours: 24
     }, (err, data) => {
+      if (err) {console.log('ERROR', err); return; }
       var data = JSON.parse(data.text);
       var output = [];
       Object.keys(data).forEach((serverId) => {
@@ -32,8 +33,8 @@ class MyApp extends React.Component {
           label: data[serverId].hostname,
           id: Number(serverId)
         });
-      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
+      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
         return -obj.value;
       }));

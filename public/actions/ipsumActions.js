@@ -94,7 +94,7 @@ module.exports = {
       data: data
     };
   },
-  ADD_MYAPP_HISOTRY(data) {
+  ADD_MYAPP_HISTORY(data) {
     return {
       type: 'ADD_MYAPP_HISTORY',
       data: data
