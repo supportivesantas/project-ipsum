@@ -92,7 +92,9 @@ exports.myAppSummary = (req, res) => {
     //ie. appRoutes = { route: {dateid:[routeModel, routeModel ...], dateid: []...}, route: {}... }
     _.each(appModels, (appModel) => {
       appRoute = appModel.attributes;
-      var dateId = appRoute.day + appRoute.month + appRoute.year;
+      var dateId =  appRoute.year +
+        (appRoute.month.length > 1 ? appRoute.month : '0' + appRoute.month) +
+        (appRoute.day.length > 1 ? appRoute.day : '0' + appRoute.day);
       //Initialize Totals for each date
       if (!appTotalHits[dateId]) {
         //=====Change to timestamp or days ago, currently day+month+year (ie '852016' for may 8 2016)?
@@ -121,7 +123,9 @@ exports.myAppSummary = (req, res) => {
           return memo + +routeDate.value;
         }, 0);
         //======DAYS AGO GO HERE??
-        var date = routeDateArr[0].day + routeDateArr[0].month + routeDateArr[0].year;
+        var date = routeDateArr[0].year +
+          (routeDateArr[0].month.length > 1 ? routeDateArr[0].month : '0' + routeDateArr[0].month) +
+          (routeDateArr[0].day.length > 1 ? routeDateArr[0].day : '0' + routeDateArr[0].day);
         appTotalHits[date] += totalHits;
         routeDateSum.push({route: routeDateArr[0].route, date: date, timestamp: routeDateArr[0].created_at, totalHits: totalHits});
       });
@@ -172,7 +176,9 @@ exports.myAppSummary = (req, res) => {
             //If route does not belonge to this app, skip it
             if (!appRoutes[serverModel.route]) { return; }
             //Sort by server and date
-            var dateId = serverModel.day + serverModel.month + serverModel.year;
+            var dateId = serverModel.year +
+              (serverModel.month.length > 1 ? serverModel.month : '0' + serverModel.month) +
+              (serverModel.day.length > 1 ?  serverModel.day : '0' + serverModel.day);
             var serverId = serverModel.serverid;
             if (!appServers[serverId]) {
               appServers[serverId] = {};
@@ -193,7 +199,9 @@ exports.myAppSummary = (req, res) => {
               return memo + +serverDate.value;
             }, 0);
             //=====DAYS AGO GO HERE??
-            var date = serverDateArr[0].day + serverDateArr[0].month + serverDateArr[0].year;
+            var date = serverDateArr[0].year +
+              (serverDateArr[0].month.length > 1 ? serverDateArr[0].month : '0' + serverDateArr[0].month) +
+              (serverDateArr[0].day.length > 1 ? serverDateArr[0].day : '0' + serverDateArr[0].day);
             serverDateSum.push({serverid: serverDateArr[0].serverid, date: date, timestamp: serverDateArr[0].created_at, totalHits: totalHits});
           });
           appServerSums.push({server: serverDateSum[0].serverid, data: serverDateSum});
