@@ -44,6 +44,7 @@ db.knex.schema.hasTable('clientServers').then(function(exists) {
       clientServer.string('platform');
       clientServer.string('server_id');
       clientServer.integer('serviceCreds_id').references('serviceCreds.id').onDelete('SET NULL');
+      clientServer.integer('master').defaultTo(null);
     }).then(function(table) {
       console.log('Created Client Server Table', table);
     });
@@ -137,6 +138,22 @@ db.knex.schema.hasTable('appsummaries').then(function(exists) {
       appsummaries.string('month');
       appsummaries.string('year');
       appsummaries.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
+    }).then(function(table) {
+      console.log('Created App Summaries Table', table);
+    });
+  }
+});
+
+db.knex.schema.hasTable('loadbalancers').then(function(exists) {
+  if (!exists) {
+    db.knex.schema.createTable('loadbalancers', function(loadbalancers) {
+      loadbalancers.increments('id').primary();
+      loadbalancers.string('ip');
+      loadbalancers.string('port');
+      loadbalancers.string('zone');
+      loadbalancers.integer('users_id').references('users.id').onDelete('CASCADE');
+      loadbalancers.integer('clientServers_id').references('clientServers.id').onDelete('CASCADE');
+      loadbalancers.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
     }).then(function(table) {
       console.log('Created App Summaries Table', table);
     });
