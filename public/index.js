@@ -14,6 +14,7 @@ import MainPage from './components/MainPage.js';
 import actions from './actions/ipsumActions.js';
 import auth from './util/authHelpers.js';
 import tokens from './components/tokens.js';
+import addLoadBalancer from './components/AddLoadBalancer.js';
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
@@ -45,6 +46,7 @@ render(
         <Route path="/myServer" component={MyServer} onEnter={auth.requireAuth} />
         <Route path="/myApp" component={MyApp} onEnter={auth.requireAuth} />
         <Route path="/tokens" component={tokens} onEnter={auth.requireAuth} />
+        <Route path="/loadBalancer" component={addLoadBalancer} onEnter={auth.requireAuth} />
       </Route>
 
     </Router>
