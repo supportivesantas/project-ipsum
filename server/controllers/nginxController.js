@@ -57,8 +57,8 @@ module.exports = {
   add(nginxipandport, targetipandport, zone) {
     exec("curl http://" + nginxipandport + "/upstream_conf?add=&upstream=" + zone + "&server=" + targetipandport, log);
   },
-  remove(nginxipandport, id, zone) {
-    exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
+  remove(nginxipandport, targetipandport, zone) {
+    // exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
   },
 
   newLoadBalancer(req, res) {
@@ -126,34 +126,3 @@ module.exports = {
   },
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
