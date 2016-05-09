@@ -152,10 +152,10 @@ db.knex.schema.hasTable('loadbalancers').then(function(exists) {
       loadbalancers.string('port');
       loadbalancers.string('zone');
       loadbalancers.integer('users_id').references('users.id').onDelete('CASCADE');
-      loadbalancers.integer('clientServers_id').references('clientServers.id').onDelete('CASCADE');
       loadbalancers.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
+      loadbalancers.timestamp('updated_at').notNullable().defaultTo(knex.raw('now()'));
     }).then(function(table) {
-      console.log('Created App Summaries Table', table);
+      console.log('Created LoadBalancers Table', table);
     });
   }
 });
