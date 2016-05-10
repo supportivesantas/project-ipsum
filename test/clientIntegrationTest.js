@@ -21,7 +21,7 @@ describe('Client Integration Tests', () => {
   var userID = null;
   var appID = null;
   var serverID = null;
-
+  var lbID = null;
   // describe setup
   before((next) => {
     // creating listener with random port
@@ -294,6 +294,98 @@ describe('Client Integration Tests', () => {
       });
   });
 
+
+  it('should add a load balancer', (done) => {
+    requestP({
+      method: 'POST',
+      uri: 'http://localhost:' + port + '/nginx/balancers',
+      json: true,
+      body: {
+        ip: '1.1.1.1',
+        port: '1337',
+        zone: 'MAGA',
+        owner: userID,
+      },
+    })
+      .then((response) => {
+        client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
+          .then((result) => {
+            expect(result[0].zone).to.equal('MAGA');
+            lbID = result[0].id;
+            done();
+          })
+          .catch((error) => {
+            expect(error).to.not.exist;
+            done();
+          });
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
+  it('should add a slave to balancer', (done) => {
+    requestP({
+      method: 'POST',
+      uri: 'http://localhost:' + port + '/nginx/slaves',
+      json: true,
+      body: {
+        id: serverID,
+        master: lbID,
+      },
+    })
+      .then((response) => {
+        client.query('SELECT * FROM "clientServers" WHERE "id" = ' + serverID)
+          .then((result) => {
+            expect(result[0].master).to.equal(lbID);
+            done();
+          })
+          .catch((error) => {
+            expect(error).to.not.exist;
+            done();
+          });
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
+  it('should remove a load balancer', (done) => {
+    requestP({
+      method: 'DELETE',
+      uri: 'http://localhost:' + port + '/nginx/balancers',
+      json: true,
+      body: {
+        id: lbID,
+      },
+    })
+      .then((response) => {
+        client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
+          .then((result) => {
+            expect(result.length).to.equal(0);
+            client.query('SELECT * FROM "clientServers" WHERE "users_id" = ' + userID)
+              .then((res) => {
+                expect(res[0].master).to.equal(null);
+                done();
+              })
+              .catch((err) => {
+                expect(error).to.not.exist;
+                done();
+              });
+          })
+          .catch((error) => {
+            expect(error).to.not.exist;
+            done();
+          });
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
   // teardown
   after(() => {
     // stop listening that port
@@ -301,6 +393,7 @@ describe('Client Integration Tests', () => {
       'DELETE FROM "clientApps" WHERE "appname" = ${appname};' +
       'DELETE FROM "users" WHERE "username" = ${username}' +
       'DELETE FROM "serviceCreds" WHERE "users_id" = ${id}',
+      'DELETE FROM "loadbalancers" WHERE "users_id" = ${id}',
        {
         ip: '127.0.0.1',
         appname: 'testapp',
