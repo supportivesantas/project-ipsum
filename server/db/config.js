@@ -46,6 +46,7 @@ db.knex.schema.hasTable('clientServers').then(function(exists) {
       clientServer.string('server_id');
       clientServer.integer('serviceCreds_id').references('serviceCreds.id').onDelete('SET NULL');
       clientServer.integer('master').references('loadbalancers.id').onDelete('SET NULL');
+      clientServer.integer('lb_id'); // id of server in load balancer config
     }).then(function(table) {
       console.log('Created Client Server Table', table);
     });
