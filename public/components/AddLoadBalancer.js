@@ -5,6 +5,11 @@ import request from '../util/restHelpers.js';
 import { Button, Col, ControlLabel, FormControl, FormGroup, Grid, Panel, Row, Form } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
+const selectRowProp = {
+  mode: 'checkbox',
+  bgColor: 'rgb(238, 193, 213)',
+};
+
 class AddLoadBalancer extends React.Component {
   constructor(props) {
     super(props);
@@ -58,13 +63,13 @@ class AddLoadBalancer extends React.Component {
 
         <Row>
           <Col md={12} xs={12}>
-            <BootstrapTable ref='table' data={this.props.state.loadBalancers} striped={true} hover={true} selectRow={this.selectRowProp} search={true}>
+            <BootstrapTable ref='table' data={this.props.state.loadBalancers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
               <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Load Balancer ID</TableHeaderColumn>
               <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Load Balancer IP</TableHeaderColumn>
               <TableHeaderColumn dataField="hostname" dataAlign="center" dataSort={true}>Hostname</TableHeaderColumn>
               <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
               <TableHeaderColumn dataField="active" dataSort={true}>Status</TableHeaderColumn>
-              <TableHeaderColumn dataField="apps">Application</TableHeaderColumn>
+              <TableHeaderColumn dataField="apps" dataSort={true}>Application</TableHeaderColumn>
             </BootstrapTable>
           </Col>
         </Row>
