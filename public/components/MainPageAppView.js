@@ -61,6 +61,7 @@ class MainPageAppView extends React.Component {
         break;
       }
     }
+    app = app || {};
     return (
       <div>
         <h4>Total Routes Monitored: {app.totalRoute}</h4>
