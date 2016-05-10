@@ -175,7 +175,7 @@ module.exports = {
   getUserCreds: (req, res) => {
     console.log('Get user creds');
     // var userID = req.user.id;
-    var userID = 1;
+    var userID = req.query.id || 1;
 
     if (userID === undefined) {
       console.log('ERROR: Missing Parameter');

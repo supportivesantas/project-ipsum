@@ -278,6 +278,22 @@ describe('Client Integration Tests', () => {
       });
   });
 
+  it('should get user credentials', (done) => {
+    requestP({
+      method: 'GET',
+      uri: 'http://localhost:' + port + '/user/usercreds?id=' + userID,
+      json: true,
+    })
+      .then((response) => {
+        expect(response[0].value).to.equal('Make America Great Again');
+        done();
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
   // teardown
   after(() => {
     // stop listening that port
