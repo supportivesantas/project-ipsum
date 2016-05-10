@@ -36,6 +36,11 @@ describe('Models Test', function() {
       expect(user.get('githubemail')).to.equal('same@s.email');
       expect(user.get('githubtoken')).to.equal('190h9fe0h01hfe0h17f');
       userID = user.get('id');
+      // knex('users').where('username', 'makeitrane').del().then(function(results){
+      //   console.log(results);
+      //   expect(results).to.be.at.least(1);
+      //   done();
+      // });
       done();
     });
   });
@@ -89,18 +94,17 @@ describe('Models Test', function() {
       });
     });
   });
-  
-  it('should save an serviceCreds to the database', function (done) {
-    var serviceCred = new ServiceCred({
-      platform: 'digital_ocean',
-      value: '1234'
+
+  it('should save an serviceCreds to the database', (done) => {
+    new ServiceCred({
+      users_id: userID,
     }).save()
-    .then(function(){
-      return ServiceCred.where({ value: '1234'}).fetch();
+    .then(() => {
+      return ServiceCred.where({ users_id: userID }).fetch();
     })
-    .then(function(serviceCred){
-      expect(serviceCred.get('value')).to.equal('1234');
-      knex('serviceCreds').where('value', '1234').del().then(function(results){
+    .then((serviceCred) => {
+      expect(serviceCred.get('users_id')).to.equal(userID);
+      knex('serviceCreds').where('users_id', userID).del().then((results) => {
         expect(results).to.be.at.least(1);
         done();
       });
@@ -159,6 +163,16 @@ describe('Summaries Controller', () => {
       expect(idArr.length).to.not.equal(0);
       done();
     });
+  });
+
+  after('destroys user', (done) => {
+    User.where({ id: userID }).fetch()
+      .then((user) => {
+        user.destroy()
+          .then(() => {
+            done();
+          });
+      });
   });
 
 });
