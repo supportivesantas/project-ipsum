@@ -6,23 +6,29 @@ import { connect } from 'react-redux';
 import request from '../util/restHelpers';
 import _ from 'underscore';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
-import barGraph from './AllAppsBarGraph'
+import barGraph from './AllAppsBarGraph';
+import Select from 'react-select';
+import style from '../styles/SelectStyle.css';
 
 class MyAppHistory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filterMode: 'total', // 'total', 'route', or 'server'
-      filterOptions: [], // an array 
+      filterMode: null, // 'total', 'route', or 'server'
+      filterOptions: null, // an array 
       days: null,
-      graphData: null
+      graphData: null,
+      selectedFilters: null
     };
   }
 
   graphIt(){
-    this.formatGraphData(); 
-    if (this.state.graphData) {
-      barGraph('historyBargraph', this.state.graphData)
+    if (this.state.days) {
+      if (this.filterMode === 'total' || this.state.filterOptions && this.state.selectedFilters)
+        this.formatGraphData(); 
+        if (this.state.graphData) {
+          barGraph('historyBargraph', this.state.graphData)
+        }
     }
   }
 
@@ -36,10 +42,10 @@ class MyAppHistory extends React.Component {
     // parse the data object for route and server totals
       var data = JSON.parse(resp.text);
       var parsedData = this.parseHistoryResponse(data);
-      console.log(data);
       // var parsedData = this.parseHistoryResponse(sampledata);
       // save parsed and formatted data to store
       this.props.dispatch(actions.ADD_MYAPP_HISTORY(parsedData));
+      this.graphIt();
     });
   }
 
@@ -74,12 +80,12 @@ class MyAppHistory extends React.Component {
   }
 
   formatGraphData() {
-    var data = this.props.state.myAppHistory;
+    console.log(this.state.selectedFilters);
     var mode = this.state.filterMode;
 
     if (mode === 'total') {
 
-      this.setState({graphData: data.Total});
+      this.setState({graphData: this.props.state.myAppHistory.Total});
       return;
 
     } else  {
@@ -95,7 +101,7 @@ class MyAppHistory extends React.Component {
       var results = {};
 
       raw.forEach( item => {
-        if (_.findWhere(this.state.filterOptions, {value: item[identifier]}).selected) {
+        if (_.findWhere(this.state.selectedFilters, {value: item[identifier]})) {
           var days = item.data;
           days.forEach( day => {
             // add the label to the results if not present
@@ -116,49 +122,50 @@ class MyAppHistory extends React.Component {
     }
   }
 
-  selectDays(event) {
-    this.setState({days: event.target.value }, () => this.getData());
+  selectDays(value) {
+    this.setState({days: value.value }, () => this.getData());
   }
 
-  selectFilterMode(event) {
-    var filterForm = document.getElementById('filter-options-form');
-    if (filterForm) { filterForm.reset(); }
+  selectFilterMode(value) {
+    // clear the old graph away
+    document.getElementById('historyBargraph').innerHTML ='';
 
-    if (event.target.value === 'server') { this.setState({filterMode: 'server'})}
-    else if (event.target.value === 'route') { this.setState({filterMode: 'route'})}
-    else { this.setState({filterMode: 'total'})}
+    if (value.value === 'server') { this.setState({filterMode: 'server'})}
+    else if (value.value === 'route') { this.setState({filterMode: 'route'})}
+    else { this.setState({filterMode: 'total', filterOptions: null})}
 
-    var mode = {
-      'route': this.props.state.myAppHistory.routeNames,
-      'server': this.props.state.myAppHistory.serverNames
-    };
+    // clear the old filter options and load the new ones
+    this.setState({selectedFilters: null}, () => {
+      // load the new filter options 
+      var mode = {
+        'route': this.props.state.myAppHistory.routeNames,
+        'server': this.props.state.myAppHistory.serverNames
+      };
 
-    var options = mode[event.target.value] || [];
-
-    if (options.length) {
-      _.each(options, option => option.selected = false );
-      this.setState({filterOptions: options});
-    } else {
-      this.setState({filterOptions: []});
-    }
+      var options = mode[value.value];
+      this.setState({filterOptions: options}, () => this.graphIt() );
+    });
   }
 
-  toggleFilterOption(event) {
-    var options = this.state.filterOptions.slice();
-    var target = _.findWhere(options, {value: event.target.value});
-    if (target) {target.selected = !(target.selected);}
-    this.setState({filterOptions: options});
+  toggleFilterOption(value) {
+    this.setState({selectedFilters: value}, () => {this.graphIt();});
   }
 
   render() {
 
     var dayOptions = [
-      {'value': 1},
-      {'value': 3},
-      {'value': 7},
-      {'value': 14},
-      {'value': 21},
-      {'value': 30}
+      {'value': 1, 'label': '1 day'},
+      {'value': 3, 'label': '3 days'},
+      {'value': 7, 'label': '7 days'},
+      {'value': 14, 'label': '14 days'},
+      {'value': 21, 'label': '21 days'},
+      {'value': 30, 'label': '30 days'}
+    ];
+
+    var filterModes = [
+      {'value': 'total', 'label': 'Total (no filter)'},
+      {'value': 'route', 'label': 'By selected route(s)'},
+      {'value': 'server', 'label': 'By selected server(s)'}
     ];
 
     return (
@@ -170,54 +177,20 @@ class MyAppHistory extends React.Component {
         <Row>
           <Col xs={12} md={4}>
 
-            <h3 className="section-heading">How far back?</h3>
-            <form id='days-form'>
-              {
-                dayOptions.map( (option, i) => {
-                  return (
-                  <div key={i}>
-                    <input name="day" type="radio" onChange={this.selectDays.bind(this)} value={option.value}></input> 
-                    <label>{option.value} days</label>
-                  </div>
-                  )
-                })
-              }
-            </form>
+            <div>
+            <h3>How far back?</h3>
+            <Select value={this.state.days} ref='daysSelect' autofocus options={dayOptions} clearable={false} name='daysSelect' onChange={this.selectDays.bind(this)} />
+            </div>
 
-            {this.state.days ? (
-              <div>
-              <h3 className="section-heading">Filter results by:</h3>
-              <form id='filter-mode-form'>
-                <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='total'></input> <label>None</label></div>
-                <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='route'></input> <label>By route(s)</label></div>
-                <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='server'></input> <label>By server(s)</label></div>
-              </form>
-              </div>
-              ) : null}
+            <div>
+            <h3>Filter results by:</h3>
+            <Select disabled={this.state.days ? false : true} value={this.state.filterMode} ref='filterModeSelect' autofocus options={filterModes} clearable={false} name='filterModeSelect' onChange={this.selectFilterMode.bind(this)} />
+            </div>
 
-            {this.state.filterOptions.length ? (
-              <div>
-              <h3 className="section-heading">Options</h3>
-                <form id="filter-options-form">
-                  {
-                    this.state.filterOptions.map( (option, i) => {
-                      return (
-                      <div key={i}>
-                        <input name="option" type="checkbox" onChange={this.toggleFilterOption.bind(this)} value={option.value}></input> 
-                        <label>{option.label}</label>
-                      </div>
-                      )
-                    })
-                  }
-                </form></div>
-              ) : null}
-
-            {this.state.filterOptions ? (
-            
-              <button onClick={this.graphIt.bind(this)}>Graph It</button>
-
-            ) : null}  
-           
+            <div>
+            <h3>Options</h3>
+            <Select disabled={this.state.filterOptions && this.state.filterMode !== 'total' ? false : true} multi value={this.state.selectedFilters} ref='filterSelect' autofocus options={this.state.filterOptions} clearable={false} name='filterSelect' onChange={this.toggleFilterOption.bind(this)} />
+            </div>
 
           </Col>
           <Col xs={12} md={8}>
