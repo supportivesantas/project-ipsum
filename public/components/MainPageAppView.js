@@ -18,7 +18,7 @@ class MainPageAppView extends React.Component {
   componentDidMount(id) {
     restHandler.post('getStats/allAppSummaries', {}, (err, res) => {
       this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
-      var apps = this.props.state.allAppSummaries;
+      var apps = this.props.state.allAppSummaries || {};
       var id = this.props.selected.id;
        var app;
         for (var i = 0; i < apps.length; i++) {
@@ -27,8 +27,6 @@ class MainPageAppView extends React.Component {
             break;
           }
         }
-        console.log(id);
-        console.log(app)
       barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
           return obj.date;
       }));
@@ -55,7 +53,7 @@ class MainPageAppView extends React.Component {
   }
 
   generateAppStats(id) {
-    var apps = this.props.state.allAppSummaries;
+    var apps = this.props.state.allAppSummaries || {};
     var app;
     for (var i = 0; i < apps.length; i++) {
       if (+apps[i].appid === id) {
@@ -80,6 +78,7 @@ class MainPageAppView extends React.Component {
       <Col xs={12} sm={6} md={6}>
         <div className="MainPageAppView">
           <Panel header={this.generateHeader(this.props.selected.id)}>
+            <h4 style={{"text-align":"center"}}>Load over the last week</h4>
             <div id={"Graph" + this.props.selected.id.toString()}>
             </div>
             {this.generateAppStats(this.props.selected.id)}
