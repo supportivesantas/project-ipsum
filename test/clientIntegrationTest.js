@@ -293,7 +293,24 @@ describe('Client Integration Tests', () => {
         done();
       });
   });
-
+  
+  it('should get init data', (done) => {
+    requestP({
+      method: 'GET',
+      uri: 'http://localhost:' + port + '/user/init',
+      json: true,
+    })
+      .then((response) => {
+        expect(response).to.be.an.Object;
+        expect(response.servers).to.be.an.Array;
+        expect(response.apps).to.be.an.Array;
+        done();
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
 
   it('should add a load balancer', (done) => {
     requestP({
@@ -387,7 +404,7 @@ describe('Client Integration Tests', () => {
   });
 
   // teardown
-  after(() => {
+  after('Destory temp items', () => {
     // stop listening that port
     client.query('DELETE FROM "clientServers" WHERE ip = ${ip};' +
       'DELETE FROM "clientApps" WHERE "appname" = ${appname};' +

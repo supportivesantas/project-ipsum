@@ -112,14 +112,14 @@ module.exports = {
     Creds.model.where({
       users_id: userID,
       platform: platform,
-      value: value
+      value: value,
     }).fetch()
       .then((credential) => {
         if (!credential) {
           return new Creds.model({
             users_id: userID,
             platform: platform,
-            value: value
+            value: value,
           }).save();
         } else {
           return credential;
@@ -232,10 +232,11 @@ deleteUserCreds: (req, res) => {
 
 
   getInit: (req, res) => {
+    const id = req.user ? req.user.id : req.query.id;
     let serverQuickLook = {};
     const servData = [];
     
-    Servers.query('where', 'users_id', '=', req.user.id, 'orderBy', 'id', 'ASC').fetch()
+    Servers.query('where', 'users_id', '=', id, 'orderBy', 'id', 'ASC').fetch()
       .then((servers) => {
         
         for (let i = 0; i < servers.models.length; i++) {
@@ -259,7 +260,7 @@ deleteUserCreds: (req, res) => {
         // console.log(servData);
         
         /* query hashes table and filter only server/app id and appnames */
-        return Hashes.query('where', 'users_id', '=', req.user.id, 'orderBy', 'id', 'ASC')
+        return Hashes.query('where', 'users_id', '=', id, 'orderBy', 'id', 'ASC')
           .fetch({
             withRelated: [{
               'clientApps': (qb) => {
@@ -281,7 +282,7 @@ deleteUserCreds: (req, res) => {
           serverQuickLook[hashAttrib.clientServers_id].apps.push(appDescription);
         });
         
-        return Apps.query('where', 'users_id', '=', req.user.id).fetch();
+        return Apps.query('where', 'users_id', '=', id).fetch();
       })
       .then((apps) => {
         const appData = [];
