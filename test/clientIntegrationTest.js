@@ -13,7 +13,7 @@ describe('Client Integration Tests', () => {
   // just describe needed vars
   var server, port;
   var client = pgp({
-    connectionString: process.env.PG_CONNECTION_STRING
+    connectionString: process.env.PG_CONNECTION_STRING,
   });
 
   // stuff we need to keep track of
