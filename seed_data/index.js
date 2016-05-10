@@ -8,7 +8,7 @@ const app = require('./app');
 const server = require('./server');
 const stats = require('./stats');
 
-var maxAppsPerServer = 3; // max 3 apps per server
+var maxAppsPerServer = 1; // max 1 apps per server
 var maxRoutes = 50; // max 50 routes
 var maxDepth = 5;   // max path depth is 5
 var generateMaxDays = 7;
