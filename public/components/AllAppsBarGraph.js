@@ -1,41 +1,60 @@
-exports.render = function(divId, data) {
-console.log(divId, data)
-  var height = null;
-  var divIdString = '#' + divId;
+import d3 from 'd3';
 
-  /* Taken from: https://bost.ocks.org/mike/bar/2/ */
-  var width = document.getElementById(divId).parentNode.clientWidth,
-    barHeight = 25;
+module.exports = function(divId, data) {
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = document.querySelector("#"+divId).clientWidth - margin.left - margin.right,
+    height = 250 - margin.top - margin.bottom;
 
-  height = barHeight * data.length;
-  document.getElementById(divId).style.height = height + 'px';
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
 
-  var x = d3.scale.linear()
-  .range([0, width]);
+var y = d3.scale.linear()
+    .range([height, 0]);
 
-  x.domain([0, d3.max(data, function(d) { return d.value; })]);
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
 
-  var chart = d3.select(divIdString)
-  .attr("width", width);
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(5);
 
-  var bar = chart.selectAll("g")
-    .data(data)
-    .enter().append("g")
-    .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+var svg = d3.select("#" + divId).append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  bar.append("rect")
-    .attr("width", function(d) { return x(d.value); })
-    .attr("height", barHeight - 1);
+  x.domain(data.map(function(d) { return d.date.toString().slice(6, 8); }));
+  y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
-  bar.append("text")
-    .attr("x", function(d) { return x(d.value) - 3; })
-    .attr("y", barHeight / 2)
-    .attr("dy", ".35em")
-    .text(function(d) { return d.date.toString().slice(6, 8); });
+  svg.append("g")
+      .attr("class", "x axisM")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
 
+  svg.append("g")
+      .attr("class", "y axisM")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("value");
+
+  svg.selectAll(".appsbar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "appsbar")
+      .attr("x", function(d) { return x(d.date.toString().slice(6, 8)); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); });
+
+function type(d) {
+  d.value = +d.value;
+  return d;
 }
-
-exports.update = function(divId, data) {
-  d3.select(divIdString).remove();
-  exports.render(divId, data);
 }

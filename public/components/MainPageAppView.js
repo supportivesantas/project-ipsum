@@ -15,15 +15,23 @@ class MainPageAppView extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount(id) {
     restHandler.post('getStats/allAppSummaries', {}, (err, res) => {
       this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
       var apps = this.props.state.allAppSummaries;
-      for (var i = 0; i < apps.length; i++) {
-        barGraph.render("Graph" + apps[i].appid, _.sortBy(apps[i].data, (obj) => {
-            return obj.date;
-        }));
-      }
+      var id = this.props.selected.id;
+       var app;
+        for (var i = 0; i < apps.length; i++) {
+          if (+apps[i].appid === id) {
+            app = apps[i];
+            break;
+          }
+        }
+        console.log(id);
+        console.log(app)
+      barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
+          return obj.date;
+      }));
     });
   }
 
