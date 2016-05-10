@@ -34,15 +34,22 @@ class AllServers extends React.Component {
   }
 
   goToApp(appId) {
-    /* placeholder for going to app specific page */
-    console.log('went to appID:' + appId);
+    var apps = this.props.state.applications;
+    var app;
+    for (var i = 0; i < apps.length; i++) {
+      if (apps[i].id === appId) {
+        app = apps[i];
+        break;
+      }
+    }
+    this.props.dispatch(actions.ADD_APP_SELECTION(app));
   }
 
   tableAppsLinkForm(cell) {
     return (
       <div>
         {cell.map((app) => {
-          return (<div key={app[0]+app[1]}><Link onClick={this.goToApp.bind(this, app[0])} to="/">{app[1]}</Link></div>);
+          return (<div key={app[0]+app[1]}><Link onClick={this.goToApp.bind(this, app[0])} to="/myApp">{app[1]}</Link></div>);
         })}
       </div>
     );
