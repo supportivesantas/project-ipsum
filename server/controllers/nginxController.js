@@ -57,8 +57,8 @@ module.exports = {
   add(nginxipandport, targetipandport, zone) {
     exec("curl http://" + nginxipandport + "/upstream_conf?add=&upstream=" + zone + "&server=" + targetipandport, log);
   },
-  remove(nginxipandport, id, zone) {
-    exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
+  remove(nginxipandport, targetipandport, zone) {
+    // exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
   },
 
   newLoadBalancer(req, res) {
@@ -109,10 +109,8 @@ module.exports = {
         }
         lb.destroy()
           .then(() => {
-            console.log(lb);
             Servers.query('where', 'master', '=', lbid).fetch()
               .then((servers) => {
-                console.log(servers);
                 _.each(servers.models, (item, index) => {
                   item.set('master', null)
                   .save();
@@ -126,34 +124,3 @@ module.exports = {
   },
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
