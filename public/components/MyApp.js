@@ -159,11 +159,6 @@ class MyApp extends React.Component {
               </Grid>
             </Panel>
           </Col>
-<<<<<<< 57268b2cdd5af561f4db372c64218084a8dbf728
-
-
-=======
->>>>>>> cleanup bargraph function
         </Row>
         <MyAppHistory />
       </Grid>
