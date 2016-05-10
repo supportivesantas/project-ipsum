@@ -25,10 +25,11 @@ class MyAppHistory extends React.Component {
   graphIt(){
     if (this.state.days) {
       if (this.filterMode === 'total' || this.state.filterOptions && this.state.selectedFilters)
-        this.formatGraphData(); 
-        if (this.state.graphData) {
-          barGraph('historyBargraph', this.state.graphData)
-        }
+        this.formatGraphData(() => {
+          if (this.state.graphData) {
+            barGraph('historyBargraph', this.state.graphData)
+          }
+        }); 
     }
   }
 
@@ -79,8 +80,7 @@ class MyAppHistory extends React.Component {
     return parsed;
   }
 
-  formatGraphData() {
-    console.log(this.state.selectedFilters);
+  formatGraphData(cb) {
     var mode = this.state.filterMode;
 
     if (mode === 'total') {
@@ -118,21 +118,21 @@ class MyAppHistory extends React.Component {
         return a.date - b.date;
       });
 
-      this.setState({graphData: arr});
+      this.setState({graphData: arr}, () => cb() );
     }
   }
 
   selectDays(value) {
-    this.setState({days: value.value }, () => this.getData());
+    this.setState({days: value.value, selectedFilters: null, filterOptions: null}, () => this.getData());
   }
 
   selectFilterMode(value) {
     // clear the old graph away
-    document.getElementById('historyBargraph').innerHTML ='';
+    document.getElementById('historyBargraph').innerHTML = '';
 
     if (value.value === 'server') { this.setState({filterMode: 'server'})}
     else if (value.value === 'route') { this.setState({filterMode: 'route'})}
-    else { this.setState({filterMode: 'total', filterOptions: null})}
+    else { this.setState({filterMode: 'total', filterOptions: null, selectedFilters: null})}
 
     // clear the old filter options and load the new ones
     this.setState({selectedFilters: null}, () => {
@@ -156,10 +156,9 @@ class MyAppHistory extends React.Component {
     var dayOptions = [
       {'value': 1, 'label': '1 day'},
       {'value': 3, 'label': '3 days'},
-      {'value': 7, 'label': '7 days'},
-      {'value': 14, 'label': '14 days'},
-      {'value': 21, 'label': '21 days'},
-      {'value': 30, 'label': '30 days'}
+      {'value': 7, 'label': '1 week'},
+      {'value': 14, 'label': '2 weeks'},
+      {'value': 28, 'label': '4 weeks'},
     ];
 
     var filterModes = [
