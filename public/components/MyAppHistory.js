@@ -6,65 +6,7 @@ import { connect } from 'react-redux';
 import request from '../util/restHelpers';
 import _ from 'underscore';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
-import barGraph from './BarGraph';
-
-var sampledata = {
-  "Total": [ 
-    {date: 20160508, value: 1234}, 
-    {date: 20160509, value: 2846}
-  ],
-  "Routes": [
-    {route: 'route1', data: 
-      [{
-        "route": "route1",
-        "date": 20160509,
-        "value": 57382
-      },
-      {
-        "route": "route1",
-        "date": 20160310,
-        "value": 49528
-      }]
-    },
-    {route: 'route2', data: 
-      [{
-        "route": "route2",
-        "date": 20160509,
-        "value": 20823
-      },
-      {
-        "route": "route2",
-        "date": 20160310,
-        "value": 28473
-      }]
-    }],
-  "Servers": [
-    {serverid: 'server1', data: 
-      [{
-        "serverid": "server1",
-        "date": 20160509,
-        "value": 58274
-      },
-      {
-        "serverid": "server1",
-        "date": 20160310,
-        "value": 29486
-      }]
-    },
-    {serverid: 'server2', data: 
-      [{
-        "serverid": "server2",
-        "date": 20160509,
-        "value": 29837
-      },
-      {
-        "serverid": "server2",
-        "date": 20160310,
-        "value": 72938
-      }]
-    }
-  ]
-};
+import barGraph from './AllAppsBarGraph'
 
 class MyAppHistory extends React.Component {
   constructor(props) {
@@ -78,7 +20,7 @@ class MyAppHistory extends React.Component {
   }
 
   graphIt(){
-    this.formatGraphData();
+    this.formatGraphData(); 
     if (this.state.graphData) {
       barGraph('historyBargraph', this.state.graphData)
     }
@@ -88,13 +30,14 @@ class MyAppHistory extends React.Component {
     request.post('/getStats/myAppSummary', {
       userId: 1,
       appId: 1,
-      days: this.state.days
+      days: 7
     }, (err, resp) => {
       console.log(err, resp)
     // parse the data object for route and server totals
       var data = JSON.parse(resp.text);
-      // var parsedData = this.parseHistoryResponse(data);
-      var parsedData = this.parseHistoryResponse(sampledata);
+      var parsedData = this.parseHistoryResponse(data);
+      console.log(data);
+      // var parsedData = this.parseHistoryResponse(sampledata);
       // save parsed and formatted data to store
       this.props.dispatch(actions.ADD_MYAPP_HISTORY(parsedData));
     });
@@ -104,9 +47,19 @@ class MyAppHistory extends React.Component {
     // make a copy
     var parsed = Object.assign({}, response);
     // collect server names for <Select>
-    parsed.serverNames = parsed.Servers.map( Server => {return {value: Server.serverid, label: Server.serverid}; });
+    parsed.serverNames = parsed.Servers.map( Server => {
+      return {
+        value: Server.server, 
+        label: _.findWhere(this.props.state.servers, {id: Number(Server.server)} ).hostname 
+      };
+    });
     // collect routenames for <Select>
-    parsed.routeNames = parsed.Routes.map( Route => {return {value: Route.route, label: Route.route}; });
+    parsed.routeNames = parsed.Routes.map( Route => {
+      return {
+        value: Route.route, 
+        label: Route.route
+      }; 
+    });
     // collect dates for Graph
     parsed.dates = parsed.Total.map( Total => Total.date);
     // sort the totals by date
@@ -132,7 +85,7 @@ class MyAppHistory extends React.Component {
     } else  {
 
       if (mode === 'server') {
-        var identifier = 'serverid';
+        var identifier = 'server';
         var raw = this.props.state.myAppHistory.Servers;
       } else {
         var identifier = 'route';
@@ -147,7 +100,7 @@ class MyAppHistory extends React.Component {
           days.forEach( day => {
             // add the label to the results if not present
             if (!results.hasOwnProperty(day.date)) {
-              results[day.date] = {label: day.date, value: 0}
+              results[day.date] = {date: day.date, value: 0}
             }
             results[day.date].value += day.value;
           })
@@ -190,10 +143,10 @@ class MyAppHistory extends React.Component {
     }
   }
 
-  toggleFilterOptions(event) {
-    var options = this.state.filterOptions.slice() || [];
+  toggleFilterOption(event) {
+    var options = this.state.filterOptions.slice();
     var target = _.findWhere(options, {value: event.target.value});
-    target.selected = !(target.selected);
+    if (target) {target.selected = !(target.selected);}
     this.setState({filterOptions: options});
   }
 
@@ -250,8 +203,8 @@ class MyAppHistory extends React.Component {
                     this.state.filterOptions.map( (option, i) => {
                       return (
                       <div key={i}>
-                        <input name="option" type="checkbox" onChange={this.toggleFilterOptions.bind(this)} value={option.value}></input> 
-                        <label>{option.value}</label>
+                        <input name="option" type="checkbox" onChange={this.toggleFilterOption.bind(this)} value={option.value}></input> 
+                        <label>{option.label}</label>
                       </div>
                       )
                     })
