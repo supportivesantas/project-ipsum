@@ -4,6 +4,8 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import { Button, ButtonToolbar, Panel, Col } from 'react-bootstrap';
+import barGraph from './AllAppsBarGraph';
+import restHandler from '../util/restHelpers.js';
 import _ from 'underscore';
 
 class MainPageAppView extends React.Component {
@@ -11,6 +13,24 @@ class MainPageAppView extends React.Component {
     super(props);
     this.state = {
     };
+  }
+
+  componentDidMount(id) {
+    restHandler.post('getStats/allAppSummaries', {}, (err, res) => {
+      this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
+      var apps = this.props.state.allAppSummaries || {};
+      var id = this.props.selected.id;
+       var app;
+        for (var i = 0; i < apps.length; i++) {
+          if (+apps[i].appid === id) {
+            app = apps[i];
+            break;
+          }
+        }
+      barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
+          return obj.date;
+      }));
+    });
   }
 
   getNumServers(id) {
@@ -33,12 +53,18 @@ class MainPageAppView extends React.Component {
   }
 
   generateAppStats(id) {
-    var app = this.props.state.allAppSummaries[id];
+    var apps = this.props.state.allAppSummaries || {};
+    var app;
+    for (var i = 0; i < apps.length; i++) {
+      if (+apps[i].appid === id) {
+        app = apps[i];
+        break;
+      }
+    }
+    app = app || {};
     return (
       <div>
-        <h4>Date: {app.data} (just display in chart)</h4>
-        <h4>Total Hits: {app.totalHits} (just display in chart)</h4>
-        <h4>Total Routes: {app.totalRoutes} </h4>
+        <h4>Total Routes Monitored: {app.totalRoute}</h4>
       </div>
     )
   }
@@ -53,9 +79,9 @@ class MainPageAppView extends React.Component {
       <Col xs={12} sm={6} md={6}>
         <div className="MainPageAppView">
           <Panel header={this.generateHeader(this.props.selected.id)}>
-            <Panel>
-              GRAPH GOES HERE
-            </Panel>
+            <h4 style={{"text-align":"center"}}>Load over the last week</h4>
+            <div id={"Graph" + this.props.selected.id.toString()}>
+            </div>
             {this.generateAppStats(this.props.selected.id)}
           </Panel>
         </div>

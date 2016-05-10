@@ -41,6 +41,29 @@ svg#serverGraph {
   text-align: left;
 }
 
+.appsbar {
+  fill: steelblue;
+}
+
+.appsbar:hover {
+  fill: brown;
+}
+
+.axisM {
+  font: 10px sans-serif;
+}
+
+.axisM path,
+.axisM line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axisM path {
+  display: none;
+}
+
 /*=======================================*/
 
 /*========= My Server Styling =============*/
@@ -147,4 +170,13 @@ svg.barGraph {
 }
 .loading {
   visibility: hidden;
+}
+
+
+/*=========== Add Load Balancer ============*/
+
+.sampleSnippet {
+  display: inline-block;
+  padding: 25px;
+  background-color: #FFEBEB;
 }
