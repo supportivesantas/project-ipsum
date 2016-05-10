@@ -4,6 +4,8 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import { Button, ButtonToolbar, Panel, Col } from 'react-bootstrap';
+import barGraph from './BarGraph';
+import restHandler from '../util/restHelpers.js';
 import _ from 'underscore';
 
 class MainPageAppView extends React.Component {
@@ -11,6 +13,18 @@ class MainPageAppView extends React.Component {
     super(props);
     this.state = {
     };
+  }
+
+  componentDidMount() {
+    restHandler.post('getStats/allAppSummaries', {}, (err, res) => {
+      this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
+      var apps = this.props.state.allAppSummaries;
+      for (var i = 0; i < apps.length; i++) {
+        barGraph.render("Graph" + apps[i].appid, _.sortBy(apps[i].data, (obj) => {
+            return -obj.date;
+        }));
+      }
+    });
   }
 
   getNumServers(id) {
@@ -33,12 +47,17 @@ class MainPageAppView extends React.Component {
   }
 
   generateAppStats(id) {
-    var app = this.props.state.allAppSummaries[id];
+    var apps = this.props.state.allAppSummaries;
+    var app;
+    for (var i = 0; i < apps.length; i++) {
+      if (+apps[i].appid === id) {
+        app = apps[i];
+        break;
+      }
+    }
     return (
       <div>
-        <h4>Date: {app.data} (just display in chart)</h4>
-        <h4>Total Hits: {app.totalHits} (just display in chart)</h4>
-        <h4>Total Routes: {app.totalRoutes} </h4>
+        <h4>Total Routes Monitored: {app.totalRoute}</h4>
       </div>
     )
   }
@@ -53,9 +72,8 @@ class MainPageAppView extends React.Component {
       <Col xs={12} sm={6} md={6}>
         <div className="MainPageAppView">
           <Panel header={this.generateHeader(this.props.selected.id)}>
-            <Panel>
-              GRAPH GOES HERE
-            </Panel>
+            <div id={"Graph" + this.props.selected.id.toString()}>
+            </div>
             {this.generateAppStats(this.props.selected.id)}
           </Panel>
         </div>
