@@ -41,7 +41,7 @@ internalTasks.syncServersToPlatforms = function (userID, overwriteAll) {
     })
     .then(function (clientServers) {
       /* update server table with retrieved information */
-      clientServers.each(function (clientServer) {
+      return Promise.all(clientServers.map(function (clientServer) {
         let quickLook = serverQuickLookup[clientServer.get('ip')];
 
         /* if the table field is not filled in or we're overwriting */
@@ -50,9 +50,11 @@ internalTasks.syncServersToPlatforms = function (userID, overwriteAll) {
           clientServer.set('platform', quickLook.platform);
           clientServer.set('server_id', quickLook.server_id);
           clientServer.set('serviceCreds_id', quickLook.serviceCreds_id);
-          clientServer.save();
+          return clientServer.save();
+        } else {
+          return;
         }
-      });
+      }));
     })
     .catch((error) => {
       console.log(error);
@@ -94,7 +96,7 @@ internalTasks.syncServersToLB = function (userID, overwriteAll) {
       return clientServers.model.where({ users_id: userID }).fetchAll();
     })
     .then((servers) => {
-      Promise.all(servers.map((server) => {
+      return Promise.all(servers.map((server) => {
         if (quickLook[server.get('ip')] && (!server.get('master') || overwriteAll)) {
           server.set('master', quickLook[server.get('ip')].lbID);
           server.set('lb_id', quickLook[server.get('ip')].id);

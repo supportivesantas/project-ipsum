@@ -99,10 +99,6 @@ statsController.registerClient = function (req, res) {
   var appID = null;
   var userID = null;
 
-  // nginxController.list('192.241.204.49:80', 'project')
-  //   .then((result) => {
-  //     console.log(result);
-  //   });
   users.model.where('username', username).fetch()
     .then(function (user) {
       if (!user) {
