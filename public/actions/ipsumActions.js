@@ -98,6 +98,12 @@ module.exports = {
     return {
       type: 'ADD_MYAPP_HISTORY',
       data: data
-    }
-  }
+    };
+  },
+  POPULATE_LOAD_BALANCERS(data) {
+    return {
+      type: 'POPULATE_LOAD_BALANCERS',
+      data: data
+    };
+  },
 };

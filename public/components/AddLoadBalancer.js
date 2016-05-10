@@ -15,6 +15,18 @@ class AddLoadBalancer extends React.Component {
     };
   }
 
+  componentDidMount() {
+    //sample before adding restHandlers
+    this.props.dispatch(actions.POPULATE_LOAD_BALANCERS([{
+      id: "#",
+      ip: "1.1.1.1",
+      hostname: "IDK",
+      platform: "azDOaws",
+      active: "Elite",
+      apps: "Coool" }]));
+    console.log(this.props.state.loadBalancers);
+  }
+
   handleSubmit() {
     if (!this.state.nginxPort || !this.state.nginxIp || !this.state.zone) {
       alert("Please fill out each field, and double check that what you entered is correct");
@@ -43,6 +55,20 @@ class AddLoadBalancer extends React.Component {
   render() {
     return (
       <Grid>
+
+        <Row>
+          <Col md={12} xs={12}>
+            <BootstrapTable ref='table' data={this.props.state.loadBalancers} striped={true} hover={true} selectRow={this.selectRowProp} search={true}>
+              <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Load Balancer ID</TableHeaderColumn>
+              <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Load Balancer IP</TableHeaderColumn>
+              <TableHeaderColumn dataField="hostname" dataAlign="center" dataSort={true}>Hostname</TableHeaderColumn>
+              <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
+              <TableHeaderColumn dataField="active" dataSort={true}>Status</TableHeaderColumn>
+              <TableHeaderColumn dataField="apps">Application</TableHeaderColumn>
+            </BootstrapTable>
+          </Col>
+        </Row>
+
         <Row>
           <Panel header={<h1>Add a Load Balancer</h1>}>
             <Grid fluid>

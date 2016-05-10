@@ -26,7 +26,7 @@ const NavigationBar = () => {
           <NavItem eventKey={1} href="#"><NavLink to="/">All Apps</NavLink></NavItem>
           <NavItem eventKey={2} href="#"><NavLink to="/allServers">All Servers</NavLink></NavItem>
           <NavItem eventKey={3} href="#"><NavLink to="/tokens">Tokens</NavLink></NavItem>
-          <NavItem eventKey={4} href="#"><NavLink to="/loadBalancer">Add Load Balancer</NavLink></NavItem>
+          <NavItem eventKey={4} href="#"><NavLink to="/loadBalancer">Load Balancers</NavLink></NavItem>
           <NavItem eventKey={5} href="#"><NavLink to="/logout">Logout</NavLink></NavItem>
         </Nav>
       </Navbar.Collapse>
