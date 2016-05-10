@@ -1,3 +1,5 @@
+import d3 from 'd3';
+
 export function renderChart(graphId, data) {
   // element.clientWidth to adjust graph size to div
   var m = [20, 80, 20, 80]; // margins

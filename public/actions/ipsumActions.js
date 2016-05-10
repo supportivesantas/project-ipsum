@@ -93,5 +93,11 @@ module.exports = {
       type: 'POPULATE_TOKENS',
       data: data
     };
+  },
+  ADD_MYAPP_HISTORY(data) {
+    return {
+      type: 'ADD_MYAPP_HISTORY',
+      data: data
+    }
   }
 };

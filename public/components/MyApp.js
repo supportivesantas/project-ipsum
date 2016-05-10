@@ -1,5 +1,6 @@
 import React from 'react';
 import actions from '../actions/ipsumActions.js';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { renderChart } from '../D3graphTemplate';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
@@ -7,6 +8,7 @@ import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import barGraph from './BarGraph';
 import _ from 'underscore';
+import MyAppHistory from './MyAppHistory';
 
 class MyApp extends React.Component {
   constructor(props) {
@@ -22,6 +24,7 @@ class MyApp extends React.Component {
       appid: this.props.state.appSelection.id,
       hours: 24
     }, (err, data) => {
+      if (err) {console.log('ERROR', err); return; }
       var data = JSON.parse(data.text);
       var output = [];
       Object.keys(data).forEach((serverId) => {
@@ -30,9 +33,9 @@ class MyApp extends React.Component {
           label: data[serverId].hostname,
           id: Number(serverId)
         });
-      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
       });
-      barGraph.render('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
+      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
+      barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
         return -obj.value;
       }));
     });
@@ -63,6 +66,24 @@ class MyApp extends React.Component {
     renderChart('lineGraph', graphData[routeIndex].data);
   }
 
+  tableLinkForm(cell) {
+    return (
+      <Link to="/myServer">
+        <div onClick={this.goToServer.bind(this, cell)}>
+          {_.findWhere(this.props.state.servers, {id: cell}).active}
+        </div>
+      </Link>
+      );
+  }
+
+  goToServer(cell) {
+    this.props.dispatch(actions.ADD_SERVER_SELECTION(_.findWhere(this.props.state.servers, {id: cell})));
+  }
+
+  enumFormatter(cell, row, enumObject) {
+    return enumObject(cell);
+  }
+
   render() {
     var sortedServerTotals = _.sortBy(this.props.state.appServerTotals, (obj) => {
         return -obj.value;
@@ -70,11 +91,10 @@ class MyApp extends React.Component {
     var statusData = sortedServerTotals.map((total, idx) => {
       return {
         label: total.label,
-        status: _.findWhere(this.props.state.servers, {id: total.id}).active
+        status: _.findWhere(this.props.state.servers, {id: total.id}).active,
+        id: total.id
       }
     })
-
-    console.log(statusData);
 
     return (
        <Grid>
@@ -90,7 +110,7 @@ class MyApp extends React.Component {
         <Row className='serverStatContainer'>
 
           <Col xs={12} lg={12} >
-            <h2>Today{'\''}s Traffic</h2>
+            <h2>What{'\''}s Happening</h2>
             <Panel header={<div>Routes</div>} >
             <Grid fluid>
             <Row>
@@ -124,14 +144,14 @@ class MyApp extends React.Component {
               <Row>
                 <Col xs={12} md={6}>
                 <h4>Relative load (24 hr)</h4>
-                <div><svg className="barGraph" id="todayBarGraph"></svg></div>
+                <div id="todayBarGraph"></div>
                 </Col>
 
                 <Col xs={12} md={6}>
                 <h4>Status</h4>
                 <BootstrapTable ref='table' data={statusData} striped={true} hover={true} >
                   <TableHeaderColumn isKey={true} dataField="label" dataAlign="center">Hostname</TableHeaderColumn>
-                  <TableHeaderColumn dataField='status' dataAlign="center">Status</TableHeaderColumn>
+                  <TableHeaderColumn dataAlign="center" dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm.bind(this)}>See Stats</TableHeaderColumn>
                 </BootstrapTable>
 
               </Col>
@@ -139,10 +159,8 @@ class MyApp extends React.Component {
               </Grid>
             </Panel>
           </Col>
-
-
         </Row>
-        <h2>History</h2>
+        <MyAppHistory />
       </Grid>
     )
   }

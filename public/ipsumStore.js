@@ -11,6 +11,7 @@ import changeAppServerTotalsReducer from './reducers/changeAppServerTotalsReduce
 import allAppSummariesReducer from './reducers/allAppSummariesReducer.js';
 import appSelectionReducer from './reducers/appSelectionReducer.js';
 import tokensReducer from './reducers/tokensReducer.js';
+import myAppHistoryReducer from './reducers/myAppHistoryReducer.js';
 
 const middleware = [logger()];
 const getInitialState = () => {
@@ -49,7 +50,8 @@ export default function configureStore(browserHistory, initialState = getInitial
     graphData: getDataReducer,
     appSelection: appSelectionReducer,
     appServerTotals: changeAppServerTotalsReducer,
-    tokens: tokensReducer
+    tokens: tokensReducer,
+    myAppHistory: myAppHistoryReducer
   }), initialState, compose(
     applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f

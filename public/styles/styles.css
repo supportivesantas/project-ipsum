@@ -107,9 +107,7 @@ nav.navbar a:active {
 }
 nav.navbar-default a {
 }
-.panel {
-  color: #272822;
-}
+
 button {
   color: #272822;
 }
@@ -140,7 +138,6 @@ svg.barGraph {
   width: 100%;
   overflow:visible;
 }
-
 /* =========================================== */
 
 .MainPageAppView .panel-heading:hover {
