@@ -8,26 +8,50 @@ var knex = require('knex')({
   connection: process.env.PG_CONNECTION_STRING,
 });
 
+Date.prototype.subDays = function(days) {
+   var dat = new Date(this.valueOf());
+   dat.setDate(dat.getDate() - days);
+   return dat;
+};
 
-//LAST EIGHT DAYS
-//[{app: name, totalRoutes: int, data: []}...]
+function getDates(startDate, stopDate) {
+  var dateArray = new Array();
+  var currentDate = startDate;
+  while (currentDate >= stopDate) {
+    var day = currentDate.getDate().toString();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear().toString();
+    var date = year +
+      (month.toString().length > 1 ? month : "0" + month) +
+      (day.toString().length > 1 ? day : "0" + day);
+    dateArray.push(+date);
+    currentDate = currentDate.subDays(1);
+  }
+  return dateArray;
+}
 
-//TODO: Reformat allAppSummaries to include seven day graph data, (x=date, y=totalHits), and total routes
 exports.allAppSummaries = function(req, res) {
   userId = req.body.userId || 1;
 
+  //To fill in any missing data points week summary (last seven dates)
+  var dateArray = getDates(new Date().subDays(1), (new Date()).subDays(7));
 
   AppSums.model.where({'users_id': userId})
   .where(knex.raw("created_at > (NOW() - INTERVAL '" + (8 * 24) + " hour'" + ")"))
   .fetchAll()
   .then((allUserApps) => {
-    var allAppsByRoute = allUserApps.models
+    var allAppsByRoute = allUserApps.models;
     var appsObj = {};
+    var today = new Date();
+    //Organize by app
     _.each(allAppsByRoute, (appAndRoute) => {
       var app = appAndRoute.attributes;
       var appDay = app.day.length > 1 ? app.day : '0' + app.day;
       var appMonth = app.month.length > 1 ? app.month : '0' + app.month;
       var date = app.year + appMonth + appDay;
+      app.dateId = date;
+      //don't include today, just previous seven days
+      if (+app.day === today.getDate()) { return; }
       if (!appsObj[app.appid]) {
         appsObj[app.appid] = {
           appid: app.appid,
@@ -42,58 +66,42 @@ exports.allAppSummaries = function(req, res) {
       }
       appsObj[app.appid].routes[app.route] = app.route;
     });
-    res.send(appsObj);
+    //Compile total hits for each day
+    var formattedAppsArr = [];
+    _.each(appsObj, (appObj) => {
+      formattedAppsArr.push({appid: appObj.appid, totalRoute: Object.keys(appObj.routes).length, data: []});
+      _.each(appObj.dates, (date) => {
+        var hitsPerDate = _.reduce(date, (memo, curr) => {
+          return memo + +curr.value;
+        }, 0);
+        formattedAppsArr[formattedAppsArr.length - 1].data.push({date: +date[0].dateId, value: hitsPerDate});
+      });
+    });
+    //Add in data point value:0 if no hits for a day
+    _.each(formattedAppsArr, (formattedApp) => {
+      var appId = formattedApp.appid;
+      var datesCheck = dateArray.slice();
+      //See what dates exist and take out of dates check
+      _.each(formattedApp.data, (dateObj) => {
+        var datesCheckIndex = datesCheck.indexOf(dateObj.date);
+        if (datesCheckIndex !== -1) {
+          datesCheck.splice(datesCheckIndex, 1);
+        }
+      });
+      //Add value: 0 for all dates left over in DatesCheck
+      _.each(datesCheck, (date) => {
+        formattedApp.data.push({date: date, value: 0});
+      });
+    });
+    res.send(formattedAppsArr);
   })
-
-
-
-  // AppSums.model.fetchAll()
-  // .then(function(appSummaries) {
-  //   var appRoutes = appSummaries.models;
-  //   var apps = {};
-  //   var totalRoutes = {};
-  //   var createAppObj = (appid, date, routes, hits) => {
-  //     var result = {};
-  //     result.appid = appid;
-  //     result.date = date;
-  //     result.totalRoutes = routes;
-  //     result.totalHits = hits;
-  //     return result;
-  //   };
-  //   _.each(appRoutes, (appRoute) => {
-  //     appRoute = appRoute.attributes;
-  //     var appId = appRoute.appid;
-  //     var id = "id"+ appId + appRoute.created_at.getDay();
-  //     if (!apps[id]) {
-  //       apps[id] = {
-  //         appid: appId,
-  //         date: appRoute.created_at,
-  //         allRoutes: { length: 0 },
-  //         hits: +appRoute.value
-  //       };
-  //     } else {
-  //       apps[id].hits += +appRoute.value;
-  //     }
-  //     if(!apps[id].allRoutes[appRoute.route]) {
-  //       apps[id].allRoutes[appRoute.route] = appRoute.route;
-  //       apps[id].allRoutes.length++;
-  //     }
-  //   });
-
-  //   var compiledApps = {};
-  //   _.each(apps, function(app) {
-  //     compiledApps[app.appid] = (createAppObj(app.appid, app.date, app.allRoutes.length, app.hits));
-  //   });
-  //   //STILL MORE COMPILING FOR GRAPH, PUT DAYS TOGETHER OF XY PLoTS
-  //   res.send(compiledApps);
-  // })
   .catch(function(error) {
     console.log('Error getting all App Summaries', error);
     res.send(500);
   });
 };
 
-//TODO: MyServerSummary, basically the inverse of myAppSummary
+
 exports.myServerSummary = (req, res) => {
 //update to req.body variables below
   var userId = 1;
