@@ -30,33 +30,15 @@ class stats {
   saveHash(client) {
     var hash = this.statServer.ip + this.statApp.appname;
     
-    client.query('INSERT INTO "hashes" ("users_id", "clientApps_id", "clientServers_id", "hash", "username", "ip", "appname") VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT ("hash") DO NOTHING',
+    return client.query('INSERT INTO "hashes" ("users_id", "clientApps_id", "clientServers_id", "hash", "username", "ip", "appname") VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT ("hash") DO NOTHING',
       [this.userID, this.statApp.id, this.statServer.id, hash, this.username, this.statServer.ip, this.statApp.appname])
-      .then((results) => {
-        // do nothing
-      })
       .catch((error) => {
         console.log('ERROR: Failed to save hash', error);
       });
   }
 
   save(client, completed) {
-    if (!this.saved) {
-      let completedTransactions = 0;
-      
-      for (let i = 0; i < this.stats.length; i++) {
-        client.query(this.stats[i], [this.userID, this.time])
-          .then((result) => {
-            if (++completedTransactions >= this.stats.length - 1) {
-              completed();
-            }
-          })
-          .catch((error) => {
-            console.log('ERROR: Failed to insert into stats:', error);
-          });
-      }
-      this.saved = true;
-    }
+    return client.tx((t) => t.batch(this.stats.map((myquery) => client.none(myquery, [this.userID, this.time]))));
   }  
 }
 
