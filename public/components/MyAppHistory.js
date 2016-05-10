@@ -7,25 +7,8 @@ import request from '../util/restHelpers';
 import _ from 'underscore';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
 import barGraph from './BarGraph';
-import Select from 'react-select';
-import styles from '../styles/SelectStyle.css';
-import { Chart } from 'react-d3-core';
-import { BarStackZoom } from 'react-d3-zoom';
-
-const dayOptions = [
-    { value: 1, label: '1 days' },
-    { value: 3, label: '3 days' },
-    { value: 7, label: '7 days' },
-    { value: 14, label: '14 days' },
-    { value: 21, label: '21 days' },
-    { value: 30, label: '30 days' }
-  ];
-
-const filterOptions = [
-  {value: 'total', label: 'Do not filter'},
-  {value: 'route', label: 'Selected Routes'},
-  {value: 'server', label: 'Selected Servers'}
-];
+import RadioGroup from 'react-radio-group';
+import CheckboxGroup from 'react-checkbox-group';
 
 var sampledata = {
   "Total": [ 
@@ -36,7 +19,7 @@ var sampledata = {
     {route: 'route1', data: 
       [{
         "route": "route1",
-        "date": 752016,
+        "date": 20160509,
         "value": 1158836
       },
       {
@@ -48,7 +31,7 @@ var sampledata = {
     {route: 'route2', data: 
       [{
         "route": "route2",
-        "date": 752016,
+        "date": 20160509,
         "value": 1158836
       },
       {
@@ -61,7 +44,7 @@ var sampledata = {
     {serverid: 'server1', data: 
       [{
         "serverid": "server1",
-        "date": 752016,
+        "date": 20160509,
         "value": 1158836
       },
       {
@@ -73,7 +56,7 @@ var sampledata = {
     {serverid: 'server2', data: 
       [{
         "serverid": "server2",
-        "date": 752016,
+        "date": 20160509,
         "value": 1158836
       },
       {
@@ -89,11 +72,10 @@ class MyAppHistory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filterMode: 'route', // 'total', 'route', or 'server'
+      filterMode: 'total', // 'total', 'route', or 'server'
       filterOptions: [], // an array 
       days: 7,
-      graphData: null,
-      chartSeries: null
+      graphData: null
     };
   }
 
@@ -116,6 +98,9 @@ class MyAppHistory extends React.Component {
     // });
   }
 
+  componentDidMount() {
+    // draw bargraph
+  }
 
   parseHistoryResponse(response) {
     // make a copy
@@ -142,87 +127,88 @@ class MyAppHistory extends React.Component {
     var mode = this.state.filterMode;
 
     if (mode === 'total') {
-      this.setState({chartSeries: [{field: 'value', name: 'Total'}]});
+
       this.setState({graphData: data.Total});
-    } else if (mode === 'server') {
+      return;
+
+    } else  {
+
+      if (mode === 'server') {
+        var identifier = 'serverId';
+        var raw = this.props.state.myAppHistory.Servers[0].data;
+      } else {
+        var identifier = 'route';
+        var raw = this.props.state.myAppHistory.Routes[0].data;
+      }
+
       var results = {};
-      var raw = this.props.state.myAppHistory.Servers[0].data;
+      console.log(raw);
+
       raw.forEach( item => {
-        if ( this.state.filterMode !== 'total' && this.state.filterOptions.indexOf(item.serverId) === -1 ) { return; }
-        if (!results.hasOwnProperty(item.date)) {
-          results[item.date] = {date: item.date};
+        if ( this.state.filterOptions.indexOf(item[identifier]) !== -1 ) { 
+
+          if (!results.hasOwnProperty(item.date)) {
+            results[item.date] = {date: item.date};
+          }
+          var day = results[item.date];
+          if (!day.hasOwnProperty(item[identifier])) {
+            day[item[identifier]] = 0;
+          }
+          day[identifier] += item.value;
         }
-        var day = results[item.date];
-        if (!day.hasOwnProperty(item.serverId)) {
-          day[item.serverId] = 0;
-        }
-        day.serverId += item.value;
       })
-      results = Object.keys(results).map(key => results.key);
-      this.setState({graphData: results})
-    } else {
-      var results = {}
-      var raw = this.props.state.myAppHistory.Routes[0].data;
-      raw.forEach( item => {
-        if ( this.state.filterMode !== 'total' && this.state.filterOptions.indexOf(item.route) === -1 ) { return; }
-        if (!results.hasOwnProperty(item  .date)) {
-          results[item.date] = {date: item.date};
-        }
-        var day = results[item.date];
-        if (!day.hasOwnProperty(item.routes)) {
-          day[item.route] = 0;
-        }
-        day.route += item.value;
-      })
-      results = Object.keys(results).map(key => results.key);
+
       this.setState({graphData: results})
     }
   }
 
-  selectDay(value) {
-    this.setState({days: value.value}, () => { this.getData() });
-  }
-  
-  selectFilterMode(value) {
-    this.setState({filterOptions: null}, () => {
-      if (value) {
-        this.setState({filterMode: value.value}); 
-      }
-    })
+  selectDays(event) {
+    this.setState({days: event.target.value });
+
   }
 
-  selectFilterOptions(value) {
-    this.setState({filterOptions: _.pluck(value, 'value')});
+  selectFilterMode(event) {
+    // console.log(event.target.value);
+
+    if (event.target.value === 'server') { this.setState({filterMode: 'server'})}
+    else if (event.target.value === 'route') { this.setState({filterMode: 'route'})}
+    else { this.setState({filterMode: 'total'}, this.getData.bind(this))}
+
+    var mode = {
+      'route': this.props.state.myAppHistory.routeNames,
+      'server': this.props.state.myAppHistory.serverNames
+    };
+
+    var options = mode[event.target.value] || [];
+    // console.log(options)
+
+    if (options.length) {
+      options.forEach( option => option.selected = false );
+      this.setState({filterOptions: options}, this.formatGraphData.bind(this));
+    } else {
+      this.setState({filterOptions: {}}, this.formatGraphData.bind(this));
+    }
+
+    this.formatGraphData();
+  }
+
+  toggleFilterOptions(event) {
+    var options = Object.assign(this.state.filterOptions);
+    var target = _.findWhere(options, {value: event.target.value});
+    target.selected = !(target.selected);
+    this.setState({filterOptions: options}, this.formatGraphData.bind(this));
   }
 
   render() {
 
-    var width = 500,
-        height = 400,
-        title = "Selected Data",
-        // what fields you want to build in the chart
-        // field is for the field in your csv field
-        // name is for the name you want to show in your legend.
-
-        // x axis accessor
-        x = function(d) {
-          return d.State;
-        },
-        xScale = 'ordinal',
-        // y tick format
-        yTickFormat = d3.format(".2s");
-
-        // ReactDom.render(
-        // <BarStackZoom
-        //   title= {title}
-        //   data= {this.state.graphData}
-        //   width= {width}
-        //   height= {height}
-        //   chartSeries = {this.state.chartSeries}
-        //   x= {x}
-        //   xScale= {xScale}
-        //   yTickFormat= {yTickFormat}
-        // />, document.getElementById('data_zoom_bar_stack'));
+    var dayOptions = [
+      {'value': 1},
+      {'value': 3},
+      {'value': 7},
+      {'value': 14},
+      {'value': 21},
+      {'value': 30}
+    ];
 
     return (
       <Row>
@@ -234,31 +220,50 @@ class MyAppHistory extends React.Component {
           <Col xs={12} md={4}>
 
             <h3 className="section-heading">How far back?</h3>
-            <Select
-              value={this.state.days} 
-              options={dayOptions} 
-              matchProp='any'
-              onChange={this.selectDay.bind(this)} />
+            <form>
+              {
+                dayOptions.map( (option, i) => {
+                  return (
+                  <div key={i}>
+                    <input name="day" type="radio" onChange={this.selectDays.bind(this)} value={option.value}></input> 
+                    <label>{option.value} days</label>
+                  </div>
+                  )
+                })
+              }
+            </form>
+
 
             <h3 className="section-heading">Filter results by:</h3>
-            <Select
-              value={this.state.filterMode} 
-              onChange={this.selectFilterMode.bind(this)}
-              matchProp='any'
-              options={filterOptions} />
+              <form>
+                <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='total'></input> <label>None</label></div>
+                <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='route'></input> <label>By route(s)</label></div>
+                <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='server'></input> <label>By server(s)</label></div>
+              </form>
 
-            <h3 className="section-heading">Options</h3>
-            <Select multi
-              disabled={this.state.filterMode === 'total' ? true : false } 
-              onChange={this.selectFilterOptions.bind(this)}
-              value={this.state.filterOptions}
-              options={this.state.filterMode === 'route' ? this.props.state.myAppHistory.routeNames: this.props.state.myAppHistory.serverNames} />
+            {this.state.filterOptions.length ? (
+              <div>
+              <h3 className="section-heading">Options</h3>
+                <form>
+                  {
+                    this.state.filterOptions.map( (option, i) => {
+                      return (
+                      <div key={i}>
+                        <input name="option" type="checkbox" onChange={this.toggleFilterOptions.bind(this)} value={option.value}></input> 
+                        <label>{option.value}</label>
+                      </div>
+                      )
+                    })
+                  }
+                </form></div>
+              ) : null}
+           
 
           </Col>
           <Col xs={12} md={8}>
             <h3>Selected Data</h3>
-            <div id='data_zoom_bar_stack'></div>
-            
+            <div id='historyBargraph'></div>
+
           </Col>
         </Row>
         </Grid>
