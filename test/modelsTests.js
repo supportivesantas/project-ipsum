@@ -10,6 +10,7 @@ const Event = require('../server/db/models/event.js');
 const Hash = require('../server/db/models/hash.js');
 const ServiceCred = require('../server/db/models/service-cred.js');
 const Stat = require('../server/db/models/stat.js');
+const summCtrl = require('../server/controllers/summaryController.js');
 
 describe('Models Test', function() {
 
@@ -141,5 +142,33 @@ describe('Models Test', function() {
       });
     });
   });
+
 });
+
+describe('Summaries Controller', () => {
+
+  it('should retreive list of servers ids from DB', (done) => {
+    summCtrl.getAllServerIds((idArr) => {
+      expect(idArr).to.be.an.Array;
+      expect(idArr.length).to.not.equal(0);
+      done();
+    });
+  });
+
+  it('should retreive list of app ids from DB', (done) => {
+    summCtrl.getAllAppIds((idArr) => {
+      expect(idArr).to.be.an.Array;
+      expect(idArr.length).to.not.equal(0);
+      done();
+    });
+  });
+
+});
+
+
+
+
+
+
+
 
