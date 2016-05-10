@@ -7,8 +7,6 @@ import request from '../util/restHelpers';
 import _ from 'underscore';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
 import barGraph from './BarGraph';
-import RadioGroup from 'react-radio-group';
-import CheckboxGroup from 'react-checkbox-group';
 
 var sampledata = {
   "Total": [ 
@@ -20,24 +18,24 @@ var sampledata = {
       [{
         "route": "route1",
         "date": 20160509,
-        "value": 1158836
+        "value": 57382
       },
       {
         "route": "route1",
-        "date": 852016,
-        "value": 26213
+        "date": 20160310,
+        "value": 49528
       }]
     },
     {route: 'route2', data: 
       [{
         "route": "route2",
         "date": 20160509,
-        "value": 1158836
+        "value": 20823
       },
       {
         "route": "route2",
-        "date": 852016,
-        "value": 26213
+        "date": 20160310,
+        "value": 28473
       }]
     }],
   "Servers": [
@@ -45,24 +43,24 @@ var sampledata = {
       [{
         "serverid": "server1",
         "date": 20160509,
-        "value": 1158836
+        "value": 58274
       },
       {
         "serverid": "server1",
-        "date": 852016,
-        "value": 26213
+        "date": 20160310,
+        "value": 29486
       }]
     },
     {serverid: 'server2', data: 
       [{
         "serverid": "server2",
         "date": 20160509,
-        "value": 1158836
+        "value": 29837
       },
       {
         "serverid": "server2",
-        "date": 852016,
-        "value": 26213
+        "date": 20160310,
+        "value": 72938
       }]
     }
   ]
@@ -74,35 +72,35 @@ class MyAppHistory extends React.Component {
     this.state = {
       filterMode: 'total', // 'total', 'route', or 'server'
       filterOptions: [], // an array 
-      days: 7,
+      days: null,
       graphData: null
     };
   }
 
-  componentWillMount(){
-    this.getData();
+  graphIt(){
+    this.formatGraphData();
+    if (this.state.graphData) {
+      barGraph('historyBargraph', this.state.graphData)
+    }
   }
 
   getData() {
-    // request.post('/getStats/serverTotalsForApp', {
-    //   userid: 1,
-    //   appid: 1,
-    //   days: 1
-    // }, (err, resp) => {
+    request.post('/getStats/myAppSummary', {
+      userId: 1,
+      appId: 1,
+      days: this.state.days
+    }, (err, resp) => {
+      console.log(err, resp)
     // parse the data object for route and server totals
-      // var data = JSON.parse(resp.text);
+      var data = JSON.parse(resp.text);
+      // var parsedData = this.parseHistoryResponse(data);
       var parsedData = this.parseHistoryResponse(sampledata);
       // save parsed and formatted data to store
       this.props.dispatch(actions.ADD_MYAPP_HISTORY(parsedData));
-      this.formatGraphData();
-    // });
+    });
   }
 
-  componentDidMount() {
-    // draw bargraph
-  }
-
-  parseHistoryResponse(response) {
+  parseHistoryResponse(response) {  
     // make a copy
     var parsed = Object.assign({}, response);
     // collect server names for <Select>
@@ -134,45 +132,48 @@ class MyAppHistory extends React.Component {
     } else  {
 
       if (mode === 'server') {
-        var identifier = 'serverId';
-        var raw = this.props.state.myAppHistory.Servers[0].data;
+        var identifier = 'serverid';
+        var raw = this.props.state.myAppHistory.Servers;
       } else {
         var identifier = 'route';
-        var raw = this.props.state.myAppHistory.Routes[0].data;
+        var raw = this.props.state.myAppHistory.Routes;
       }
 
       var results = {};
-      console.log(raw);
 
       raw.forEach( item => {
-        if ( this.state.filterOptions.indexOf(item[identifier]) !== -1 ) { 
-
-          if (!results.hasOwnProperty(item.date)) {
-            results[item.date] = {date: item.date};
-          }
-          var day = results[item.date];
-          if (!day.hasOwnProperty(item[identifier])) {
-            day[item[identifier]] = 0;
-          }
-          day[identifier] += item.value;
+        if (_.findWhere(this.state.filterOptions, {value: item[identifier]}).selected) {
+          var days = item.data;
+          days.forEach( day => {
+            // add the label to the results if not present
+            if (!results.hasOwnProperty(day.date)) {
+              results[day.date] = {label: day.date, value: 0}
+            }
+            results[day.date].value += day.value;
+          })
         }
       })
 
-      this.setState({graphData: results})
+      var arr = Object.keys(results).map( key => results[key]);
+      arr.sort( (a, b) => {
+        return a.date - b.date;
+      });
+
+      this.setState({graphData: arr});
     }
   }
 
   selectDays(event) {
-    this.setState({days: event.target.value });
-
+    this.setState({days: event.target.value }, () => this.getData());
   }
 
   selectFilterMode(event) {
-    // console.log(event.target.value);
+    var filterForm = document.getElementById('filter-options-form');
+    if (filterForm) { filterForm.reset(); }
 
     if (event.target.value === 'server') { this.setState({filterMode: 'server'})}
     else if (event.target.value === 'route') { this.setState({filterMode: 'route'})}
-    else { this.setState({filterMode: 'total'}, this.getData.bind(this))}
+    else { this.setState({filterMode: 'total'})}
 
     var mode = {
       'route': this.props.state.myAppHistory.routeNames,
@@ -180,23 +181,20 @@ class MyAppHistory extends React.Component {
     };
 
     var options = mode[event.target.value] || [];
-    // console.log(options)
 
     if (options.length) {
-      options.forEach( option => option.selected = false );
-      this.setState({filterOptions: options}, this.formatGraphData.bind(this));
+      _.each(options, option => option.selected = false );
+      this.setState({filterOptions: options});
     } else {
-      this.setState({filterOptions: {}}, this.formatGraphData.bind(this));
+      this.setState({filterOptions: []});
     }
-
-    this.formatGraphData();
   }
 
   toggleFilterOptions(event) {
-    var options = Object.assign(this.state.filterOptions);
+    var options = this.state.filterOptions.slice() || [];
     var target = _.findWhere(options, {value: event.target.value});
     target.selected = !(target.selected);
-    this.setState({filterOptions: options}, this.formatGraphData.bind(this));
+    this.setState({filterOptions: options});
   }
 
   render() {
@@ -220,7 +218,7 @@ class MyAppHistory extends React.Component {
           <Col xs={12} md={4}>
 
             <h3 className="section-heading">How far back?</h3>
-            <form>
+            <form id='days-form'>
               {
                 dayOptions.map( (option, i) => {
                   return (
@@ -233,18 +231,21 @@ class MyAppHistory extends React.Component {
               }
             </form>
 
-
-            <h3 className="section-heading">Filter results by:</h3>
-              <form>
+            {this.state.days ? (
+              <div>
+              <h3 className="section-heading">Filter results by:</h3>
+              <form id='filter-mode-form'>
                 <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='total'></input> <label>None</label></div>
                 <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='route'></input> <label>By route(s)</label></div>
                 <div><input name="mode" type="radio" onChange={this.selectFilterMode.bind(this)} value='server'></input> <label>By server(s)</label></div>
               </form>
+              </div>
+              ) : null}
 
             {this.state.filterOptions.length ? (
               <div>
               <h3 className="section-heading">Options</h3>
-                <form>
+                <form id="filter-options-form">
                   {
                     this.state.filterOptions.map( (option, i) => {
                       return (
@@ -257,6 +258,12 @@ class MyAppHistory extends React.Component {
                   }
                 </form></div>
               ) : null}
+
+            {this.state.filterOptions ? (
+            
+              <button onClick={this.graphIt.bind(this)}>Graph It</button>
+
+            ) : null}  
            
 
           </Col>
