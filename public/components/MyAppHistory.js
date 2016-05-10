@@ -24,7 +24,7 @@ class MyAppHistory extends React.Component {
 
   graphIt(){
     if (this.state.days) {
-      if (this.filterMode === 'total' || this.state.filterOptions && this.state.selectedFilters)
+      if (this.state.filterMode === 'total' || this.state.filterOptions && this.state.selectedFilters)
         this.formatGraphData(() => {
           if (this.state.graphData) {
             barGraph('historyBargraph', this.state.graphData)
@@ -85,7 +85,7 @@ class MyAppHistory extends React.Component {
 
     if (mode === 'total') {
 
-      this.setState({graphData: this.props.state.myAppHistory.Total});
+      this.setState({graphData: this.props.state.myAppHistory.Total}, cb.bind(this));
       return;
 
     } else  {
@@ -130,21 +130,24 @@ class MyAppHistory extends React.Component {
     // clear the old graph away
     document.getElementById('historyBargraph').innerHTML = '';
 
-    if (value.value === 'server') { this.setState({filterMode: 'server'})}
-    else if (value.value === 'route') { this.setState({filterMode: 'route'})}
-    else { this.setState({filterMode: 'total', filterOptions: null, selectedFilters: null})}
+    var next = function() {
+      // clear the old filter options and load the new ones
+      this.setState({selectedFilters: null}, () => {
+        // load the new filter options 
+        var mode = {
+          'route': this.props.state.myAppHistory.routeNames,
+          'server': this.props.state.myAppHistory.serverNames
+        };
 
-    // clear the old filter options and load the new ones
-    this.setState({selectedFilters: null}, () => {
-      // load the new filter options 
-      var mode = {
-        'route': this.props.state.myAppHistory.routeNames,
-        'server': this.props.state.myAppHistory.serverNames
-      };
+        var options = mode[value.value];
+        this.setState({filterOptions: options}, () => this.graphIt() );
+      });
+    }
 
-      var options = mode[value.value];
-      this.setState({filterOptions: options}, () => this.graphIt() );
-    });
+    if (value.value === 'server') { this.setState({filterMode: 'server'}, next.bind(this))}
+    else if (value.value === 'route') { this.setState({filterMode: 'route'}, next.bind(this))}
+    else { this.setState({filterMode: 'total', filterOptions: null, selectedFilters: null}, this.graphIt.bind(this))};
+
   }
 
   toggleFilterOption(value) {
