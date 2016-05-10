@@ -12,10 +12,8 @@ const internalTasks = require('./internal_tasks');
 module.exports = {
 
   getUserId: (req, res) => {
-    console.log('IN USER DATA!!!!!');
-    console.log(req.session.passport.user.githubid);
-
-    res.send(req.session.passport.user.githubid);
+    console.log(req.user.githubid);
+    res.send(req.user.githubid);
   },
 
   getUserApps: (req, res) => {
