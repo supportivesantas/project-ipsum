@@ -90,17 +90,18 @@ describe('Models Test', function() {
       });
     });
   });
-  // needs to point to a user in the database
-  xit('should save an serviceCreds to the database', function (done) {
+  
+  it('should save an serviceCreds to the database', function (done) {
     var serviceCred = new ServiceCred({
-      users_id: 1234,
+      platform: 'digital_ocean',
+      value: '1234'
     }).save()
     .then(function(){
-      return ServiceCred.where({users_id: 1234}).fetch();
+      return ServiceCred.where({ value: '1234'}).fetch();
     })
     .then(function(serviceCred){
-      expect(serviceCred.get('users_id')).to.equal(1234);
-      knex('serviceCreds').where('users_id', 1234).del().then(function(results){
+      expect(serviceCred.get('value')).to.equal('1234');
+      knex('serviceCreds').where('value', '1234').del().then(function(results){
         expect(results).to.be.at.least(1);
         done();
       });
