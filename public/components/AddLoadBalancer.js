@@ -5,6 +5,11 @@ import request from '../util/restHelpers.js';
 import { Button, Col, ControlLabel, FormControl, FormGroup, Grid, Panel, Row, Form } from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
+const selectRowProp = {
+  mode: 'checkbox',
+  bgColor: 'rgb(238, 193, 213)',
+};
+
 class AddLoadBalancer extends React.Component {
   constructor(props) {
     super(props);
@@ -13,6 +18,18 @@ class AddLoadBalancer extends React.Component {
       nginxPort: null,
       zone: null,
     };
+  }
+
+  componentDidMount() {
+    //sample before adding restHandlers
+    this.props.dispatch(actions.POPULATE_LOAD_BALANCERS([{
+      id: "#",
+      ip: "1.1.1.1",
+      hostname: "IDK",
+      platform: "azDOaws",
+      active: "Elite",
+      apps: "Coool" }]));
+    console.log(this.props.state.loadBalancers);
   }
 
   handleSubmit() {
@@ -43,6 +60,20 @@ class AddLoadBalancer extends React.Component {
   render() {
     return (
       <Grid>
+
+        <Row>
+          <Col md={12} xs={12}>
+            <BootstrapTable ref='table' data={this.props.state.loadBalancers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
+              <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Load Balancer ID</TableHeaderColumn>
+              <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Load Balancer IP</TableHeaderColumn>
+              <TableHeaderColumn dataField="hostname" dataAlign="center" dataSort={true}>Hostname</TableHeaderColumn>
+              <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
+              <TableHeaderColumn dataField="active" dataSort={true}>Status</TableHeaderColumn>
+              <TableHeaderColumn dataField="apps" dataSort={true}>Application</TableHeaderColumn>
+            </BootstrapTable>
+          </Col>
+        </Row>
+
         <Row>
           <Panel header={<h1>Add a Load Balancer</h1>}>
             <Grid fluid>

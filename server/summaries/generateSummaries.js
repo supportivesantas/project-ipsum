@@ -77,6 +77,7 @@ const generateAppSummaries = () => {
 const servsummaries = [];
 const appsummaries = [];
 const today = new Date();
+today.setDate(today.getDate() - 1);
 const day = today.getDate();
 const month = today.getMonth() + 1;
 const year = today.getFullYear();

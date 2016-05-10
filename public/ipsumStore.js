@@ -12,6 +12,7 @@ import allAppSummariesReducer from './reducers/allAppSummariesReducer.js';
 import appSelectionReducer from './reducers/appSelectionReducer.js';
 import tokensReducer from './reducers/tokensReducer.js';
 import myAppHistoryReducer from './reducers/myAppHistoryReducer.js';
+import loadBalancersReducer from './reducers/loadBalancersReducer.js';
 
 const middleware = [logger()];
 const getInitialState = () => {
@@ -32,7 +33,8 @@ const getInitialState = () => {
       serverSelection: {},
       lineGraphTitle: [],
       graphData: [],
-      tokens: []
+      tokens: [],
+      loadBalancers: [],
     };
   }
 };
@@ -51,6 +53,7 @@ export default function configureStore(browserHistory, initialState = getInitial
     appSelection: appSelectionReducer,
     appServerTotals: changeAppServerTotalsReducer,
     tokens: tokensReducer,
+    loadBalancers: loadBalancersReducer,
     myAppHistory: myAppHistoryReducer
   }), initialState, compose(
     applyMiddleware(...middleware),
