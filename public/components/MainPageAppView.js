@@ -4,7 +4,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import { Button, ButtonToolbar, Panel, Col } from 'react-bootstrap';
-import barGraph from './BarGraph';
+import barGraph from './AllAppsBarGraph';
 import restHandler from '../util/restHelpers.js';
 import _ from 'underscore';
 
@@ -21,7 +21,7 @@ class MainPageAppView extends React.Component {
       var apps = this.props.state.allAppSummaries;
       for (var i = 0; i < apps.length; i++) {
         barGraph.render("Graph" + apps[i].appid, _.sortBy(apps[i].data, (obj) => {
-            return -obj.date;
+            return obj.date;
         }));
       }
     });
