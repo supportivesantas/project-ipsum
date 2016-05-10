@@ -91,8 +91,7 @@ describe('Models Test', function() {
     });
   });
 
-//Test was working before, not sure why its not working now
-  xit('should save an serviceCreds to the database', function (done) {
+  it('should save an serviceCreds to the database', function (done) {
     var serviceCred = new ServiceCred({
       users_id: 1234,
     }).save()
