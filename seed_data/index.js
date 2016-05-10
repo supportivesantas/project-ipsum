@@ -1,12 +1,14 @@
 "use strict";
 
 const configure = ('../server/api/configure');
-const pgp = require('pg-promise')({});
+const pgp = require('pg-promise')({
+  promiseLib: Promise,
+});
 const app = require('./app');
 const server = require('./server');
 const stats = require('./stats');
 
-var maxAppsPerServer = 3; // max 3 apps per server
+var maxAppsPerServer = 1; // max 1 apps per server
 var maxRoutes = 50; // max 50 routes
 var maxDepth = 5;   // max path depth is 5
 var generateMaxDays = 7;
@@ -54,56 +56,51 @@ var username = null;
 var servers = [];
 var apps = [];
 
-var compileStats = () => { 
+var compileStats = () => {
   var currentServer = 0;
   var currentDate = new Date();
 
   console.log('Generating stats and saving to database');
 
   // loop for each server
-  var loopServer = () => {
-    var wdate = new Date();
-    var timeStamps = [];
+  let loopServer = () => {
+    let wdate = new Date(); // working date
+    let timeStamps = []; // array containing all timestamps for this server
 
-    // loop through each timestamp
-    var currentStamp = 0;
-    var completed = true;
+    // keep track of current working timestamp
+    let currentStamp = 0;
 
-    // start 1 days before
+    // start generateMaxDays days before
     wdate.setDate(currentDate.getDate() - generateMaxDays);
 
     // generate timestamps between then and now
     while (wdate.getTime() < currentDate.getTime()) {
       timeStamps.push(new Date(wdate));
 
-      var variance = Math.floor(Math.random() * 5000); // variance is 5 seconds?
+      let variance = Math.floor(Math.random() * 5000); // variance is 5 seconds?
       wdate.setTime(wdate.getTime() + 3600000 + variance); // add one hour + some minor variation
     }
 
-    // randomly choose number of servers up to maxAppsPerServer
-    var numApps = Math.ceil(Math.random() * maxAppsPerServer);
-    var theseApps = [];
+    // randomly choose number of apps up to maxAppsPerServer for this server to host
+    let numApps = Math.ceil(Math.random() * maxAppsPerServer);
+    let theseApps = [];
+    let appIdx = 0;
     for (let i = 0; i < numApps; i++) {
-      var currentApp = Math.floor(Math.random() * apps.length);
+      let currentApp = Math.floor(Math.random() * apps.length);
       theseApps.push(currentApp);
     }
 
-    var loopTime = () => {
-      // if not completed previous insertions wait another 10 ms
-      if (!completed) {
-        setTimeout(loopTime, 10);
-        return;
-      } else if (currentStamp < timeStamps.length) {
-        // ok we are done so go do the next one
-        completed = false;
-      } else {
-        // we completed all the timestamps for this server go to next server
+    // work on each timestamp recursively    
+    let loopTime = () => {
+      if (currentStamp >= timeStamps.length) {
+        /* we completed all the timestamps for this server go to next server */
         console.log('Done for server ' + servers[currentServer].hostname);
         console.log((currentServer + 1) + ' out of ' + servers.length);
         currentServer++;
         if (currentServer < servers.length) {
           loopServer();
         } else {
+          /* finished all servers now bail */
           console.log('COMPLETELY DONE');
           process.exit(0);
         }
@@ -111,37 +108,38 @@ var compileStats = () => {
       }
 
       // for each app generate some stats on this server
-      for (var i = 0; i < numApps; i++) {
-        var testStat = new stats(userID, username, servers[currentServer], apps[theseApps[i]], 1000, timeStamps[currentStamp]);
+      var testStat = new stats(userID, username, servers[currentServer], apps[theseApps[appIdx]], 1000, timeStamps[currentStamp]);
 
-        // save hash        
-        testStat.saveHash(client);
+      // save hash        
+      testStat.saveHash(client);
 
-        // build the stats
-        testStat.buildStats();
+      // build the stats
+      testStat.buildStats();
 
-        // save the stats and when it's all saved set completed to true
-        testStat.save(client, () => {
-          completed = true;
-          delete this;
+      // save the stats and when it's all saved call recursively to start next app for this timestamp
+      testStat.save(client)
+        .then((result) => {
+          if (++appIdx >= numApps) {
+            /* we finished all apps for this current time stamp go to next timestamp */
+            appIdx = 0;
+            currentStamp++;
+          }
+
+          loopTime();
+        })
+        .catch((error) => {
+          console.log('failed to save testStat');
+          console.log(error);
         });
-      }
-
-      // we're done with this timestamp just need to wait for insertions to complete
-      // increase the timestamp count so we're ready to use the next one
-      currentStamp++;
-
-      // wait for the insertions to finish
-      setTimeout(loopTime, 10);
-    }
+    };
 
     // start trying inserting for this server
     loopTime();
-  }
+  };
 
   // try all servers
   loopServer();
-}
+};
 
 var initAppsServers = () => {
   
