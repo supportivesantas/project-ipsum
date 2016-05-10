@@ -2,6 +2,9 @@ import d3 from 'd3';
 
 module.exports = function(divId, data) {
 
+//clear out any current graph/content in the target div
+document.getElementById(divId).innerHTML = '';
+
 var margin = {top: 20, right: 20, bottom: 30, left: 60},
     width = document.querySelector("#"+divId).clientWidth - margin.left - margin.right,
     height = 250 - margin.top - margin.bottom;

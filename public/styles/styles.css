@@ -42,11 +42,11 @@ svg#serverGraph {
 }
 
 .appsbar {
-  fill: steelblue;
+  fill: #66D9EF;
 }
 
 .appsbar:hover {
-  fill: brown;
+  fill: #F92672;
 }
 
 .axisM {
