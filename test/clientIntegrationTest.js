@@ -218,15 +218,78 @@ describe('Client Integration Tests', () => {
       });
   });
 
+  it('should get app data for user', (done) => {
+    requestP({
+      method: 'GET',
+      uri: 'http://localhost:' + port + '/user/userapps?id=' + userID,
+      json: true,
+    })
+      .then((response) => {
+        expect(response[0].appname).to.equal('testapp');
+        done();
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
+  it('should get server data for user', (done) => {
+    requestP({
+      method: 'GET',
+      uri: 'http://localhost:' + port + '/user/userservers?id=' + userID,
+      json: true,
+    })
+      .then((response) => {
+        expect(response[0].ip).to.equal('127.0.0.1');
+        done();
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
+  it('should post user credentials', (done) => {
+    requestP({
+      method: 'POST',
+      uri: 'http://localhost:' + port + '/user/usercreds',
+      json: true,
+      body: {
+        id: userID,
+        platform: 'Donald Trump',
+        value: 'Make America Great Again',
+      }
+    })
+      .then((response) => {
+        client.query('SELECT * FROM "serviceCreds" WHERE "users_id" = ' + userID)
+          .then((result) => {
+            expect(result[0].value).to.equal('Make America Great Again');
+            done();
+          })
+          .catch((error) => {
+            expect(error).to.not.exist;
+            done();
+          });
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
   // teardown
   after(() => {
     // stop listening that port
     client.query('DELETE FROM "clientServers" WHERE ip = ${ip};' +
       'DELETE FROM "clientApps" WHERE "appname" = ${appname};' +
-      'DELETE FROM "users" WHERE "username" = ${username}', {
+      'DELETE FROM "users" WHERE "username" = ${username}' +
+      'DELETE FROM "serviceCreds" WHERE "users_id" = ${id}',
+       {
         ip: '127.0.0.1',
         appname: 'testapp',
-        username: 'testuser'
+        username: 'testuser',
+        id: userID,
       });
     server.close();
   });

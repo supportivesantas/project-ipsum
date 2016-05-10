@@ -8,17 +8,17 @@ const Servers = require('../db/collections/client-server.js');
 const Hashes = require('../db/collections/hashes');
 const Creds = require('../db/collections/service-creds');
 const internalTasks = require('./internal_tasks');
+const url = require('url');
 
 module.exports = {
 
   getUserId: (req, res) => {
-    console.log(req.user.githubid);
     res.send(req.user.githubid);
   },
 
   getUserApps: (req, res) => {
-    console.log('IN USER APPS!!!!!');
-    Apps.query('where', 'users_id', '=', req.user.id).fetch()
+    const id = req.user ? req.user.id : req.query.id;
+    Apps.query('where', 'users_id', '=', id).fetch()
       .then(function(apps) {
         var appData = [];
         for (var i = 0; i < apps.models.length; i++) {
@@ -45,8 +45,8 @@ module.exports = {
   },
 
   getUserServers: (req, res) => {
-    console.log('IN USER SERVS!!!!!');
-    Servers.query('where', 'users_id', '=', req.user.id).fetch()
+    const id = req.user ? req.user.id : req.query.id;
+    Servers.query('where', 'users_id', '=', id).fetch()
       .then((servers) => {
         let servData = [];
         for (let i = 0; i < servers.models.length; i++) {
@@ -91,15 +91,15 @@ module.exports = {
         }
         // only care about the first result
         let server = result_servers[0];
-        
-        
+
+
       });
   },
 
   postUserCreds: (req, res) => {
     console.log('post user creds');
     // var userID = req.user.id;
-    var userID = 1;
+    var userID = req.body.id || 1;
     var platform = req.body.platform;
     var value = req.body.value;
 

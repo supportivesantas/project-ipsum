@@ -57,7 +57,7 @@ db.knex.schema.hasTable('events').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('events', function(event) {
       event.increments('id').primary();
-      event.integer('userId');
+      event.integer('userId').references('users.id').onDelete('CASCADE');
     }).then(function(table) {
       console.log('Created Event Table', table);
     });
@@ -68,7 +68,7 @@ db.knex.schema.hasTable('serviceCreds').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('serviceCreds', function(serviceCred) {
       serviceCred.increments('id').primary();
-      serviceCred.integer('users_id');
+      serviceCred.integer('users_id').references('users.id').onDelete('CASCADE');
       serviceCred.string('platform');
       serviceCred.string('value');
     }).then(function(table) {

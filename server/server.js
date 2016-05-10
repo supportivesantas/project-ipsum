@@ -36,7 +36,7 @@ configRoutes.configRoutes(app, passport); // pass app for configuration
 app.use(express.static('./dist'));
 app.use('/getStats', /*configRoutes.ensureAuthenticated,*/ getStats_controller);
 app.use('/stats', stats_controller);
-app.use('/user', configRoutes.ensureAuthenticated, userRouter);
+app.use('/user', /*configRoutes.ensureAuthenticated,*/ userRouter);
 app.use('/nginx', nginxRouter);
 
 // api interface for interacting with digital_ocean, et al.
