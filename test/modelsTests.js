@@ -36,11 +36,6 @@ describe('Models Test', function() {
       expect(user.get('githubemail')).to.equal('same@s.email');
       expect(user.get('githubtoken')).to.equal('190h9fe0h01hfe0h17f');
       userID = user.get('id');
-      // knex('users').where('username', 'makeitrane').del().then(function(results){
-      //   console.log(results);
-      //   expect(results).to.be.at.least(1);
-      //   done();
-      // });
       done();
     });
   });

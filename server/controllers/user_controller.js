@@ -1,4 +1,3 @@
-"use strict";
 const User = require('../db/models/user');
 const Users = require('../db/collections/users');
 const App = require('../db/models/client-app.js');
@@ -19,9 +18,9 @@ module.exports = {
   getUserApps: (req, res) => {
     const id = req.user ? req.user.id : req.query.id;
     Apps.query('where', 'users_id', '=', id).fetch()
-      .then(function(apps) {
-        var appData = [];
-        for (var i = 0; i < apps.models.length; i++) {
+      .then((apps) => {
+        const appData = [];
+        for (let i = 0; i < apps.models.length; i++) {
           appData.push(apps.models[i].attributes);
         }
         res.status(200).send(appData);
@@ -48,7 +47,7 @@ module.exports = {
     const id = req.user ? req.user.id : req.query.id;
     Servers.query('where', 'users_id', '=', id).fetch()
       .then((servers) => {
-        let servData = [];
+        const servData = [];
         for (let i = 0; i < servers.models.length; i++) {
           servData.push(servers.models[i].attributes);
         }
@@ -74,8 +73,8 @@ module.exports = {
 
   postUserServers: (req, res) => {
     console.log('Post to user servers');
-    var userID = req.user.id;
-    var serverID = req.body.server_id;
+    const userID = req.user.id;
+    const serverID = req.body.server_id;
 
     if (userID === undefined || serverID === undefined) {
       console.log('ERROR: Missing parameter in postUserServers');
@@ -85,12 +84,12 @@ module.exports = {
     
     Servers.query('where', 'users_id', '=', req.user.id, 'AND',
       'clientServers_id', '=', serverID).fetch()
-      .then((result_servers) => {
-        if (!result_servers || !result_servers.length) {
+      .then((resultServers) => {
+        if (!resultServers || !resultServers.length) {
           throw 'No Server Found';
         }
         // only care about the first result
-        let server = result_servers[0];
+        let server = resultServers[0];
 
 
       });
@@ -99,9 +98,9 @@ module.exports = {
   postUserCreds: (req, res) => {
     console.log('post user creds');
     // var userID = req.user.id;
-    var userID = req.body.id || 1;
-    var platform = req.body.platform;
-    var value = req.body.value;
+    const userID = req.body.id || 1;
+    const platform = req.body.platform;
+    const value = req.body.value;
 
     if (userID === undefined || platform === undefined || value === undefined) {
       console.log('ERROR: Missing parameter in postUserCreds');
@@ -138,10 +137,10 @@ module.exports = {
   putUserCreds: (req, res) => {
     console.log('put user creds');
     // var userID = req.user.id;
-    var userID = 1;
-    var id = req.body.id;
-    var platform = req.body.platform;
-    var value = req.body.value;
+    const userID = 1;
+    const id = req.body.id;
+    const platform = req.body.platform;
+    const value = req.body.value;
 
     if (userID === undefined || platform === undefined || value === undefined) {
       console.log('ERROR: Missing parameter in postUserCreds');
@@ -151,7 +150,7 @@ module.exports = {
 
     Creds.model.where({
       users_id: userID,
-      id: id
+      id: id,
     }).fetch()
       .then((credential) => {
         if (!credential) {
@@ -175,7 +174,7 @@ module.exports = {
   getUserCreds: (req, res) => {
     console.log('Get user creds');
     // var userID = req.user.id;
-    var userID = req.query.id || 1;
+    const userID = req.query.id || 1;
 
     if (userID === undefined) {
       console.log('ERROR: Missing Parameter');
@@ -185,13 +184,13 @@ module.exports = {
 
     Creds.model.where({ users_id: userID }).fetchAll()
       .then((results) => {
-        let credentials = [];
-        
+        const credentials = [];
+
         results.each((credential) => {
           credentials.push({
             id: credential.get('id'),
             platform: credential.get('platform'),
-            value: credential.get('value')
+            value: credential.get('value'),
           });
         });
         res.status(200).json(credentials);
@@ -202,19 +201,19 @@ module.exports = {
       });
   },
 
-deleteUserCreds: (req, res) => {
-  console.log('Delete user creds');
-    // let userID = req.user.id;
-    let userID = 1;
-    let credsIDs = req.body.ids;
+  deleteUserCreds: (req, res) => {
+    console.log('Delete user creds');
+      // let userID = req.user.id;
+    const userID = 1;
+    const credsIDs = req.body.ids;
 
-    if (userID === undefined || credsIDs == undefined) {
+    if (userID === undefined || credsIDs === undefined) {
       console.log('ERROR: Missing Parameters');
       res.status(404).end();
       return;
     }
 
-    for (let credID of credsIDs) {
+    for (const credID of credsIDs) {
       Creds.model.where({ users_id: userID, id: credID }).fetch()
         .then((cred) => {
           return cred.destroy();
@@ -233,24 +232,24 @@ deleteUserCreds: (req, res) => {
 
   getInit: (req, res) => {
     const id = req.user ? req.user.id : req.query.id;
-    let serverQuickLook = {};
+    const serverQuickLook = {};
     const servData = [];
-    
+
     Servers.query('where', 'users_id', '=', id, 'orderBy', 'id', 'ASC').fetch()
       .then((servers) => {
-        
+
         for (let i = 0; i < servers.models.length; i++) {
           // servData.push(servers.models[i].attributes);
-          let curServer = servers.models[i].attributes;
+          const curServer = servers.models[i].attributes;
 
-          let serverAttrib = {
+          const serverAttrib = {
             id: curServer.id,
             hostname: curServer.hostname,
             ip: curServer.ip,
             // platform: curServer.platform,
             platform: 'Digital Ocean',
             active: 'active', // fix me later
-            apps: []
+            apps: [],
           };
 
           servData.push(serverAttrib);
@@ -258,30 +257,30 @@ deleteUserCreds: (req, res) => {
           serverQuickLook[curServer.id] = serverAttrib;
         }
         // console.log(servData);
-        
+
         /* query hashes table and filter only server/app id and appnames */
         return Hashes.query('where', 'users_id', '=', id, 'orderBy', 'id', 'ASC')
           .fetch({
             withRelated: [{
-              'clientApps': (qb) => {
+              clientApps: (qb) => {
                 qb.column('appname');
-              }
+              },
             }], columns: ['clientServers_id', 'clientApps_id', 'appname']
           });
       })
       .then((hashesResult) => {
         hashesResult.each((hash) => {
-          var hashAttrib = hash.attributes;
+          const hashAttrib = hash.attributes;
 
           if (hashAttrib.clientServers_id === undefined || !hashAttrib.appname) {
             return;
           }
 
           /* push appname into array */
-          var appDescription = [hashAttrib.clientApps_id, hashAttrib.appname];
+          const appDescription = [hashAttrib.clientApps_id, hashAttrib.appname];
           serverQuickLook[hashAttrib.clientServers_id].apps.push(appDescription);
         });
-        
+
         return Apps.query('where', 'users_id', '=', id).fetch();
       })
       .then((apps) => {
@@ -324,8 +323,6 @@ deleteUserCreds: (req, res) => {
     //   .catch((err) => {
     //     res.send(401);
     //   });
-
-
   },
 
 };

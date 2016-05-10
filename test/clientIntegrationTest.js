@@ -25,22 +25,22 @@ describe('Client Integration Tests', () => {
   // describe setup
   before((next) => {
     // creating listener with random port
-    server = app.listen( () => {
+    server = app.listen(() => {
       // store port when its ready
       port = server.address().port;
 
       // setup db connection
       client.connect()
-        .then((result) => {
+        .then(() => {
           return client.query('DELETE FROM "clientServers" WHERE ip = ${ip};' +
             'DELETE FROM "clientApps" WHERE "appname" = ${appname};' +
             'DELETE FROM "users" WHERE "username" = ${username}', {
               ip: '127.0.0.1',
               appname: 'testapp',
-              username: 'testuser'
+              username: 'testuser',
             });
         })
-        .then((result) => {
+        .then(() => {
           // don't really care about the result
           next();
         })
@@ -62,8 +62,8 @@ describe('Client Integration Tests', () => {
         ip: '127.0.0.1',
         hostname: 'testhost',
         appname: 'testapp',
-        port: 8080
-      }
+        port: 8080,
+      },
     })
       .then((response) => {
         expect(response).to.exist;
@@ -133,11 +133,12 @@ describe('Client Integration Tests', () => {
         token: null,
         statistics: {
           dummyPath: 3,
-          dummyPath2: 12
-        }
-      }
+          dummyPath2: 12,
+        },
+      },
     })
-      .then((response) => {
+      .then(() => {
+        //DO THING HERE
         done();
       })
       .catch((error) => {
@@ -153,8 +154,8 @@ describe('Client Integration Tests', () => {
       json: true,
       body: {
         serverId: 1,
-        hours: 24
-      }
+        hours: 24,
+      },
     })
       .then((response) => {
         expect(response[0].route).to.equal('Total');
@@ -174,8 +175,8 @@ describe('Client Integration Tests', () => {
       json: true,
       body: {
         appId: 1,
-        hours: 24
-      }
+        hours: 24,
+      },
     })
       .then((response) => {
         expect(response[0].route).to.equal('Total');
@@ -259,9 +260,9 @@ describe('Client Integration Tests', () => {
         id: userID,
         platform: 'Donald Trump',
         value: 'Make America Great Again',
-      }
+      },
     })
-      .then((response) => {
+      .then(() => {
         client.query('SELECT * FROM "serviceCreds" WHERE "users_id" = ' + userID)
           .then((result) => {
             expect(result[0].value).to.equal('Make America Great Again');
@@ -293,7 +294,7 @@ describe('Client Integration Tests', () => {
         done();
       });
   });
-  
+
   it('should get init data', (done) => {
     requestP({
       method: 'GET',
@@ -324,7 +325,7 @@ describe('Client Integration Tests', () => {
         owner: userID,
       },
     })
-      .then((response) => {
+      .then(() => {
         client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
           .then((result) => {
             expect(result[0].zone).to.equal('MAGA');
@@ -352,7 +353,7 @@ describe('Client Integration Tests', () => {
         master: lbID,
       },
     })
-      .then((response) => {
+      .then(() => {
         client.query('SELECT * FROM "clientServers" WHERE "id" = ' + serverID)
           .then((result) => {
             expect(result[0].master).to.equal(lbID);
@@ -378,7 +379,7 @@ describe('Client Integration Tests', () => {
         id: lbID,
       },
     })
-      .then((response) => {
+      .then(() => {
         client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
           .then((result) => {
             expect(result.length).to.equal(0);
@@ -388,7 +389,7 @@ describe('Client Integration Tests', () => {
                 done();
               })
               .catch((err) => {
-                expect(error).to.not.exist;
+                expect(err).to.not.exist;
                 done();
               });
           })
@@ -402,16 +403,16 @@ describe('Client Integration Tests', () => {
         done();
       });
   });
-
+  
   // teardown
   after('Destory temp items', () => {
     // stop listening that port
     client.query('DELETE FROM "clientServers" WHERE ip = ${ip};' +
       'DELETE FROM "clientApps" WHERE "appname" = ${appname};' +
       'DELETE FROM "users" WHERE "username" = ${username}' +
-      'DELETE FROM "serviceCreds" WHERE "users_id" = ${id}',
+      'DELETE FROM "serviceCreds" WHERE "users_id" = ${id}' +
       'DELETE FROM "loadbalancers" WHERE "users_id" = ${id}',
-       {
+      {
         ip: '127.0.0.1',
         appname: 'testapp',
         username: 'testuser',
@@ -419,5 +420,4 @@ describe('Client Integration Tests', () => {
       });
     server.close();
   });
-
 });
