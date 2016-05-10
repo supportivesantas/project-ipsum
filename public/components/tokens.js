@@ -38,13 +38,12 @@ class Tokens extends React.Component {
     request.get('/user/usercreds',
       (err, res) => {
         if (err) { console.log('Error getting tokens', err); }
-        console.log(res);
+        if (!res.body) { return; }
         this.props.dispatch(actions.POPULATE_TOKENS(res.body));
       });
   }
 
   onAfterSaveCell(row, cellName, cellValue) {
-    console.log(row);
     request.put('/user/usercreds',
       row,
       (err, res) => {
@@ -54,11 +53,9 @@ class Tokens extends React.Component {
   }
 
   afterDeleteRow(rowKeys) {
-    console.log('DELETE', rowKeys);
     request.del('/user/usercreds',
       { ids: rowKeys },
       (err, res) => {
-        console.log(res);
         if (err) { console.log('Error putting token', err); }
       });
   }
@@ -74,7 +71,7 @@ class Tokens extends React.Component {
       this.setState({
         showError: true
       });
-      
+
       this.setState({
         showError: false
       });
@@ -87,7 +84,6 @@ class Tokens extends React.Component {
         value: this.state.value
       },
       (err, res) => {
-        console.log(res);
         if (err) { console.log('Error putting token', err); }
         this.setState({
           showError: false,
@@ -109,7 +105,7 @@ class Tokens extends React.Component {
       value: e.target.value
     });
   }
-  
+
   render() {
     return (
       <Grid><Row><Col md={12} xs={12}>
