@@ -138,9 +138,7 @@ describe('Client Integration Tests', () => {
       }
     })
       .then((response) => {
-        // maybe we should return something later
-        // wait 250 ms for sql stores to take place
-        setTimeout(done, 250);
+        done();
       })
       .catch((error) => {
         expect(error).to.not.exist;
@@ -190,15 +188,28 @@ describe('Client Integration Tests', () => {
       });
   });
 
-  it('should store statistics in stats table', (done) => {
-    client.query('SELECT * FROM "stats" WHERE "clientApps_id" = ${appID} AND "clientServers_id" = ${serverID}',
-    { appID: appID, serverID: serverID })
+  it('should store statistics in stats table 1', (done) => {
+    client.query('SELECT * FROM "stats" WHERE "clientApps_id" = ${appID} AND "clientServers_id" = ${serverID} AND "statName" = ${statName}',
+      { appID: appID, serverID: serverID, statName: 'dummyPath' })
       .then((result) => {
-        expect(result).to.have.length(2);
+        expect(result).to.have.length(1);
         expect(result[0].statName).to.equal('dummyPath');
         expect(result[0].statValue).to.equal(3);
-        expect(result[1].statName).to.equal('dummyPath2');
-        expect(result[1].statValue).to.equal(12);
+        done();
+      })
+      .catch((error) => {
+        expect(error).to.not.exist;
+        done();
+      });
+  });
+
+  it('should store statistics in stats table 2', (done) => {
+    client.query('SELECT * FROM "stats" WHERE "clientApps_id" = ${appID} AND "clientServers_id" = ${serverID} AND "statName" = ${statName}',
+      { appID: appID, serverID: serverID, statName: 'dummyPath2' })
+      .then((result) => {
+        expect(result).to.have.length(1);
+        expect(result[0].statName).to.equal('dummyPath2');
+        expect(result[0].statValue).to.equal(12);
         done();
       })
       .catch((error) => {

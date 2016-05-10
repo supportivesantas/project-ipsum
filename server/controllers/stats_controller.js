@@ -1,3 +1,4 @@
+"use strict";
 var users = require('../db/collections/users');
 var clientApps = require('../db/collections/client-apps');
 var clientServers = require('../db/collections/client-server');
@@ -6,39 +7,43 @@ var hashes = require('../db/collections/hashes');
 var lookup = require('./lookup');
 var internalTasks = require('./internal_tasks');
 var nginxController = require('./nginxController');
+var Promise = require('bluebird');
 var statsController = {};
 
 /* store the stats into postgresql */
-var storeStats = function (statistics, foreignID) {
+var storeStats = (statistics, foreignID) => {
   /* consolidate stats for endpoints disregarding the trailing slash */
-  for (var stat in statistics) {
+  for (let stat in statistics) {
     if (stat === '/' || stat[stat.length - 1] !== '/') {
       continue;
     }
 
-    var trueEndPoint = stat.replace(/\/$/, '');
+    let trueEndPoint = stat.replace(/\/$/, '');
     statistics[trueEndPoint] = (statistics[trueEndPoint] || 0) + statistics[stat];
     delete (statistics[stat]);
   }
-  
-  for (var stat in statistics) {
-    new stats.model({
+
+  let statsArray = [];
+  for (let stat in statistics) {
+    statsArray.push(new stats.model({
       statName: stat,
       statValue: statistics[stat],
       /* use attach for the foreign keys later? */
       users_id: foreignID[0],
       clientServers_id: foreignID[1],
       clientApps_id: foreignID[2]
-    }).save();
+    }).save());
   }
+
+  return Promise.all(statsArray);
 };
 
 /* handler for post request of stats from client */
-statsController.processStats = function (req, res) {
-  var hash = req.body.hash;
-  var username = req.body.username;
-  var statistics = req.body.statistics;
-  var foreignID = lookup.hash2ID(hash);
+statsController.processStats = (req, res) => {
+  let hash = req.body.hash;
+  let username = req.body.username;
+  let statistics = req.body.statistics;
+  let foreignID = lookup.hash2ID(hash);
 
   if (!hash) {
     /* no hash sent this is a critical error */
@@ -50,7 +55,7 @@ statsController.processStats = function (req, res) {
   if (!foreignID) {
     /* Foreign IDs not found in hash table look them up */
     hashes.model.where('hash', hash).fetch()
-      .then(function (hash) {
+      .then((hash) => {
         if (!hash) {
           /* hash is missing from db so force client to re-register */
           res.status(409).send('Error: Hash not found.  Re-register the client');
@@ -59,17 +64,25 @@ statsController.processStats = function (req, res) {
           lookup.storeHash2ID(hash.hash, hash.users_id, hash.clientServers_id, hash.clientApps_id);
           foreignID = [hash.hash, hash.clientServers_id, hash.clientApps_id];
         }
-        storeStats(statistics, foreignID);
+        return storeStats(statistics, foreignID);
+      })
+      .then((result) => {
         res.status(200).end('');
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.log('Error: Hash Processing Failed', error);
         res.status(500).send('Error: Internal Server Error');
       });
   } else {
     /* we have the Foreign IDs so just store the stats */
-    storeStats(statistics, foreignID);
-    res.status(200).end('');
+    storeStats(statistics, foreignID)
+      .then((result) => {
+        res.status(200).end('');
+      })
+      .catch((error) => {
+        console.log('Error: Hash Processing Failed', error);
+        res.status(500).send('Error: Internal Server Error');
+      });
   }
 };
 
