@@ -244,9 +244,11 @@ exports.myServerSummary = (req, res) => {
 
 exports.myAppSummary = (req, res) => {
 //update to req.body variables below
-  var userId = 1;
-  var appId = 1;
-  var days = 2;
+  var userId = req.body.userId || 1 ;
+  var appId = req.body.appId || 1;
+  var days = req.body.days || 3;
+
+  var dateArray = getDates(new Date().subDays(1), (new Date()).subDays(days));
   //appRoutes defined in this scope so servers can cross reference and total up just the hits for this app.
   //Assumes apps do not share route names, only way to pull out app hits for each server
   //Server summaries is totaled by route not by app (so would need to let customers know routes must be unique across apps)
@@ -379,6 +381,54 @@ exports.myAppSummary = (req, res) => {
         });
         //Add server summaries to response object before sending
         appCompleteSummary.Servers = appServerSums;
+
+
+        //Add in data point value:0 if no hits for a day
+        _.each(appCompleteSummary.Routes, (route) => {
+          var datesCheck = dateArray.slice();
+          //See what dates exist and take out of dates check
+          _.each(route.data, (dateObj) => {
+            var datesCheckIndex = datesCheck.indexOf(dateObj.date);
+            if (datesCheckIndex !== -1) {
+              datesCheck.splice(datesCheckIndex, 1);
+            }
+          });
+          //Add value: 0 for all dates left over in DatesCheck
+          _.each(datesCheck, (date) => {
+            route.data.push({route: route.route, date: date, value: 0});
+          });
+        });
+
+                //Add in data point value:0 if no hits for a day
+        _.each(appCompleteSummary.Servers, (server) => {
+          var datesCheck = dateArray.slice();
+          //See what dates exist and take out of dates check
+          _.each(server.data, (dateObj) => {
+            var datesCheckIndex = datesCheck.indexOf(dateObj.date);
+            if (datesCheckIndex !== -1) {
+              datesCheck.splice(datesCheckIndex, 1);
+            }
+          });
+          //Add value: 0 for all dates left over in DatesCheck
+          _.each(datesCheck, (date) => {
+            server.data.push({serverid: server.server, date: date, value: 0});
+          });
+        });
+
+        var datesCheck = dateArray.slice();
+        //See what dates exist and take out of dates check
+        _.each(appCompleteSummary.Total, (dateObj) => {
+          var datesCheckIndex = datesCheck.indexOf(dateObj.date);
+          if (datesCheckIndex !== -1) {
+            datesCheck.splice(datesCheckIndex, 1);
+          }
+        });
+        //Add value: 0 for all dates left over in DatesCheck
+        _.each(datesCheck, (date) => {
+          appCompleteSummary.Total.push({date: date, value: 0});
+        });
+
+
         res.send(appCompleteSummary);
       });
     });
