@@ -183,6 +183,9 @@ button {
 .barGraph rect {
   fill: #66D9EF;
 }
+.barGraph rect:hover {
+  fill: #A6E22E;
+}
 .barGraph text {
   fill: white;
   font: 10px sans-serif;
