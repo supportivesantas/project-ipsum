@@ -15,7 +15,8 @@ class MyApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      lineGraphRoute: null
+      lineGraphRoute: null,
+      resizefunc: null
     };
   }
 
@@ -53,6 +54,26 @@ class MyApp extends React.Component {
         this.setState({lineGraphRoute: this.props.state.graphData[0].route});
         renderChart('lineGraph', this.props.state.graphData[0].data);
     });
+
+    this.setState({resizefunc: this.resizedb()}, () => {
+      window.addEventListener('resize', this.state.resizefunc);
+    })
+  }
+
+  resizedb() {
+    var redraw = function() {
+      // linegraph 
+      this.updateGraph({value: this.state.lineGraphRoute});
+      // horizontal bar graph
+      barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
+        return -obj.value;
+      }));
+    }
+    return _.debounce(redraw.bind(this), 500)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.state.resizefunc);
   }
 
   updateGraph(value) {

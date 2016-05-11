@@ -14,8 +14,7 @@ class MyServer extends React.Component {
     super(props);
     this.state = {
       lineGraphRoute: null,
-      lineGraphOptions: null,
-      lineGraphDataRaw: null
+      resizefunc: null
     };
   }
 
@@ -32,6 +31,20 @@ class MyServer extends React.Component {
       }
     );
 
+    this.setState({resizefunc: this.resizedb()}, () => {
+      window.addEventListener('resize', this.state.resizefunc);
+    })
+  }
+
+  resizedb() {
+    var redraw = function() {
+      this.updateGraph({value: this.state.lineGraphRoute});
+    }
+    return _.debounce(redraw.bind(this), 500)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.state.resizefunc);
   }
 
   updateGraph(value) {

@@ -18,12 +18,20 @@ class MyAppHistory extends React.Component {
       filterOptions: null, // an array
       days: 7,
       graphData: null,
-      selectedFilters: null
+      selectedFilters: null,
+      resizefunc: null
     };
   }
 
   componentDidMount() {
     this.getData();
+    this.setState({resizefunc: this.resizedb()}, () => {
+      window.addEventListener('resize', this.state.resizefunc);
+    });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.state.resizefunc);
   }
 
   graphIt(){
@@ -36,6 +44,11 @@ class MyAppHistory extends React.Component {
         });
     }
   }
+
+  resizedb() {
+    return _.debounce(this.graphIt.bind(this), 500)
+  }
+
 
   getData() {
     request.post('/getStats/myAppSummary', {
