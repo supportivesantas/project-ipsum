@@ -74,7 +74,7 @@ describe('Models Test', function() {
     });
   });
   // needs to point to a user in the database
-  xit('should save an event to the database', function (done) {
+  it('should save an event to the database', function (done) {
     var event = new Event({
       userId: userID,
     }).save()
