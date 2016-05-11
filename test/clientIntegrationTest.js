@@ -4,6 +4,7 @@ const requestP = require('request-promise');
 const pgp = require('pg-promise')({});
 const expect = chai.expect;
 const assert = chai.assert;
+const summCtrl = require('../server/controllers/summaryController.js');
 
 /* simulate production env for testing */
 process.env.NODE_ENV = 'production';
@@ -402,6 +403,23 @@ describe('Client Integration Tests', () => {
         expect(error).to.not.exist;
         done();
       });
+  });
+
+
+  it('should retreive list of servers ids from DB', (done) => {
+    summCtrl.getAllServerIds((idArr) => {
+      expect(idArr).to.be.an.Array;
+      expect(idArr.length).to.not.equal(0);
+      done();
+    });
+  });
+
+  it('should retreive list of app ids from DB', (done) => {
+    summCtrl.getAllAppIds((idArr) => {
+      expect(idArr).to.be.an.Array;
+      expect(idArr.length).to.not.equal(0);
+      done();
+    });
   });
   
   // teardown
