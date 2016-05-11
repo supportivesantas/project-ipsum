@@ -50,7 +50,7 @@ svg#serverGraph {
 }
 
 .appsbar:hover {
-  fill: #F92672;
+  fill: #A6E22E;
 }
 
 .axisM {
@@ -74,6 +74,9 @@ svg#serverGraph {
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
   border-radius: 2px;
+}
+.d3-tip span {
+  color: #A6E22E;
 }
 /* Style northward tooltips differently */
 .d3-tip.n:after {

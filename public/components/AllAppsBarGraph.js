@@ -36,7 +36,7 @@ var tip = d3tip(d3)
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    return "<strong>Hits:</strong> <span style='color:red'>" + Number(d.value).toLocaleString() + "</span>";
+    return "<strong>Hits:</strong> <span>" + Number(d.value).toLocaleString() + "</span>";
   })
 
 svg.call(tip);
