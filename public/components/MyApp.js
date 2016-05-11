@@ -50,19 +50,17 @@ class MyApp extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        this.setState({lineGraphRoute: this.props.state.graphData[0].route}, () => {
-          renderChart('lineGraph', this.props.state.graphData[0].data);
-        })
+        this.setState({lineGraphRoute: this.props.state.graphData[0].route});
+        renderChart('lineGraph', this.props.state.graphData[0].data);
     });
   }
 
   updateGraph(value) {
     !value ? null : 
-    this.setState({lineGraphRoute: value.value}, () => {
-      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/" + value.value));
-      d3.select('#lineGraph > svg').remove(); 
-      renderChart('lineGraph', _.findWhere(this.props.state.graphData, {route: value.value}).data);
-    });
+    this.setState({lineGraphRoute: value.value});
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/" + value.value));
+    d3.select('#lineGraph > svg').remove(); 
+    renderChart('lineGraph', _.findWhere(this.props.state.graphData, {route: value.value}).data);
   }
 
   tableLinkForm(cell) {

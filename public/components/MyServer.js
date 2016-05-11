@@ -27,36 +27,24 @@ class MyServer extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        this.setState({
-          lineGraphOptions: this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}}),
-          lineGraphRoute: this.props.state.graphData[0].route,
-          lineGraphDataRaw:  this.props.state.graphData[0].data
-        });
+        this.setState({lineGraphRoute: this.props.state.graphData[0].route});
+        renderChart('lineGraph', this.props.state.graphData[0].data);
       }
     );
 
   }
 
   updateGraph(value) {
-    if (value !== null) {
-      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
-      this.setState({
-        lineGraphRoute: value.value,
-        lineGraphDataRaw: _.findWhere(this.props.state.graphData, {route: value.value}).data
-      })
-    }
+    !value ? null : 
+    this.setState({lineGraphRoute: value.value});
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/" + value.value));
+    d3.select('#lineGraph > svg').remove(); 
+    renderChart('lineGraph', _.findWhere(this.props.state.graphData, {route: value.value}).data);
   }
 
   render() {
 
-    var lineGraphData= [
-          { 
-            name: 'series1',
-            values: this.state.lineGraphDataRaw.map( hour => { return {x: hour.time, y: hour.hits} }),
-            strokeWidth: 3,
-            strokeDashArray: "5,5"
-          }]
-
+    var lineGraphOptions = this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}});
 
     return (
       <Grid>
@@ -83,7 +71,7 @@ class MyServer extends React.Component {
               <Select
                 value={this.state.lineGraphRoute}
                 multi={false}
-                options={this.state.lineGraphOptions}
+                options={lineGraphOptions}
                 onChange={this.updateGraph.bind(this)}
                 />
               <h5 className="xAxis-title">Server Traffic</h5>
@@ -100,12 +88,6 @@ class MyServer extends React.Component {
     );
   }
 }
-
-  // {this.props.state.graphData.map(graph =>
-  //    <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
-  //      <p>/{graph.route}</p>
-  //    </Panel>
-  //  )}
 
 MyServer = connect(state => ({ state: state }))(MyServer);
 export default MyServer;
