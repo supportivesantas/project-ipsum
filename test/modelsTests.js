@@ -10,8 +10,7 @@ const Event = require('../server/db/models/event.js');
 const Hash = require('../server/db/models/hash.js');
 const ServiceCred = require('../server/db/models/service-cred.js');
 const Stat = require('../server/db/models/stat.js');
-const summCtrl = require('../server/controllers/summaryController.js');
-let userID = null;
+
 describe('Models Test', function() {
 
   it('should save a user to the database', function (done) {
@@ -35,8 +34,10 @@ describe('Models Test', function() {
       expect(user.get('githubid')).to.equal('ranedance');
       expect(user.get('githubemail')).to.equal('same@s.email');
       expect(user.get('githubtoken')).to.equal('190h9fe0h01hfe0h17f');
-      userID = user.get('id');
-      done();
+      knex('users').where('username', 'makeitrane').del().then(function(results){
+        expect(results).to.be.at.least(1);
+        done();
+      });
     });
   });
 
@@ -74,32 +75,33 @@ describe('Models Test', function() {
     });
   });
   // needs to point to a user in the database
-  it('should save an event to the database', function (done) {
+  xit('should save an event to the database', function (done) {
     var event = new Event({
-      userId: userID,
+      userId: 1234,
     }).save()
     .then(function(){
-      return Event.where({userId: userID}).fetch();
+      return Event.where({userId: 1234}).fetch();
     })
     .then(function(event){
-      expect(event.get('userId')).to.equal(userID);
-      knex('events').where('userId', userID).del().then(function(results){
+      expect(event.get('userId')).to.equal(1234);
+      knex('events').where('userId', 1234).del().then(function(results){
         expect(results).to.be.at.least(1);
         done();
       });
     });
   });
-
-  it('should save an serviceCreds to the database', (done) => {
-    new ServiceCred({
-      users_id: userID,
+  
+  it('should save an serviceCreds to the database', function (done) {
+    var serviceCred = new ServiceCred({
+      platform: 'digital_ocean',
+      value: '1234'
     }).save()
-    .then(() => {
-      return ServiceCred.where({ users_id: userID }).fetch();
+    .then(function(){
+      return ServiceCred.where({ value: '1234'}).fetch();
     })
-    .then((serviceCred) => {
-      expect(serviceCred.get('users_id')).to.equal(userID);
-      knex('serviceCreds').where('users_id', userID).del().then((results) => {
+    .then(function(serviceCred){
+      expect(serviceCred.get('value')).to.equal('1234');
+      knex('serviceCreds').where('value', '1234').del().then(function(results){
         expect(results).to.be.at.least(1);
         done();
       });
@@ -139,43 +141,4 @@ describe('Models Test', function() {
       });
     });
   });
-
 });
-
-describe('Summaries Controller', () => {
-
-  it('should retreive list of servers ids from DB', (done) => {
-    summCtrl.getAllServerIds((idArr) => {
-      expect(idArr).to.be.an.Array;
-      expect(idArr.length).to.not.equal(0);
-      done();
-    });
-  });
-
-  it('should retreive list of app ids from DB', (done) => {
-    summCtrl.getAllAppIds((idArr) => {
-      expect(idArr).to.be.an.Array;
-      expect(idArr.length).to.not.equal(0);
-      done();
-    });
-  });
-
-  after('destroys user', (done) => {
-    User.where({ id: userID }).fetch()
-      .then((user) => {
-        user.destroy()
-          .then(() => {
-            done();
-          });
-      });
-  });
-
-});
-
-
-
-
-
-
-
-
