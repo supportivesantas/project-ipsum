@@ -5,6 +5,10 @@ path {
   fill: none;
 }
 
+.panel {
+  transition: all .5 ease;
+}
+
 .axis {
   shape-rendering: crispEdges;
 }

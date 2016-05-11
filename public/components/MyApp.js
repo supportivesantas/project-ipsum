@@ -3,17 +3,19 @@ import actions from '../actions/ipsumActions.js';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { renderChart } from '../D3graphTemplate';
-import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem} from 'react-bootstrap';
 import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import barGraph from './BarGraph';
 import _ from 'underscore';
 import MyAppHistory from './MyAppHistory';
+import Select from 'react-select';
 
 class MyApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      lineGraphRoute: null
     };
   }
 
@@ -52,18 +54,13 @@ class MyApp extends React.Component {
     });
   }
 
-  updateGraph(graph) {
-    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
-    var graphData = this.props.state.graphData;
-    d3.select('#lineGraph > svg').remove();
-    var routeIndex;
-    for (var i = 0; i < graphData.length; i++) {
-      if (graphData[i].route === graph.route) {
-        routeIndex = i;
-        break;
-      }
-    }
-    renderChart('lineGraph', graphData[routeIndex].data);
+  updateGraph(value) {
+    this.setState({lineGraphRoute: value.value}, () => {
+      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
+      var graphData  = this.props.state.graphData, routeIndex;
+      d3.select('#lineGraph > svg').remove();
+      renderChart('lineGraph', _.findWhere(graphData, {route: value.value}).data);
+    });
   }
 
   tableLinkForm(cell) {
@@ -95,6 +92,7 @@ class MyApp extends React.Component {
         id: total.id
       }
     })
+    var lineGraphOptions = this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}})
 
     return (
        <Grid>
@@ -115,13 +113,12 @@ class MyApp extends React.Component {
             <Grid fluid>
             <Row>
             <Col xs={4} lg={4}>
-              <ListGroup className='server-route-list'>
-               {this.props.state.graphData.map((graph, idx) =>
-                  <ListGroupItem key={idx} className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
-                    /{graph.route}
-                  </ListGroupItem>
-                )}
-             </ListGroup>
+              <Select ref='linegraph'
+                value={this.state.lineGraphRoute}
+                multi={false}
+                options={lineGraphOptions}
+                onChange={this.updateGraph.bind(this)}
+                />
             </Col>
             <Col xs={8} lg={8}>
               <h3 className="linegraph-title">Hits Per Hour Today</h3>
