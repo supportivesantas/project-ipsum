@@ -7,48 +7,58 @@ import request from '../util/restHelpers.js';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import Select from 'react-select';
 import _ from 'underscore';
+import { LineChart } from 'rd3';
 
 class MyServer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      lineGraphRoute: null
+      lineGraphRoute: null,
+      lineGraphOptions: null,
+      lineGraphDataRaw: null,
+      chartwidth: 400
     };
-  }
-
-  updateGraphTitle(clickedRoute) {
-    console.log(clickedRoute);
-    this.graphTitle = clickedRoute;
-    return this.graphTitle;
   }
 
   componentDidMount() { 
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
+    this.setState({chartwidth: this.refs.linechart.parentNode.offsetWidth});
     var servId = this.props.state.serverSelection.id;
     request.post('/getStats/server',
       {serverId: servId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        this.setState({lineGraphRoute: this.props.state.graphData[0].route}, () => {
-          renderChart('lineGraph', this.props.state.graphData[0].data);
-        })
-      });
+        this.setState({
+          lineGraphOptions: this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}}),
+          lineGraphRoute: this.props.state.graphData[0].route,
+          lineGraphDataRaw:  this.props.state.graphData[0].data
+        });
+      }
+    );
+
   }
 
   updateGraph(value) {
-    !value ? null : 
-    this.setState({lineGraphRoute: value.value}, () => {
+    if (value !== null) {
       this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
-      var graphData = this.props.state.graphData;
-      d3.select('#lineGraph > svg').remove();
-      renderChart('lineGraph', _.findWhere(graphData, {route: value.value}).data);
-    })
+      this.setState({
+        lineGraphRoute: value.value,
+        lineGraphDataRaw: _.findWhere(this.props.state.graphData, {route: value.value}).data
+      })
+    }
   }
 
   render() {
 
-    var lineGraphOptions = this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}})
+    var lineGraphData= [
+          { 
+            name: 'series1',
+            values: this.state.lineGraphDataRaw.map( hour => { return {x: hour.time, y: hour.hits} }),
+            strokeWidth: 3,
+            strokeDashArray: "5,5"
+          }]
+
 
     return (
       <Grid>
@@ -75,12 +85,29 @@ class MyServer extends React.Component {
               <Select
                 value={this.state.lineGraphRoute}
                 multi={false}
-                options={lineGraphOptions}
+                options={this.state.lineGraphOptions}
                 onChange={this.updateGraph.bind(this)}
                 />
-              <h5 className="xAxis-title">Hits Per Hour</h5>
-              <div id="lineGraph"></div>
-              <h5 className="xAxis-title">Hours Ago</h5>
+              <h5 className="xAxis-title">Server Traffic</h5>
+              <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
+              {/*<div id="lineGraph"></div>*/}
+
+              <LineChart
+                ref='linechart'
+                width='100%'
+                height={400}
+                viewBoxObject={{
+                  x: 0,
+                  y: 0,
+                  width: this.state.chartwidth,
+                  height: this.state.chartwidth * 2/3
+                }}
+                yAxisLabel="Requests"
+                xAxisLabel="Hours ago"
+                domain={{x: [,6], y: [-10,]}}
+                gridHorizontal={true}
+              />
+
             </Col>
           </Row>
         </Grid>
