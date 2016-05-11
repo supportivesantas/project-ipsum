@@ -15,7 +15,7 @@ class MyAppHistory extends React.Component {
     super(props);
     this.state = {
       filterMode: 'total', // 'total', 'route', or 'server'
-      filterOptions: null, // an array 
+      filterOptions: null, // an array
       days: 7,
       graphData: null,
       selectedFilters: null
@@ -31,19 +31,18 @@ class MyAppHistory extends React.Component {
       if (this.state.filterMode === 'total' || this.state.filterOptions && this.state.selectedFilters)
         this.formatGraphData(() => {
           if (this.state.graphData) {
-            barGraph('historyBargraph', this.state.graphData)
+            barGraph('historyBargraph', this.state.graphData);
           }
-        }); 
+        });
     }
   }
 
   getData() {
     request.post('/getStats/myAppSummary', {
-      userId: this.props.state.appSelection.id,
-      appId: this.props.state.appSelection.users_id,
+      userId: this.props.state.appSelection.users_id,
+      appId: this.props.state.appSelection.id,
       days: this.state.days
     }, (err, resp) => {
-      console.log(err, resp)
     // parse the data object for route and server totals
       var data = JSON.parse(resp.text);
       var parsedData = this.parseHistoryResponse(data);
@@ -54,22 +53,22 @@ class MyAppHistory extends React.Component {
     });
   }
 
-  parseHistoryResponse(response) {  
+  parseHistoryResponse(response) {
     // make a copy
     var parsed = Object.assign({}, response);
     // collect server names for <Select>
     parsed.serverNames = parsed.Servers.map( Server => {
       return {
-        value: Server.server, 
-        label: _.findWhere(this.props.state.servers, {id: Number(Server.server)} ).hostname 
+        value: Server.server,
+        label: _.findWhere(this.props.state.servers, {id: Number(Server.server)} ).hostname
       };
     });
     // collect routenames for <Select>
     parsed.routeNames = parsed.Routes.map( Route => {
       return {
-        value: Route.route, 
+        value: Route.route,
         label: '/' + Route.route
-      }; 
+      };
     });
     // collect dates for Graph
     parsed.dates = parsed.Total.map( Total => Total.date);
@@ -137,7 +136,7 @@ class MyAppHistory extends React.Component {
     var next = function() {
       // clear the old filter options and load the new ones
       this.setState({selectedFilters: null}, () => {
-        // load the new filter options 
+        // load the new filter options
         var mode = {
           'route': this.props.state.myAppHistory.routeNames,
           'server': this.props.state.myAppHistory.serverNames

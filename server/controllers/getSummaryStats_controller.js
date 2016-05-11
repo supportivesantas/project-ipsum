@@ -244,9 +244,9 @@ exports.myServerSummary = (req, res) => {
 
 exports.myAppSummary = (req, res) => {
 //update to req.body variables below
-  var userId = req.body.userId || 1 ;
-  var appId = req.body.appId || 1;
-  var days = req.body.days || 3;
+  var userId = req.body.userId ;
+  var appId = req.body.appId;
+  var days = req.body.days;
 
   var dateArray = getDates(new Date().subDays(1), (new Date()).subDays(days));
   //appRoutes defined in this scope so servers can cross reference and total up just the hits for this app.
