@@ -3,9 +3,8 @@ import d3tip from 'd3-tip';
 
 module.exports = function(divId, data) {
 
-//clear out any current graph/content in the target div
-var outerDiv = document.getElementById(divId);
-if (outerDiv) { outerDiv.innerHTML = '';}
+//clear out any current graph/content in the target div's svg
+d3.select('#'+divId + '> svg').remove();
 
 var margin = {top: 20, right: 20, bottom: 30, left: 60},
     width = document.querySelector("#"+divId).clientWidth - margin.left - margin.right,

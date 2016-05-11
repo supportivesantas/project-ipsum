@@ -21,7 +21,7 @@ class Login extends React.Component {
     return (
       <Grid fluid>
         <Row>
-          <Jumbotron>
+          <Jumbotron style={{"backgroundColor":"#66D9EF"}}>
             <Row>
               <Col xs={12} sm={8}>
                 <h2> Welcome to Project Ipsum! </h2>
