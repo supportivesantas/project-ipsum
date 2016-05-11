@@ -2,7 +2,7 @@ import React from 'react';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import { renderChart } from '../D3graphTemplate';
-import { Panel, Grid, Row, Col, Clearfix } from 'react-bootstrap';
+import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
 import request from '../util/restHelpers.js';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
@@ -49,9 +49,11 @@ class MyServer extends React.Component {
   render() {
     return (
       <Grid>
+        <Row><Col xs={12} md={12}><PageHeader>{this.props.state.serverSelection.hostname} <small>at a glance</small></PageHeader></Col></Row>
         <Row className="server-control-panel">
-          <Col xs={12} md={12} lg={12}>
-            <Panel header={<h1>Server Control Panel</h1>}>
+          <Col xs={12} md={12}>
+            <Panel header={<h1>Control Panel</h1>}>
+            Cool controls to come! Scale up, scale down, emergency shut down, etc.<br/>
               <span style={{textDecoration:'underline'}}>Server:  </span> {this.props.state.serverSelection.hostname}<br/>
               <span style={{textDecoration:'underline'}}>IP:  </span> {this.props.state.serverSelection.ip}<br/>
               <span style={{textDecoration:'underline'}}>Status:  </span> {this.props.state.serverSelection.active}<br/>
@@ -60,27 +62,34 @@ class MyServer extends React.Component {
           </Col>
         </Row>
 
+
         <Row className='serverStatContainer'>
-          <Col xs={12} lg={4} >
+
+          <Col xs={12} lg={12} >
+            <h2>What{'\''}s Happening</h2>
             <Panel header={<div>Routes</div>} >
-              <div className='server-route-list'>
+              <Grid fluid>
+              <Row>
+              <Col xs={4} lg={4}>
+              <ListGroup className='server-route-list'>
                {this.props.state.graphData.map(graph =>
-                  <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+                  <ListGroupItem className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
                     <p>/{graph.route}</p>
-                  </Panel>
+                  </ListGroupItem>
                 )}
-             </div>
-           </Panel>
+             </ListGroup>
           </Col>
           <Col xs={12} lg={8}>
-            <Panel header={<div>{this.props.state.lineGraphTitle[0]}</div>} >
-              <h5 className="xAxis-title">Hits Per Hour</h5>
-              <div id="lineGraph"></div>
-              <h5 className="xAxis-title">Hours Ago</h5>
-            </Panel>
+            <h3 className="linegraph-title">Hits Per Hour Today</h3>
+            <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
+            <div id="lineGraph"></div>
+            <h5 className="xAxis-title">Hours Ago</h5>
           </Col>
-
         </Row>
+      </Grid>
+      </Panel>
+      </Col>
+      </Row>
       </Grid>
     );
   }
