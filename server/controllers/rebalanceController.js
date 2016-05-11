@@ -41,16 +41,11 @@ module.exports = {
             numSlaves = slaves.models.length;
             module.exports.generateSlaveTotals(slaves)
               .then((slaveTotals) => {
-                console.log(slaveTotals);
                 if (slaveTotals >= max) {
-                  console.log('inc');
-                  return { modify: 'incr' };
+                  return 'incr';
                 } else if (slaveTotals <= min && numSlaves > 1) {
-                  console.log('dec');
-
-                  return { modify: 'decr' };
+                  return 'decr';
                 } else {
-                  console.log('no balance');
                   return false;
                 }
               });
