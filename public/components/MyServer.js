@@ -15,14 +15,12 @@ class MyServer extends React.Component {
     this.state = {
       lineGraphRoute: null,
       lineGraphOptions: null,
-      lineGraphDataRaw: null,
-      chartwidth: 400
+      lineGraphDataRaw: null
     };
   }
 
   componentDidMount() { 
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
-    this.setState({chartwidth: this.refs.linechart.parentNode.offsetWidth});
     var servId = this.props.state.serverSelection.id;
     request.post('/getStats/server',
       {serverId: servId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
@@ -90,23 +88,7 @@ class MyServer extends React.Component {
                 />
               <h5 className="xAxis-title">Server Traffic</h5>
               <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
-              {/*<div id="lineGraph"></div>*/}
-
-              <LineChart
-                ref='linechart'
-                width='100%'
-                height={400}
-                viewBoxObject={{
-                  x: 0,
-                  y: 0,
-                  width: this.state.chartwidth,
-                  height: this.state.chartwidth * 2/3
-                }}
-                yAxisLabel="Requests"
-                xAxisLabel="Hours ago"
-                domain={{x: [,6], y: [-10,]}}
-                gridHorizontal={true}
-              />
+              <div id="lineGraph"></div>
 
             </Col>
           </Row>

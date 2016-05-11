@@ -59,10 +59,9 @@ class MyApp extends React.Component {
   updateGraph(value) {
     !value ? null : 
     this.setState({lineGraphRoute: value.value}, () => {
-      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
-      var graphData  = this.props.state.graphData;
-      d3.select('#lineGraph > svg').remove();
-      renderChart('lineGraph', _.findWhere(graphData, {route: value.value}).data);
+      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/" + value.value));
+      d3.select('#lineGraph > svg').remove(); 
+      renderChart('lineGraph', _.findWhere(this.props.state.graphData, {route: value.value}).data);
     });
   }
 
