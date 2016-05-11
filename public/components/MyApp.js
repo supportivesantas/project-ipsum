@@ -115,15 +115,13 @@ class MyApp extends React.Component {
             <Panel header={<div>Routes</div>} >
             <Grid fluid>
             <Row>
-            <Col xs={4} lg={4}>
+            <Col xs={12} lg={12}>
               <Select
                 value={this.state.lineGraphRoute}
                 multi={false}
                 options={lineGraphOptions}
                 onChange={this.updateGraph.bind(this)}
                 />
-            </Col>
-            <Col xs={8} lg={8}>
               <h3 className="linegraph-title">Hits Per Hour Today</h3>
               <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
 

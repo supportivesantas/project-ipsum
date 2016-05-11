@@ -71,15 +71,13 @@ class MyServer extends React.Component {
         <Panel header={<div>Routes</div>}>
         <Grid fluid>
           <Row>
-            <Col xs={12} lg={4}>
+            <Col xs={12} lg={12}>
               <Select
                 value={this.state.lineGraphRoute}
                 multi={false}
                 options={lineGraphOptions}
                 onChange={this.updateGraph.bind(this)}
                 />
-            </Col>
-            <Col xs={12} lg={8}>
               <h5 className="xAxis-title">Hits Per Hour</h5>
               <div id="lineGraph"></div>
               <h5 className="xAxis-title">Hours Ago</h5>
