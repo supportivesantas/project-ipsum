@@ -9,7 +9,7 @@ const stats_controller = require('./routes/stats_route');
 const getStats_controller = require('./routes/getStats_route');
 const userRouter = require('./routes/userRouter.js');
 const nginxRouter = require('./routes/nginxRouter.js');
-
+const msgCtrl = require('./controllers/notificationController.js');
 //add this middleware to protected routes. redirects to github login page if not authenticated
 const ensureAuthenticated = require('./auth/passport.js').ensureAuthenticated;
 
@@ -53,5 +53,6 @@ app.get('*', (request, response) => {
   console.log('directing to index');
   response.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
+
 
 module.exports = app;
