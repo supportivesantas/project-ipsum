@@ -124,7 +124,7 @@ describe('Internal Tasks Tests', () => {
   let userID = null;
   let credID = null;
   let client = pgp({
-    connectionString: process.env.PG_CONNECTION_STRING
+    connectionString: process.env.PG_CONNECTION_STRING,
   });
 
   // describe setup
@@ -142,12 +142,12 @@ describe('Internal Tasks Tests', () => {
             appname: 'testapp',
             username: 'testuser',
             value: 'mydigitaltoken',
-            lbip: '127.0.0.2'
+            lbip: '127.0.0.2',
           });
       })
       .then((result) => {
         return client.query('INSERT INTO "users" ("username") VALUES(${username}) RETURNING id;', {
-          username: 'testuser'
+          username: 'testuser',
         });
       })
       .then((result) => {
@@ -229,7 +229,6 @@ describe('Internal Tasks Tests', () => {
         expect(result).to.exist;
         expect(result).to.have.length(1);
         expect(result[0].master).to.equal(lbid);
-        expect(result[0].lb_id).to.equal(0);
         done();
       })
       .catch((error) => {
