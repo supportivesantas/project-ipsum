@@ -154,6 +154,8 @@ db.knex.schema.hasTable('loadbalancers').then(function(exists) {
       loadbalancers.string('port');
       loadbalancers.string('zone');
       loadbalancers.integer('image');
+      loadbalancers.integer('min_threshold');
+      loadbalancers.integer('max_threshold');
       loadbalancers.integer('users_id').references('users.id').onDelete('CASCADE');
       loadbalancers.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
       loadbalancers.timestamp('updated_at').notNullable().defaultTo(knex.raw('now()'));

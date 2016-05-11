@@ -72,6 +72,8 @@ module.exports = {
             port: data.port,
             zone: data.zone,
             users_id: data.owner,
+            min_threshold: 10000,
+            max_threshold: 50000,
           })
           .save()
           .then((newlb) => {
