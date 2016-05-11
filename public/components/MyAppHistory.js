@@ -14,12 +14,16 @@ class MyAppHistory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filterMode: null, // 'total', 'route', or 'server'
+      filterMode: 'total', // 'total', 'route', or 'server'
       filterOptions: null, // an array 
-      days: null,
+      days: 7,
       graphData: null,
       selectedFilters: null
     };
+  }
+
+  componentDidMount() {
+    this.getData();
   }
 
   graphIt(){
@@ -35,9 +39,9 @@ class MyAppHistory extends React.Component {
 
   getData() {
     request.post('/getStats/myAppSummary', {
-      userId: 1,
-      appId: 1,
-      days: 7
+      userId: this.props.state.appSelection.id,
+      appId: this.props.state.appSelection.users_id,
+      days: this.state.days
     }, (err, resp) => {
       console.log(err, resp)
     // parse the data object for route and server totals
@@ -64,7 +68,7 @@ class MyAppHistory extends React.Component {
     parsed.routeNames = parsed.Routes.map( Route => {
       return {
         value: Route.route, 
-        label: Route.route
+        label: '/' + Route.route
       }; 
     });
     // collect dates for Graph
@@ -181,17 +185,17 @@ class MyAppHistory extends React.Component {
 
             <div>
             <h3>How far back?</h3>
-            <Select value={this.state.days} ref='daysSelect' autofocus options={dayOptions} clearable={false} name='daysSelect' onChange={this.selectDays.bind(this)} />
+            <Select value={this.state.days} ref='daysSelect' options={dayOptions} clearable={false} name='daysSelect' onChange={this.selectDays.bind(this)} />
             </div>
 
             <div>
             <h3>Filter results by:</h3>
-            <Select disabled={this.state.days ? false : true} value={this.state.filterMode} ref='filterModeSelect' autofocus options={filterModes} clearable={false} name='filterModeSelect' onChange={this.selectFilterMode.bind(this)} />
+            <Select disabled={this.state.days ? false : true} value={this.state.filterMode} ref='filterModeSelect' options={filterModes} clearable={false} name='filterModeSelect' onChange={this.selectFilterMode.bind(this)} />
             </div>
 
             <div>
             <h3>Options</h3>
-            <Select disabled={this.state.filterOptions && this.state.filterMode !== 'total' ? false : true} multi value={this.state.selectedFilters} ref='filterSelect' autofocus options={this.state.filterOptions} clearable={false} name='filterSelect' onChange={this.toggleFilterOption.bind(this)} />
+            <Select disabled={this.state.filterOptions && this.state.filterMode !== 'total' ? false : true} multi value={this.state.selectedFilters} ref='filterSelect' options={this.state.filterOptions} clearable={false} name='filterSelect' onChange={this.toggleFilterOption.bind(this)} />
             </div>
 
           </Col>

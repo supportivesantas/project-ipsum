@@ -5,6 +5,10 @@ path {
   fill: none;
 }
 
+.panel {
+  transition: all .5 ease;
+}
+
 .axis {
   shape-rendering: crispEdges;
 }
@@ -46,7 +50,7 @@ svg#serverGraph {
 }
 
 .appsbar:hover {
-  fill: #F92672;
+  fill: #A6E22E;
 }
 
 .axisM {
@@ -62,6 +66,35 @@ svg#serverGraph {
 
 .x.axisM path {
   display: none;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+.d3-tip span {
+  color: #A6E22E;
+}
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
 }
 
 /*=======================================*/
@@ -114,10 +147,13 @@ body {
 nav.navbar {
   background-color: #66D9EF;
 }
-nav.navbar a {
-  color: white;
+/* override the gray link from navbar.less */
+.navbar-default .navbar-brand:focus, 
+.navbar-default .navbar-brand:hover{
+  color:white;
 }
-nav.navbar a:active {
+/*navbar links*/
+.navbar a, .navbar-brand{
   color: white;
 }
 .navbar-default .navbar-brand {
@@ -126,11 +162,7 @@ nav.navbar a:active {
 }
 .navbar-default .navbar-brand:hover {
   letter-spacing: .05em;
-  color:white;
 }
-nav.navbar-default a {
-}
-
 button {
   color: #272822;
 }
@@ -150,6 +182,9 @@ button {
 /* ============== BAR GRAPH STYLING ============= */
 .barGraph rect {
   fill: #66D9EF;
+}
+.barGraph rect:hover {
+  fill: #A6E22E;
 }
 .barGraph text {
   fill: white;

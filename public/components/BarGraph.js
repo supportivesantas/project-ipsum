@@ -1,11 +1,12 @@
 import d3 from 'd3'; 
+import d3tip from 'd3-tip';
 
 module.exports = function(divId, data) {
 
   // clear out the old graph
   var outerDiv = document.getElementById(divId);
   outerDiv.innerHTML  = '<svg class="barGraph"></svg>';
-  
+
   var chart = d3.select('#' + divId).select('svg')
   var height = null; 
 
@@ -18,6 +19,15 @@ module.exports = function(divId, data) {
 
   var x = d3.scale.linear()
   .range([0, width]);
+
+  var tip = d3tip(d3)
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+      return "<strong>Hits:</strong> <span>" + Number(d.value).toLocaleString() + "</span>";
+    })
+
+  chart.call(tip);
 
   x.domain([0, d3.max(data, function(d) { return d.value; })]);
 
@@ -36,5 +46,9 @@ module.exports = function(divId, data) {
     .attr("x", function(d) { return x(d.value) - 3; })
     .attr("y", barHeight / 2)
     .attr("dy", ".35em")
-    .text(function(d) { return d.label; }); 
+    .text(function(d) { return d.label; });
+
+  bar.on('mouseover', tip.show)
+     .on('mouseout', tip.hide)
+
 }

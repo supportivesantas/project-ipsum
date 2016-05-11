@@ -1,12 +1,10 @@
 # Project Name
 
-> Pithy project description
-
 ## Team
 
-  - __Product Owner__: teamMember
-  - __Scrum Master__: teamMember
-  - __Development Team Members__: teamMember, teamMember
+  - __Product Owner__: Jonathan Mah
+  - __Scrum Master__: Rane Gridley
+  - __Development Team Members__: Matt Bresnan, Roland Fung
 
 ## Table of Contents
 
@@ -36,64 +34,65 @@
 
 From within the root directory:
 
-```sh
-sudo npm install -g bower
-npm install
-bower install
-```
+`npm install
+`
+
+### Testing
+`npm test`
 
 ### Roadmap
 
 View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
 ```
-                                                 +--------------------+
-                                                 |                    |
-  +----------------+  Preferences, credentials,  |                    |
-  |                |  commands                   |  OUR AWESOME APP   |
-  |     User       +-----------------------------+                    |
-  |   Dashboard    |                             |                    |
-  |                |     Alerts, metrics         |                    |
-  |                <-----------------------------+                    |
-  +----------------+                             |                    |
-                                                 |                    |
-  +-----------------+                            |                    |
-  |                 |      Requested Data        |                    |
-  |   PostgreSQL    +---------------------------->                    |
-  |                 |                            |                    |
-  |   Users, Apps   |       Compiled Data        |                    |
-  |                 <----------------------------+                    |
-  +-----------------^                            |                    |
-                                                 |     Controller     |
-                           Instructions          |      DOProxy       |
-        +----------------------------------------+                    |
-        |                                        +-------------^----^-+
-        |                                                      |    |
-        |                                                      |    |
-+-------v------+   +-----------------------+                   |    |
+                                                 +---------------------------+
+                                                 |                           |
+  +----------------+                             |      PROJECT IPSUM        |
+  | User interface |    Credentials, commands    |                           |
+  | * add app (LB) +-----------------------------> *collect stats            |
+  | * add creds    |                             | *prepare summaries        |
+  | * see stats    |     Alerts, metrics         | *associate LB to servers  |
+  |                <-----------------------------+ *command LB and platform  |
+  +----------------+                             |  apis                     |
+                                                 |                           |
+  +-----------------+                            |                           |
+  |                 |      Requested Data        |                           |
+  |   PostgreSQL    +---------------------------->                           |
+  |                 |                            |                           |
+  |                 |       Compiled Data        |                           |
+  |                 <----------------------------+                           |
+  +-----------------^                            |                           |
+                                                 |                           |
+                           Instructions          |                           |
+   +---------------------------------------------+                           |
+   |                                             +-------------+----^--------+
+   |                                                           |    |
+   |                                                           |    |
++--v-----------+   +-----------------------+                   |    |
+|  Deployment  |   |                       |                   |    |
+| Platform API |   |                       |                   |    |
+|(DigitalOcean)|   |  nginx load balancer  |                   |    |
 |              |   |                       |                   |    |
-| DigitalOcean |   |                       |                   |    |
-|      API     |   |        HAProxy        |                   |    |
-|              |   |                       |                   |    |
-+-------+------+   |     Load Balancer     |                   |    |
-        |          |                       |                   |    |
-        |          |                       +-------------------+    |
-        |          |                       |  Routing info          |
-        |          |                       |                        |
-        |          +-----------+-----------+                        |
-        |                      |                                    |
-        | Add or               | Route web                          |
-        | Delete               | Traffic                            |
-        |                      |                                    |
-        |             +--------v---------+                          |
-        |             |                  |                          |
-        |             |                  |                          |
-        |             |   Droplet 1      |                          |
-        |             |   ...            +--------------------------+
-        |             |   Droplet n      |    Droplet info
-        +---------------> Droplet n+1    |
++--+-----------+   |                       |                   |    |
+   |               |                       |                   |    |
+   |               |                       <-------------------+    |
+   |               |                       |  Nginx API calls       |
+   |               |                       |  * Add/del from LB     |
+   |               +-----------+-----------+                        |
+   |                           |                                    |
+   | Create/destroy            | Route web                          |
+   | droplet from              | Traffic                            |
+   | an image                  |                                    |
+   |                  +--------v---------+                          |
+   |                  |                  |                          |
+   |                  |                  |                          |
+   |                  |   Droplet 1      |                          |
+   |                  |   ...            +--------------------------+
+   |                  |   Droplet n      |   Traffic information
+   +--------------------> Droplet n+1    |
                       |                  |
                       |                  |
                       +------------------+
+
 ```
 
 ## Contributing

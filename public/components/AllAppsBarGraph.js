@@ -1,9 +1,11 @@
 import d3 from 'd3';
+import d3tip from 'd3-tip';
 
 module.exports = function(divId, data) {
 
 //clear out any current graph/content in the target div
-document.getElementById(divId).innerHTML = '';
+var outerDiv = document.getElementById(divId);
+if (outerDiv) { outerDiv.innerHTML = '';}
 
 var margin = {top: 20, right: 20, bottom: 30, left: 60},
     width = document.querySelector("#"+divId).clientWidth - margin.left - margin.right,
@@ -30,6 +32,15 @@ var svg = d3.select("#" + divId).append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var tip = d3tip(d3)
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<strong>Hits:</strong> <span>" + Number(d.value).toLocaleString() + "</span>";
+  })
+
+svg.call(tip);
+
   x.domain(data.map(function(d) { return d.date.toString().slice(6, 8); }));
   y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
@@ -55,7 +66,9 @@ var svg = d3.select("#" + divId).append("svg")
       .attr("x", function(d) { return x(d.date.toString().slice(6, 8)); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); });
+      .attr("height", function(d) { return height - y(d.value); })
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
 
 function type(d) {
   d.value = +d.value;
