@@ -68,7 +68,7 @@ class MyAppHistory extends React.Component {
     parsed.routeNames = parsed.Routes.map( Route => {
       return {
         value: Route.route, 
-        label: Route.route
+        label: '/' + Route.route
       }; 
     });
     // collect dates for Graph
