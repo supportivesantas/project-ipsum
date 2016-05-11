@@ -126,7 +126,7 @@ class MyAppHistory extends React.Component {
   }
 
   selectDays(value) {
-    this.setState({days: value.value, selectedFilters: null, filterOptions: null}, () => this.getData());
+    this.setState({days: value.value}, () => this.getData());
   }
 
   selectFilterMode(value) {
