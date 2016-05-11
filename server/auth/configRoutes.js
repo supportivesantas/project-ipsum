@@ -28,15 +28,20 @@ var configRoutes = function(app, passport) {
 
   app.get('/logout', function(req, res){
     req.logout();
-    req.session.destroy();
-    res.redirect('/login');
+    req.session.destroy(function(err) {
+      if (err) {
+        console.log(err);
+      }
+      res.clearCookie('il');
+      res.redirect('/login');
+    });
   });
-}
+};
 
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  console.log('failed auth')
-  res.redirect('/login')
-}
+  console.log('failed auth');
+  res.redirect('/login');
+};
 
 exports.configRoutes = configRoutes;

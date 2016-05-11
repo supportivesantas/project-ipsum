@@ -107,7 +107,17 @@ class AddLoadBalancer extends React.Component {
                 </Col>
                 <Col xs={12} lg={8}>
                   <h3 style={{textDecoration:'underline'}}> Instructions: </h3>
-                      CONFIG INSTRUCTIONS HERE
+                  <pre className="instructions">
+                      &nbsp;&nbsp;1) On your load balancing server running nginx, navigate to <strong>/etc/nginx.</strong>{"\n"}
+                      &nbsp;&nbsp;2) In nginx.conf, ensure the following line is present:{"\n"}
+                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>include /etc/nginx/sites-enabled/*;</strong>{"\n"}
+                      &nbsp;&nbsp;3) In <strong>/etc/nginx/sites-enabled/</strong>, setup a file like the example file on this page{"\n"}
+                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>PORT:</strong> The port your load balancer listens on{"\n"}
+                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>ZONE:</strong> String identifier. Can be whatever you want.{"\n"}
+                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The second 'allow' statement in the example config gives us the {"\n"}
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ability to control your balancer for you.{"\n"}
+                     &nbsp;&nbsp;4) Fill out the form below, and watch the magic of PROJECT IPSUM happen!{"\n"}
+                  </pre>
                 </Col>
               </Row>
               <Form horizontal ref="laodInputs">
