@@ -1,3 +1,4 @@
+"use strict";
 const User = require('../db/models/user');
 const Users = require('../db/collections/users');
 const App = require('../db/models/client-app.js');
@@ -81,7 +82,7 @@ module.exports = {
       res.status(404).end();
       return;
     }
-    
+
     Servers.query('where', 'users_id', '=', req.user.id, 'AND',
       'clientServers_id', '=', serverID).fetch()
       .then((resultServers) => {
