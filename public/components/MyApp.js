@@ -50,14 +50,17 @@ class MyApp extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        renderChart('lineGraph', this.props.state.graphData[0].data);
+        this.setState({lineGraphRoute: this.props.state.graphData[0].route}, () => {
+          renderChart('lineGraph', this.props.state.graphData[0].data);
+        })
     });
   }
 
   updateGraph(value) {
+    !value ? null : 
     this.setState({lineGraphRoute: value.value}, () => {
       this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
-      var graphData  = this.props.state.graphData, routeIndex;
+      var graphData  = this.props.state.graphData;
       d3.select('#lineGraph > svg').remove();
       renderChart('lineGraph', _.findWhere(graphData, {route: value.value}).data);
     });
@@ -113,7 +116,7 @@ class MyApp extends React.Component {
             <Grid fluid>
             <Row>
             <Col xs={4} lg={4}>
-              <Select ref='linegraph'
+              <Select
                 value={this.state.lineGraphRoute}
                 multi={false}
                 options={lineGraphOptions}

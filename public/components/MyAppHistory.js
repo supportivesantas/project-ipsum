@@ -23,7 +23,7 @@ class MyAppHistory extends React.Component {
   }
 
   componentDidMount() {
-    this.graphIt();
+    this.getData();
   }
 
   graphIt(){

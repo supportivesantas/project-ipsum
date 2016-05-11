@@ -118,10 +118,13 @@ body {
 nav.navbar {
   background-color: #66D9EF;
 }
-nav.navbar a {
-  color: white;
+/* override the gray link from navbar.less */
+.navbar-default .navbar-brand:focus, 
+.navbar-default .navbar-brand:hover{
+  color:white;
 }
-nav.navbar a:active {
+/*navbar links*/
+.navbar a, .navbar-brand{
   color: white;
 }
 .navbar-default .navbar-brand {
@@ -130,11 +133,7 @@ nav.navbar a:active {
 }
 .navbar-default .navbar-brand:hover {
   letter-spacing: .05em;
-  color:white;
 }
-nav.navbar-default a {
-}
-
 button {
   color: #272822;
 }

@@ -5,12 +5,14 @@ import { renderChart } from '../D3graphTemplate';
 import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem } from 'react-bootstrap';
 import request from '../util/restHelpers.js';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-
+import Select from 'react-select';
+import _ from 'underscore';
 
 class MyServer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      lineGraphRoute: null
     };
   }
 
@@ -20,7 +22,7 @@ class MyServer extends React.Component {
     return this.graphTitle;
   }
 
-  componentDidMount() {
+  componentDidMount() { 
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
     var servId = this.props.state.serverSelection.id;
     request.post('/getStats/server',
@@ -28,25 +30,26 @@ class MyServer extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-      renderChart('lineGraph', this.props.state.graphData[0].data);
+        this.setState({lineGraphRoute: this.props.state.graphData[0].route}, () => {
+          renderChart('lineGraph', this.props.state.graphData[0].data);
+        })
       });
   }
 
-  updateGraph(graph) {
-    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ graph.route));
-    var graphData = this.props.state.graphData;
-    d3.select('#lineGraph > svg').remove();
-    var routeIndex;
-    for (var i = 0; i < graphData.length; i++) {
-      if (graphData[i].route === graph.route) {
-        routeIndex = i;
-        break;
-      }
-    }
-    renderChart('lineGraph', graphData[routeIndex].data);
+  updateGraph(value) {
+    !value ? null : 
+    this.setState({lineGraphRoute: value.value}, () => {
+      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
+      var graphData = this.props.state.graphData;
+      d3.select('#lineGraph > svg').remove();
+      renderChart('lineGraph', _.findWhere(graphData, {route: value.value}).data);
+    })
   }
 
   render() {
+
+    var lineGraphOptions = this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}})
+
     return (
       <Grid>
         <Row><Col xs={12} md={12}><PageHeader>{this.props.state.serverSelection.hostname} <small>at a glance</small></PageHeader></Col></Row>
@@ -64,36 +67,38 @@ class MyServer extends React.Component {
 
 
         <Row className='serverStatContainer'>
-
-          <Col xs={12} lg={12} >
-            <h2>What{'\''}s Happening</h2>
-            <Panel header={<div>Routes</div>} >
-              <Grid fluid>
-              <Row>
-              <Col xs={4} lg={4}>
-              <ListGroup className='server-route-list'>
-               {this.props.state.graphData.map(graph =>
-                  <ListGroupItem className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
-                    <p>/{graph.route}</p>
-                  </ListGroupItem>
-                )}
-             </ListGroup>
-          </Col>
-          <Col xs={12} lg={8}>
-            <h3 className="linegraph-title">Hits Per Hour Today</h3>
-            <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
-            <div id="lineGraph"></div>
-            <h5 className="xAxis-title">Hours Ago</h5>
-          </Col>
+        <Col xs={12} md={12} lg={12}>
+        <Panel header={<div>Routes</div>}>
+        <Grid fluid>
+          <Row>
+            <Col xs={12} lg={4}>
+              <Select
+                value={this.state.lineGraphRoute}
+                multi={false}
+                options={lineGraphOptions}
+                onChange={this.updateGraph.bind(this)}
+                />
+            </Col>
+            <Col xs={12} lg={8}>
+              <h5 className="xAxis-title">Hits Per Hour</h5>
+              <div id="lineGraph"></div>
+              <h5 className="xAxis-title">Hours Ago</h5>
+            </Col>
+          </Row>
+        </Grid>
+        </Panel>
+        </Col>
         </Row>
-      </Grid>
-      </Panel>
-      </Col>
-      </Row>
       </Grid>
     );
   }
 }
+
+  // {this.props.state.graphData.map(graph =>
+  //    <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
+  //      <p>/{graph.route}</p>
+  //    </Panel>
+  //  )}
 
 MyServer = connect(state => ({ state: state }))(MyServer);
 export default MyServer;
