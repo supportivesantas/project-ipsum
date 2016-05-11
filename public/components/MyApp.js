@@ -15,7 +15,8 @@ class MyApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      lineGraphRoute: null
+      lineGraphRoute: null,
+      resizefunc: null
     };
   }
 
@@ -50,20 +51,37 @@ class MyApp extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        this.setState({lineGraphRoute: this.props.state.graphData[0].route}, () => {
-          renderChart('lineGraph', this.props.state.graphData[0].data);
-        })
+        this.setState({lineGraphRoute: this.props.state.graphData[0].route});
+        renderChart('lineGraph', this.props.state.graphData[0].data);
     });
+
+    this.setState({resizefunc: this.resizedb()}, () => {
+      window.addEventListener('resize', this.state.resizefunc);
+    })
+  }
+
+  resizedb() {
+    var redraw = function() {
+      // linegraph 
+      this.updateGraph({value: this.state.lineGraphRoute});
+      // horizontal bar graph
+      barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
+        return -obj.value;
+      }));
+    }
+    return _.debounce(redraw.bind(this), 500)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.state.resizefunc);
   }
 
   updateGraph(value) {
     !value ? null : 
-    this.setState({lineGraphRoute: value.value}, () => {
-      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
-      var graphData  = this.props.state.graphData;
-      d3.select('#lineGraph > svg').remove();
-      renderChart('lineGraph', _.findWhere(graphData, {route: value.value}).data);
-    });
+    this.setState({lineGraphRoute: value.value});
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/" + value.value));
+    d3.select('#lineGraph > svg').remove(); 
+    renderChart('lineGraph', _.findWhere(this.props.state.graphData, {route: value.value}).data);
   }
 
   tableLinkForm(cell) {
@@ -115,15 +133,13 @@ class MyApp extends React.Component {
             <Panel header={<div>Routes</div>} >
             <Grid fluid>
             <Row>
-            <Col xs={4} lg={4}>
+            <Col xs={12} lg={12}>
               <Select
                 value={this.state.lineGraphRoute}
                 multi={false}
                 options={lineGraphOptions}
                 onChange={this.updateGraph.bind(this)}
                 />
-            </Col>
-            <Col xs={8} lg={8}>
               <h3 className="linegraph-title">Hits Per Hour Today</h3>
               <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
 

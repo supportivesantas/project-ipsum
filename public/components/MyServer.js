@@ -7,19 +7,15 @@ import request from '../util/restHelpers.js';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import Select from 'react-select';
 import _ from 'underscore';
+import { LineChart } from 'rd3';
 
 class MyServer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      lineGraphRoute: null
+      lineGraphRoute: null,
+      resizefunc: null
     };
-  }
-
-  updateGraphTitle(clickedRoute) {
-    console.log(clickedRoute);
-    this.graphTitle = clickedRoute;
-    return this.graphTitle;
   }
 
   componentDidMount() { 
@@ -30,25 +26,38 @@ class MyServer extends React.Component {
       (err, res) => {
         if (err) { console.log("Error getting Server Data", err); }
         this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        this.setState({lineGraphRoute: this.props.state.graphData[0].route}, () => {
-          renderChart('lineGraph', this.props.state.graphData[0].data);
-        })
-      });
+        this.setState({lineGraphRoute: this.props.state.graphData[0].route});
+        renderChart('lineGraph', this.props.state.graphData[0].data);
+      }
+    );
+
+    this.setState({resizefunc: this.resizedb()}, () => {
+      window.addEventListener('resize', this.state.resizefunc);
+    })
+  }
+
+  resizedb() {
+    var redraw = function() {
+      this.updateGraph({value: this.state.lineGraphRoute});
+    }
+    return _.debounce(redraw.bind(this), 500)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.state.resizefunc);
   }
 
   updateGraph(value) {
     !value ? null : 
-    this.setState({lineGraphRoute: value.value}, () => {
-      this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/"+ value.value));
-      var graphData = this.props.state.graphData;
-      d3.select('#lineGraph > svg').remove();
-      renderChart('lineGraph', _.findWhere(graphData, {route: value.value}).data);
-    })
+    this.setState({lineGraphRoute: value.value});
+    this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE("/" + value.value));
+    d3.select('#lineGraph > svg').remove(); 
+    renderChart('lineGraph', _.findWhere(this.props.state.graphData, {route: value.value}).data);
   }
 
   render() {
 
-    var lineGraphOptions = this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}})
+    var lineGraphOptions = this.props.state.graphData.map((graph) => {return {label: '/'+graph.route, value: graph.route}});
 
     return (
       <Grid>
@@ -71,18 +80,17 @@ class MyServer extends React.Component {
         <Panel header={<div>Routes</div>}>
         <Grid fluid>
           <Row>
-            <Col xs={12} lg={4}>
+            <Col xs={12} lg={12}>
               <Select
                 value={this.state.lineGraphRoute}
                 multi={false}
                 options={lineGraphOptions}
                 onChange={this.updateGraph.bind(this)}
                 />
-            </Col>
-            <Col xs={12} lg={8}>
-              <h5 className="xAxis-title">Hits Per Hour</h5>
+              <h5 className="xAxis-title">Server Traffic</h5>
+              <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
               <div id="lineGraph"></div>
-              <h5 className="xAxis-title">Hours Ago</h5>
+
             </Col>
           </Row>
         </Grid>
@@ -93,12 +101,6 @@ class MyServer extends React.Component {
     );
   }
 }
-
-  // {this.props.state.graphData.map(graph =>
-  //    <Panel className='routePanel' onClick={this.updateGraph.bind(this, graph)}>
-  //      <p>/{graph.route}</p>
-  //    </Panel>
-  //  )}
 
 MyServer = connect(state => ({ state: state }))(MyServer);
 export default MyServer;
