@@ -24,6 +24,28 @@ module.exports = {
         json: true
       };
     },
+    get_server: function(req) {
+      if (!req.body) { throw new Error('Request body not present') }
+      if (!(req.body.server_id)) { 
+        throw new Error('server_id not specified in req.body to get the pltfm specific info.') 
+      }
+      req.options = {
+        method: 'GET',
+        uri: `${module.exports.baseUrl}/droplets/` + req.body.server_id,
+        json: true
+      };
+    },
+    get_server_pltfm_specific: function(req) {
+      if (!req.body) { throw new Error('Request body not present') }
+      if (!(req.body.server_id)) { 
+        throw new Error('server_id not specified in req.body to get the pltfm specific info.') 
+      }
+      req.options = {
+        method: 'GET',
+        uri: `${module.exports.baseUrl}/droplets/` + req.body.server_id,
+        json: true
+      };
+    },
     create_server: function(req) {
       if (!req.body) { throw new Error('Request body not present') }
       if (!(req.body.name && req.body.region && req.body.size && req.body.image_id)) { 
@@ -119,6 +141,65 @@ module.exports = {
     list_all_images: function (res) {
       //something
     },
+    get_server: function (res) {
+      var parsedData = {
+        server: {}
+      };
+      var ip = null;
+
+      /* get the public IPv4 address */
+      for (var ifidx = 0; ifidx < res.droplet.networks.v4.length; ifidx++) {
+        if (res.droplet.networks.v4[ifidx].type === 'public') {
+          ip = res.droplet.networks.v4[ifidx].ip_address;
+          break;
+        }
+      }      
+
+      parsedData.server.name = res.droplet.name;
+      parsedData.server.ip = ip;
+      parsedData.server.platform = 'digital_ocean';
+      parsedData.server.platformSpecific = {
+        imageID: res.droplet.image.id,
+        region: res.droplet.region.slug,
+        size: res.droplet.size.slug,
+        status: res.droplet.status
+      };
+
+      return parsedData;
+    },
+    get_server_pltfm_specific: function (res) {
+      var parsedData = {
+        server: {}
+      };
+      
+      // only grab data we need to create a new server
+      // which is name region size. image will come from user
+      parsedData.server.name = res.droplet.name;
+      parsedData.server.region = res.droplet.region.slug;
+      parsedData.server.size = res.droplet.size.slug;
+
+      return parsedData;
+    },
+    create_server: function (res) {
+      // some implementation
+      var droplet = res.droplet;
+
+      var server = {
+        name: droplet.name,
+        /* need to wait to get ip */
+        ip: null,
+        server_id: droplet.id,
+        platform: 'digital_ocean',
+        platformSpecific: {
+          imageID: droplet.image.id,
+          region: droplet.region.slug,
+          size: droplet.size.slug,
+          status: droplet.status
+        }
+      };
+
+      return { server: server };
+    }
   },
 
   authorize: function(req) {
