@@ -7,9 +7,12 @@ class app {
     this.appname = appname;
     this.routes = [];
     this.saved = false;
+    this.port = null;
   }
 
   buildRoutes(numRoutes, maxDepth, randomRoute) {
+    // randomize a port number between 8000 and 9000
+    this.port = 8000 + Math.floor(Math.random() * 1000);
     for (let i = 0; i < numRoutes; i++) {
       let depth = Math.ceil(Math.random() * maxDepth); // get random depth
       let route = [''];
@@ -27,7 +30,7 @@ class app {
   save(client) {
     let self = this;
     if (!this.saved) {
-      client.query('INSERT INTO "clientApps" (users_id, appname) VALUES ($1, $2) RETURNING id', [this.userID, this.appname])
+      client.query('INSERT INTO "clientApps" (users_id, appname, port) VALUES ($1, $2, $3) RETURNING id', [this.userID, this.appname, this.port])
         .then((result) => {
           self.id = result[0].id;
         })
