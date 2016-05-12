@@ -1,6 +1,7 @@
 "use strict";
 const clientApps = require('../db/collections/client-apps');
 const clientServers = require('../db/collections/client-server');
+const hashes = require('../db/collections/hashes');
 const Creds = require('../db/collections/service-creds');
 const LoadBalancers = require('../db/collections/loadbalancers');
 const Users = require('../db/collections/users.js');
@@ -122,7 +123,7 @@ internalTasks.createServer = function (userID, serverID, image_id) {
   let cred = null;
   let pltfmSpecifc = null;
   let name = null;
-  console.log('inside createServer');
+  console.log('Creating new server');
   if (userID === undefined || serverID === undefined) {
     return null;
   }
@@ -165,7 +166,7 @@ var spinServerHelper = function (cred, server_id) {
     var intervalID = null;
     var numTries = 0;
     var checkIPReady = function () {
-      console.log('checking if server ip is ready');
+      console.log('Checking if new server ip is ready');
       internalRequest.getServer(cred, server_id)
         .then((result) => {
           if (result.server.ip) {
@@ -183,10 +184,15 @@ var spinServerHelper = function (cred, server_id) {
 
 internalTasks.spinUpServerInLB = function (userID, lbID) {
   let self = this;
+  let serverID = null;
   let spin_server_id = null;
   let spin_serverID = null;
   let cred = null;
   let credsID = null;
+  let appID = null;
+  let appPort = null;
+  let platform = null;
+  let image_id = null;
   
   return LoadBalancers.model.where({
     users_id: userID,
@@ -196,6 +202,11 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
       let ip = LB.get('ip');
       let port = LB.get('port');
       let zone = LB.get('zone');
+      image_id = LB.get('image');
+
+      if (!image_id) {
+        throw 'ERROR: Image is not specified in LB database';
+      }
 
       let host = ip + ':' + port;
       /* make this generic later for other load balancers */
@@ -210,7 +221,8 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
       for (let nginxHost of nginxHosts) {
         lbIPs.push(nginxHost.ip);
       }
-      console.log(lbIPs);
+      
+      // get server info
       return clientServers.model.query((qb) => {
         qb.where('users_id', userID);
         qb.whereIn('ip', lbIPs);
@@ -220,14 +232,33 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
       if (!server || server.length === 0) {
         throw 'ERROR: no servers in LB found';
       }
-      let serverID = server.get('id');
+      serverID = server.get('id');
       credsID = server.get('serviceCreds_id');
-      console.log('creating server');
-      return self.createServer(userID, serverID, 16539246);
+      // get hash to get appID
+      // assume one app per server
+      return hashes.model.where({
+        users_id: userID,
+        clientServers_id: serverID
+      }).fetch();
+    })
+    .then((hash) => {
+      appID = hash.get('clientApps_id');
+      // get app port
+      return clientApps.model.where({
+        users_id: userID,
+        id: appID
+      }).fetch();
+    })
+    .then((app) => {
+      appPort = app.get('port');
+      // create server
+      console.log('Creating Server');
+      return self.createServer(userID, serverID, image_id);
     })
     .then((server) => {
-      console.log('loaded new server');
+      console.log('Added new server, waiting for IP');
       spin_server_id = server.server.server_id;
+      // get credential for server
       return Creds.model.where({
         users_id: userID,
         id: credsID
@@ -235,21 +266,28 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
     })
     .then((userCred) => {
       cred = userCred;
+      platform = userCred.get('platform');
+      // use cred to get ip of created server by server_id
       return spinServerHelper(cred, spin_server_id);
     })
     .then((server) => {
       let ip = server.server.ip;
       let hostname = server.server.name;
-      console.log('got server ip: ' + ip);
+      console.log('Got new server ip: ' + ip);
+      // add server to clientServer
       return new clientServers.model({
           users_id: userID,
           ip: ip,
-          hostname: hostname
+          hostname: hostname,
+          master: lbID,
+          platform: platform,
+          server_id: spin_server_id,
+          serviceCreds_id: credsID
         }).save();
     })
     .then((clientServer) => {
       spin_serverID = clientServer.id;
-      return;
+      return self.attachServerLB(userID, serverID, appPort, lbID);
     })
     .catch((error) => {
       console.log(error);
@@ -353,8 +391,41 @@ Promise.promisify(function (serverIP, cb) {
   }); 
 });
 
-internalTasks.attachServerLB = function (userID, serverID, lbID) {
+internalTasks.attachServerLB = function (userID, serverID, appPort, lbID) {
+  let nginxIP = null;
+  let nginxPort = null;
+  let nginxZone = null;
+  let nginxIPPort = null;
+  let appIPPort = null;
   
+  return LoadBalancers.model.where({
+    users_id: userID,
+    id: lbID
+  }).fetch()
+    .then((LB) => {
+      nginxIP = LB.get('ip');
+      nginxPort = LB.get('port');
+      nginxZone = LB.get('zone');
+
+      nginxIPPort = nginxIP + ':' + nginxPort;
+      return clientServers.model.where({
+        users_id: userID,
+        id: serverID
+      }).fetch();
+    })
+    .then((server) => {
+      let serverIP = server.get('ip');
+      appIPPort = serverIP + ':' + appPort;
+      return nginxController.add(nginxIPPort, appIPPort, nginxZone);
+    })
+    .then((result) => {
+      console.log('Server successfully added to NGINX');
+      console.log(result);
+    })
+    .catch((error) => {
+      console.log('ERROR: Failed in attachServerLB', error);
+      return;
+    });
 };
 
 internalTasks.removeServerLB = function (userID, serverID, lbID) {
