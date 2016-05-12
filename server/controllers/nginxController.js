@@ -55,7 +55,12 @@ module.exports = {
     exec("curl http://" + nginxipandport + "/upstream_conf?upstream=" + zone + "&server=" + targetipandport + "&down=", log);
   },
   add(nginxipandport, targetipandport, zone) {
-    exec("curl http://" + nginxipandport + "/upstream_conf?add=&upstream=" + zone + "&server=" + targetipandport, log);
+    let options = {
+      // don't use qs for this one since query string ascii convers the : in the server which nginx does not like
+      uri: 'http://' + nginxipandport + '/upstream_conf?add=&upstream=' + zone + '&server=' + targetipandport,
+    };
+    return requestP(options);
+    // exec("curl http://" + nginxipandport + "/upstream_conf?add=&upstream=" + zone + "&server=" + targetipandport, log);
   },
   remove(nginxipandport, targetipandport, zone) {
     // exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
