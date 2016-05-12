@@ -30,7 +30,7 @@ module.exports = {
     });
   },
 
-  checkThresholds(id) {
+  checkThresholds(id, cb) {
     let numSlaves;
     LoadBalancer.where({ id: id }).fetch()
       .then((balancer) => {
@@ -39,16 +39,18 @@ module.exports = {
         Servers.query('where', 'master', '=', balancer.attributes.id).fetch()
           .then((slaves) => {
             numSlaves = slaves.models.length;
-            module.exports.generateSlaveTotals(slaves)
-              .then((slaveTotals) => {
-                if (slaveTotals >= max) {
-                  return 'incr';
-                } else if (slaveTotals <= min && numSlaves > 1) {
-                  return 'decr';
-                } else {
-                  return false;
-                }
-              });
+            if (numSlaves > 0) {
+              module.exports.generateSlaveTotals(slaves)
+                .then((slaveTotals) => {
+                  if (slaveTotals >= max) {
+                    cb('incr');
+                  } else if (slaveTotals <= min && numSlaves > 1) {
+                    cb('decr');
+                  } else {
+                    cb('none');
+                  }
+                });
+            }
           });
       })
       .catch((err) => {
