@@ -17,7 +17,7 @@ const doOneLb = (id) => {
   });
 };
 
-const checkAll = (cb) => {
+const checkAll = () => {
   return LoadBalancers.fetch()
     .then((balancers) => {
       return Promise.all(balancers.models.map( (item, index) => {
@@ -41,7 +41,8 @@ const checkAll = (cb) => {
             } else {
               console.log('no modification necessary for lb with id - ', item.attributes.id);
               if (index === balancers.models.length - 1) {
-                cb();
+                // dont throw an error so we resolve the rest of the promises for other models
+                return true;
               }
             }
           });
