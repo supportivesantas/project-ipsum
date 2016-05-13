@@ -159,4 +159,12 @@ module.exports = {
       });
   },
 
+  getLoadBalancers(req, res) {
+    console.log("USER ID FOR GET LOADB", req.user.id);    LoadBalancer.where({users_id: req.user.id}).fetchAll()
+      .then((LoadBalancers) => {
+        console.log(LoadBalancers.models),
+        res.send(LoadBalancers);
+      });
+  },
+
 };

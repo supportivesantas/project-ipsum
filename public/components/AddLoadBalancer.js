@@ -23,10 +23,15 @@ class AddLoadBalancer extends React.Component {
 
   componentDidMount() {
     //TODO: fetch images list and load balancers list (how do we associate load balancers to servers)
+    request.get('/nginx/balancers', (error, res) => {
+      if (error) {console.log("Error getting Load Balancers", error)};
+
+      console.log("Load Balancers", res);
+    });
 
     request.get('/api/list_all_images', (error, res) => {
       if (error) {console.log("Error getting image list", error)}
-      console.log(res);
+      console.log("Images", res);
     });
 
     //sample before adding restHandlers
@@ -153,7 +158,7 @@ class AddLoadBalancer extends React.Component {
                       <FormControl onChange={this.handleZone.bind(this)} value={this.state.zone}/>
                   </Col>
                   <Col xs={6} lg={3}>
-                      <ControlLabel>Image id for adding servers:</ControlLabel>
+                      <ControlLabel>Choose Image for adding servers:</ControlLabel>
                       <FormControl onChange={this.handleImage.bind(this)} value={this.state.image}/>
                   </Col>
               </Form>

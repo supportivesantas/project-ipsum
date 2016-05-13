@@ -140,7 +140,6 @@ module.exports = {
     },
     list_all_images: function (res) {
       var data = JSON.parse(res);
-      console.log(data);
       return data.images;
     },
     get_server: function (res) {
