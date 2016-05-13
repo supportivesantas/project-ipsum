@@ -182,7 +182,7 @@ var spinServerHelper = function (cred, server_id) {
   });
 };
 
-internalTasks.spinUpServerInLB = function (userID, lbID) {
+internalTasks.spinUpServerInLB = function (lbID) {
   let self = this;
   let serverID = null;
   let spin_server_id = null;
@@ -193,9 +193,9 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
   let appPort = null;
   let platform = null;
   let image_id = null;
+  let userID = null;
   
   return LoadBalancers.model.where({
-    users_id: userID,
     id: lbID
   }).fetch()
     .then((LB) => {
@@ -203,6 +203,7 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
       let port = LB.get('port');
       let zone = LB.get('zone');
       image_id = LB.get('image');
+      userID = LB.get('users_id');
 
       if (!image_id) {
         throw 'ERROR: Image is not specified in LB database';
@@ -287,14 +288,14 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
     })
     .then((clientServer) => {
       spin_serverID = clientServer.id;
-      return self.attachServerLB(userID, serverID, appPort, lbID);
+      return self.attachServerLB(userID, spin_serverID, appPort, lbID);
     })
     .catch((error) => {
       console.log(error);
     });
 };
 
-internalTasks.unhookAndDestoryServer = function(lbID, cb) {
+internalTasks.unhookAndDestoryServer = function(lbID) {
   // this function combines .unhookServer and .destroyServer (both promises)
   return internalTasks.unhookServer(lbID)
     .then(function(serverIP) {
@@ -302,11 +303,9 @@ internalTasks.unhookAndDestoryServer = function(lbID, cb) {
     })
     .then(function(res) {
       console.log('Server removed from LB and destroyed. Message:', res);
-      cb(null, res);
     })
     .catch(function(err){
       console.log('Error during unhookAndDestoryServer:', err);
-      cb(err);
     });
 }
 
@@ -421,6 +420,7 @@ internalTasks.attachServerLB = function (userID, serverID, appPort, lbID) {
     .then((result) => {
       console.log('Server successfully added to NGINX');
       console.log(result);
+      return result;
     })
     .catch((error) => {
       console.log('ERROR: Failed in attachServerLB', error);

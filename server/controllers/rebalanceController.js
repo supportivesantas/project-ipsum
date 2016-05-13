@@ -1,3 +1,4 @@
+"use strict";
 const Server = require('../db/models/client-server.js');
 const Servers = require('../db/collections/client-server.js');
 const LoadBalancer = require('../db/models/loadbalancer.js');
@@ -41,6 +42,7 @@ module.exports = {
             if (numSlaves > 0) {
               module.exports.generateSlaveTotals(slaves)
                 .then((slaveTotals) => {
+                  console.log(slaveTotals, max, min);
                   if (slaveTotals >= max) {
                     cb('incr');
                   } else if (slaveTotals <= min && numSlaves > 1) {
