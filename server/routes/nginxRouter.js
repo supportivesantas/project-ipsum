@@ -1,11 +1,12 @@
 const nginxRouter = require('express').Router();
 const ctrl = require('../controllers/nginxController.js');
+const auth = require('../auth/configRoutes.js');
 
 nginxRouter.route('/balancers')
-  .post(ctrl.newLoadBalancer)
-  .delete(ctrl.removeLoadBalancer);
+  .post(auth.ensureAuthenticated, ctrl.newLoadBalancer)
+  .delete(auth.ensureAuthenticated, ctrl.removeLoadBalancer);
 
 nginxRouter.route('/slaves')
-  .post(ctrl.addSlave);
+  .post(auth.ensureAuthenticated, ctrl.addSlave);
 
 module.exports = nginxRouter;

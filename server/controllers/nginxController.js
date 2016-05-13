@@ -78,8 +78,7 @@ module.exports = {
           .save()
           .then((newlb) => {
             //DO AUTO DISCOVERY
-            console.log('DONE');
-            res.send();
+            res.send('success');
           });
         } else {
           res.send('That server has already been added');

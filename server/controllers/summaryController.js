@@ -64,8 +64,8 @@ exports.singleApp = function(appId, callback) {
     });
 };
 
-exports.singleServerSummary = function(serverId, callback) {
-  var hoursvar = 24; //default to last twelve hours
+exports.singleServerSummary = function(serverId, hrs, callback) {
+  var hoursvar = hrs; //default to last twelve hours
   var dataRange = _.range(hoursvar + 1);
 
   stats.model.where('clientServers_id', serverId)

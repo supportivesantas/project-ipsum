@@ -12,8 +12,7 @@ module.exports = {
     let total = 0;
     return new Promise((resolve, reject) => {
       _.each(slaves.models, (item, sindex) => {
-        summCtrl.singleServerSummary(item.attributes.id, (data) => {
-          // console.log(data);
+        summCtrl.singleServerSummary(item.attributes.id, 24, (data) => {
           for (let i = 0; i < data.length; i++) {
             if (data[i].route === 'Total') {
               _.each(data[i].data, (hrData, dindex) => {
@@ -58,6 +57,3 @@ module.exports = {
       });
   },
 };
-
-
-

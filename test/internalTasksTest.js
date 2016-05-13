@@ -6,6 +6,7 @@ const nock = require('nock');
 const internalTasks = require('../server/controllers/internal_tasks');
 const expect = chai.expect;
 const assert = chai.assert;
+process.env.testing = true;
 
 let list_all_servers = JSON.stringify({
   "droplets": [

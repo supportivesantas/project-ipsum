@@ -18,7 +18,7 @@ const generateServSummaries = () => {
   return new Promise((resolve, reject) => {
     ctrl.getAllServerIds((serverList) => {
       for (let i = 0; i < serverList.length; i++) {
-        ctrl.singleServerSummary(serverList[i].id, (data) => {
+        ctrl.singleServerSummary(serverList[i].id, 24, (data) => {
           for (let j = 0; j < data.length; j++) {
             if (data[j].route !== 'Total') {
               const hits = _.reduce(data[j].data, (memo, dataPoint) => {

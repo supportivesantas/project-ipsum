@@ -10,6 +10,7 @@ const Event = require('../server/db/models/event.js');
 const Hash = require('../server/db/models/hash.js');
 const ServiceCred = require('../server/db/models/service-cred.js');
 const Stat = require('../server/db/models/stat.js');
+process.env.testing = true;
 
 describe('Models Test', function() {
 
