@@ -328,16 +328,13 @@ describe('Client Integration Tests', () => {
       },
     })
       .then(() => {
-        client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
-          .then((result) => {
-            expect(result[0].zone).to.equal('MAGA');
-            lbID = result[0].id;
-            done();
-          })
-          .catch((error) => {
-            expect(error).to.not.exist;
-            done();
-          });
+        return client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ${userID}',
+          { userID: userID });
+      })
+      .then((result) => {
+        expect(result[0].zone).to.equal('MAGA');
+        lbID = result[0].id;
+        done();
       })
       .catch((error) => {
         expect(error).to.not.exist;
