@@ -18,19 +18,23 @@ class MainPageAppView extends React.Component {
 
   componentDidMount(id) {
     restHandler.post('getStats/allAppSummaries', {}, (err, res) => {
-      this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
-      var apps = this.props.state.allAppSummaries || {};
-      var id = this.props.selected.id;
-       var app;
-        for (var i = 0; i < apps.length; i++) {
-          if (+apps[i].appid === id) {
-            app = apps[i];
-            break;
+      if (res.status !== 401) {
+        this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
+        var apps = this.props.state.allAppSummaries || {};
+        var id = this.props.selected.id;
+         var app;
+          for (var i = 0; i < apps.length; i++) {
+            if (+apps[i].appid === id) {
+              app = apps[i];
+              break;
+            }
           }
-        }
-      barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
-          return obj.date;
-      }));
+        barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
+            return obj.date;
+        })); 
+      } else {
+        browserHistory.push('/login');
+      }
     });
     this.setState({resizefunc: this.resizedb()}, () => {
       window.addEventListener('resize', this.state.resizefunc);

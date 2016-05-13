@@ -292,7 +292,7 @@ Promise.promisify(function (lbID, cb) {
     if (length === 0) { throw new Error('No servers on this LB to unhook'); }
     // choose the last one from the list to remove
     var id = Number(list[length - 1].id);
-    var removedIP = list[length -1].ip;
+    removedIP = list[length -1].ip;
     return nginxController.remove(LB.get('ip') + ':' + LB.get('port'), LB.get('zone'), id);
   })
   .then(function(newList){
@@ -327,7 +327,7 @@ Promise.promisify(function (serverIP, cb) {
     return Creds.model.where({id: server.get('serviceCreds_id')}).fetch()
     .then(function(cred) {
       req.token = cred.get('value');
-      console.log('token is:', cred.get('value'));
+      if (!req.token) { throw new Error('No token found for this server! Aborting destroyServer()')}
       DOconfig.authorize(req);
       // send the destroy command to the platform
       return requestP(req.options)

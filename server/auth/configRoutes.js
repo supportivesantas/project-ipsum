@@ -42,6 +42,7 @@ exports.ensureAuthenticated = function(req, res, next) {
   console.log(process.env.testing);
   if (req.isAuthenticated() || process.env.testing === 'true') { return next(); }
   console.log('failed auth');
+  res.status(401);
   res.redirect('/login');
 };
 

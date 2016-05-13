@@ -40,7 +40,7 @@ module.exports = function(passport) {
   passport.use(new GitHubStrategy({
       clientID: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:1337/auth/github/callback",
+      callbackURL: process.env.NODE_ENV === 'production' ? "http://djdeploy.com/auth/github/callback" : "http://localhost:1337/auth/github/callback"
     },
     function(token, refreshToken, profile, done) {
       new User({username: profile.username}).fetch()

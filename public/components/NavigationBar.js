@@ -8,7 +8,7 @@ const NavigationBar = () => {
     <Navbar className="navigation" fluid>
       <Navbar.Header>
         <Navbar.Brand>
-          <NavLink to="/">Project-Ipsum</NavLink>
+          <NavLink to="/">DJ Deploy</NavLink>
         </Navbar.Brand>
         <Navbar.Toggle />
       </Navbar.Header>
