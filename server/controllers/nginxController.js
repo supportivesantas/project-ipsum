@@ -6,6 +6,7 @@ const LoadBalancers = require('../db/collections/loadbalancers.js');
 const Server = require('../db/models/client-server.js');
 const Servers = require('../db/collections/client-server.js');
 var requestP = require('request-promise');
+var Promise = require('bluebird');
 
 var log = function(error, stdout, stderr) {
   console.log(stdout);
@@ -64,17 +65,27 @@ module.exports = {
       qs: {
         upstream: zone,
         id: id
-      }
+      } 
     };
 
     return requestP(options)
-    .then(function(resp){
-      console.log('Reponse from nginx:', resp)
-      return resp;
+    .then(function(result){
+      let servers = [];
+      let parseServerInfo = /server ([0-9\.]+):([0-9]+).*id=([0-9]+)/g;
+      let serverInfo = null;
+      while (serverInfo = parseServerInfo.exec(result)) {
+        servers.push({
+          ip: serverInfo[1],
+          port: serverInfo[2],
+          id: serverInfo[3]
+        });
+      }
+      return servers;
     })
-    .catch(function(err) {
-      console.log('Error while trying to unhook from lb:', err);
-    })
+    .catch((error) => {
+      console.log(error);
+      return;
+    });
   },
 
   newLoadBalancer(req, res) {

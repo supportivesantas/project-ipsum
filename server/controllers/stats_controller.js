@@ -166,6 +166,10 @@ statsController.registerClient = function (req, res) {
       internalTasks.syncServersToPlatforms(userID);
       internalTasks.syncServersToLB(userID);
       // internalTasks.spinUpServerInLB(userID, 1);
+      internalTasks.unhookAndDestoryServer(3, function(err, res) {
+        if (err) {console.log(err);};
+        console.log(res);
+      })
     })
     .catch(function (error) {
       console.log('Stats Client Registration Failure', error);

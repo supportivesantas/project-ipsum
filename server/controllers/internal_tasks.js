@@ -5,7 +5,7 @@ const Creds = require('../db/collections/service-creds');
 const LoadBalancers = require('../db/collections/loadbalancers');
 const Users = require('../db/collections/users.js');
 const internalRequest = require('../api/internalRequest');
-const requestP = requrie('request-promise');
+const requestP = require('request-promise');
 const Promise = require('bluebird');
 const nginxController = require('./nginxController');
 const configureRequest = require('../api/configure.js');
@@ -256,12 +256,11 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
     });
 };
 
-internalTasks.unhookAndDestoryServer = function(lbID, cb)
-  // this combines .spinDownServer and .destroyServer (both promises)
-  // into a new promise returning composite function
+internalTasks.unhookAndDestoryServer = function(lbID, cb) {
+  // this function combines .unhookServer and .destroyServer (both promises)
   return internalTasks.unhookServer(lbID)
-    .then(function(serverID) {
-      return internalTasks.destroyServer(serverID)
+    .then(function(serverIP) {
+      return internalTasks.destroyServer(serverIP)
     })
     .then(function(res) {
       console.log('Server removed from LB and destroyed. Message:', res);
@@ -271,24 +270,39 @@ internalTasks.unhookAndDestoryServer = function(lbID, cb)
       console.log('Error during unhookAndDestoryServer:', err);
       cb(err);
     });
-});
+}
 
 
 internalTasks.unhookServer = 
 Promise.promisify(function (lbID, cb) {
+  var length = null, removedIP = null, LB = null;
   // the ngingx lb tells us which server was unhooked
   return LoadBalancers.model.where({id: lbID}).fetch()
   .then(function(lb) {
+    // hold a ref to the load balancer
+    LB = lb;
     // returns a list of servers hooked up to lb
-    return nginxController.listParsed(lb.ip + lb.port, lb.zone);
+    return nginxController.listParsed(lb.get('ip') + ':' + lb.get('port'), lb.get('zone'));
   })
   .then(function(list){
+    length = list.length; 
+    console.log('LB list is:', list);
+    console.log('Number of slaves:', length);
+    if (!(length > 1)) { throw new Error('Aborting unhookAndDestory: only one slave left on this load balancer!') }
+    if (length === 0) { throw new Error('No servers on this LB to unhook'); }
     // choose the last one from the list to remove
-    var id = list[list.length - 1].id; 
-    return nginxController.remove(lb.ip + ':' + lb.port, lb.zone, id);
+    var id = Number(list[length - 1].id);
+    var removedIP = list[length -1].ip;
+    return nginxController.remove(LB.get('ip') + ':' + LB.get('port'), LB.get('zone'), id);
   })
-  .then(function(res){
-    cb(null, res);
+  .then(function(newList){
+    console.log('Newlist is:', newList)
+    console.log('Newlist length is:', newList.length)
+    if (newList.length < length) {
+      cb(null, removedIP);
+    } else {
+      throw new Error('Unsuccessful removal from load balancer');
+    }
   })
   .catch(function(err) {
     cb(err);
@@ -299,20 +313,25 @@ Promise.promisify(function (lbID, cb) {
 var DOconfig = require('../api/platformConfigs/digitalOceanConfig.js');
 
 internalTasks.destroyServer  = 
-Promise.promisify(function (serverID, cb) {
-
+Promise.promisify(function (serverIP, cb) {
   // grab the token associated with this server
-  return clientServers.model.where({id: serverID,}).fetchOne()
+  var req = {};
+
+  return clientServers.model.where({ip: serverIP,}).fetch()
   .then(function(server){
-    var token = serviceCreds_id;
-
     // simulate a call to our frontend api
-    var req = {body: {server_id: serverID}, token: token};
-    req = DOconfig.actions.delete_server(req);
-    req = DOconfig.authorize.(req);
+    console.log('server id is:', server.get('server_id'))
+    req.body = {server_id: server.get('server_id')};
+    DOconfig.actions.delete_server(req);
 
-    // send the destroy command to the platform
-    requestP(req)
+    return Creds.model.where({id: server.get('serviceCreds_id')}).fetch()
+    .then(function(cred) {
+      req.token = cred.get('value');
+      console.log('token is:', cred.get('value'));
+      DOconfig.authorize(req);
+      // send the destroy command to the platform
+      return requestP(req.options)
+    })
     .then(function(resp) {
       console.log('Response from platform:', resp);
       cb(null, resp);
@@ -321,8 +340,7 @@ Promise.promisify(function (serverID, cb) {
       console.log('Error whilte trying to send a destroy command to platform');
       cb(err);
     });
-
-  });
+  }); 
 });
 
 internalTasks.attachServerLB = function (userID, serverID, lbID) {
