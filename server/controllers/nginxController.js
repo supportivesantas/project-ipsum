@@ -70,7 +70,7 @@ module.exports = {
       qs: {
         upstream: zone,
         id: id
-      } 
+      }
     };
 
     return requestP(options)
@@ -104,8 +104,9 @@ module.exports = {
             zone: data.zone,
             image: +data.image,
             users_id: req.user.id,
-            min_threshold: 10000,
-            max_threshold: 50000,
+            min_threshold: data.min_threshold || 10000,
+            max_threshold: data.max_threshold || 50000,
+            max_servers: data.max_servers || 5,
           })
           .save()
           .then((newlb) => {
@@ -160,9 +161,8 @@ module.exports = {
   },
 
   getLoadBalancers(req, res) {
-    console.log("USER ID FOR GET LOADB", req.user.id);    LoadBalancer.where({users_id: req.user.id}).fetchAll()
+    LoadBalancer.where({users_id: req.user.id}).fetchAll()
       .then((LoadBalancers) => {
-        console.log(LoadBalancers.models),
         res.send(LoadBalancers);
       });
   },

@@ -18,6 +18,10 @@ class AddLoadBalancer extends React.Component {
       port: "",
       zone: "",
       image: "",
+      min_threshold: "",
+      max_threshold: "",
+      max_servers: "",
+
     };
   }
 

@@ -4,7 +4,7 @@ const auth = require('../auth/configRoutes.js');
 
 nginxRouter.route('/balancers')
   .post(auth.ensureAuthenticated, ctrl.newLoadBalancer)
-  .get(ctrl.getLoadBalancers)
+  .get(auth.ensureAuthenticated, ctrl.getLoadBalancers)
   .delete(auth.ensureAuthenticated, ctrl.removeLoadBalancer);
 
 nginxRouter.route('/slaves')
