@@ -194,6 +194,7 @@ internalTasks.spinUpServerInLB = function (lbID) {
   let platform = null;
   let image_id = null;
   let userID = null;
+  let max_servers = null;
   
   return LoadBalancers.model.where({
     id: lbID
@@ -204,6 +205,7 @@ internalTasks.spinUpServerInLB = function (lbID) {
       let zone = LB.get('zone');
       image_id = LB.get('image');
       userID = LB.get('users_id');
+      max_servers = LB.get('max_servers') || 5; // set max servers to 5 if not defined
 
       if (!image_id) {
         throw 'ERROR: Image is not specified in LB database';
@@ -216,6 +218,9 @@ internalTasks.spinUpServerInLB = function (lbID) {
     .then((nginxHosts) => {
       if (!nginxHosts || nginxHosts.length === 0) {
         throw 'ERROR: No nginx hosts received';
+      } else if (nginxHosts.length >= max_servers) {
+        // greater than max servers contained in LB so just bail
+        throw 'ERROR: Already reached max servers on LB: ';
       }
       
       let lbIPs = [];
