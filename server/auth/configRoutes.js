@@ -1,15 +1,24 @@
 const session = require('express-session');
 const methodOverride = require('method-override');
+const RedisStore = require('connect-redis')(session);
+const redisClient = require('redis').createClient();
 
-var configRoutes = function(app, passport) {
+const configRoutes = function(app, passport) {
 
   // Initialize Passport!  Also use passport.session() middleware, to support
   // persistent login sessions (recommended).
   app.use(methodOverride());
-  app.use(session({ 
+  app.use(session({
+    store: new RedisStore({
+      host: 'localhost',
+      port: 6379,
+      db: 1,
+      client: redisClient,
+    }),
+    cookie: { maxAge: (24 * 3600 * 1000 * 30) },
     secret: 'my_precious',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
   }));
   app.use(passport.initialize());
   app.use(passport.session());

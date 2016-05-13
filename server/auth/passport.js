@@ -29,7 +29,6 @@ module.exports = function(passport) {
       .fetch()
       .then(function(user) {
         var theuser = user.attributes;
-        console.log(theuser);
         done(null, theuser);
       })
       .catch(function(err){

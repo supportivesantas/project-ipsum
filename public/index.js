@@ -15,11 +15,9 @@ import actions from './actions/ipsumActions.js';
 import auth from './util/authHelpers.js';
 import tokens from './components/tokens.js';
 import addLoadBalancer from './components/AddLoadBalancer.js';
-
+import resthandler from './util/restHelpers.js';
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
-
-// GET ASYNC DATA HERE BEFORE RENDER, THEN CALL RENDER
 
 const logout = () => {
   console.log('LO hit');
@@ -27,30 +25,48 @@ const logout = () => {
   store.dispatch(actions.USER_RESET());
   window.location.href = '/login';
 };
+
+const restoreSession = () => {
+  return new Promise((resolve, reject) => {
+    resthandler.get('/user/sessionreload', (err, res) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resolve(res.text);
+      }
+    });
+  });
+};
+
 store.subscribe(() => {
   const state = store.getState();
   localStorage.setItem('state', JSON.stringify(state));
 });
-render(
-  <Provider store={store}>
-    <Router history={history}>
 
-      <Route path="/login" component={Login} />
-      <Route path="/logout" onEnter={logout} />
-      <Route path="/auth/github/callback" />
+restoreSession()
+  .then(() => {
+    render(
+      <Provider store={store}>
+        <Router history={history}>
 
-      <Route path="/" component={App} onEnter={auth.requireAuth} >
-        <IndexRoute component={MainPage} onEnter={auth.requireAuth} />
-        <Route path="/allApps" component={AllApps} onEnter={auth.requireAuth} />
-        <Route path="/allServers" component={AllServers} onEnter={auth.requireAuth} />
-        <Route path="/myServer" component={MyServer} onEnter={auth.requireAuth} />
-        <Route path="/myApp" component={MyApp} onEnter={auth.requireAuth} />
-        <Route path="/tokens" component={tokens} onEnter={auth.requireAuth} />
-        <Route path="/loadBalancer" component={addLoadBalancer} onEnter={auth.requireAuth} />
-      </Route>
+          <Route path="/login" component={Login} />
+          <Route path="/logout" onEnter={logout} />
+          <Route path="/auth/github/callback" />
 
-    </Router>
-  </Provider>,
-  document.getElementById('app')
-);
+          <Route path="/" component={App} onEnter={auth.requireAuth} >
+            <IndexRoute component={MainPage} onEnter={auth.requireAuth} />
+            <Route path="/allApps" component={AllApps} onEnter={auth.requireAuth} />
+            <Route path="/allServers" component={AllServers} onEnter={auth.requireAuth} />
+            <Route path="/myServer" component={MyServer} onEnter={auth.requireAuth} />
+            <Route path="/myApp" component={MyApp} onEnter={auth.requireAuth} />
+            <Route path="/tokens" component={tokens} onEnter={auth.requireAuth} />
+            <Route path="/loadBalancer" component={addLoadBalancer} onEnter={auth.requireAuth} />
+          </Route>
+
+        </Router>
+      </Provider>,
+      document.getElementById('app')
+    );
+  });
+
 

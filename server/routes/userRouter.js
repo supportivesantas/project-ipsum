@@ -21,5 +21,20 @@ userRouter.route('/usercreds')
 userRouter.route('/init')
   .get(auth.ensureAuthenticated, userController.getInit);
 
+userRouter.route('/sessionreload')
+  .get((req, res) => {
+    if (req.user) {
+      req.session.reload((err) => {
+        if (err) {
+          console.log(err);
+          res.send('false');
+        }
+        res.cookie('il', 'true', { httpOnly: false });
+        res.send('true');
+      });
+    } else {
+      res.send('false');
+    }
+  });
 
 module.exports = userRouter;
