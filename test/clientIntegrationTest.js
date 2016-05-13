@@ -315,7 +315,7 @@ describe('Client Integration Tests', () => {
       });
   });
 
-  it('should add a load balancer', (done) => {
+  xit('should add a load balancer', (done) => {
     requestP({
       method: 'POST',
       uri: 'http://localhost:' + port + '/nginx/balancers',
@@ -369,7 +369,7 @@ describe('Client Integration Tests', () => {
       });
   });
 
-  it('should remove a load balancer', (done) => {
+  xit('should remove a load balancer', (done) => {
     requestP({
       method: 'DELETE',
       uri: 'http://localhost:' + port + '/nginx/balancers',
