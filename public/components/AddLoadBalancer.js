@@ -14,9 +14,10 @@ class AddLoadBalancer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      nginxIp: null,
-      nginxPort: null,
-      zone: null,
+      ip: "",
+      port: "",
+      zone: "",
+      image: "",
     };
   }
 
@@ -29,31 +30,41 @@ class AddLoadBalancer extends React.Component {
       platform: "azDOaws",
       active: "Elite",
       apps: "Coool" }]));
-    console.log(this.props.state.loadBalancers);
+    // console.log(this.props.state.loadBalancers);
   }
 
   handleSubmit() {
-    if (!this.state.nginxPort || !this.state.nginxIp || !this.state.zone) {
+    if (!this.state.port || !this.state.ip || !this.state.zone || !this.state.image) {
       alert("Please fill out each field, and double check that what you entered is correct");
+    } else {
+      request.post('/nginx/balancers', this.state, (error, res) => {
+        if (error) {console.log("Error adding new lb",error)}
+        console.log("THIS IS THE RESPONSE", res);
+      });
     }
-    console.log(this.state);
   }
 
   handleIp(e) {
     this.setState({
-      nginxIp: e.target.value
+      ip: e.target.value
     });
   }
 
   handlePort(e) {
     this.setState({
-      nginxPort: e.target.value
+      port: e.target.value
     });
   }
 
   handleZone(e) {
     this.setState({
       zone: e.target.value
+    });
+  }
+
+  handleImage(e) {
+    this.setState({
+      image: e.target.value
     });
   }
 
@@ -116,31 +127,36 @@ class AddLoadBalancer extends React.Component {
                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>ZONE:</strong> String identifier. Can be whatever you want.{"\n"}
                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The second 'allow' statement in the example config gives us the {"\n"}
                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ability to control your balancer for you.{"\n"}
-                     &nbsp;&nbsp;4) Fill out the form below, and watch the magic of PROJECT IPSUM happen!{"\n"}
+                     &nbsp;&nbsp;4) Fill out the form below, and watch the magic of DJ Deploy happen!{"\n"}
                   </pre>
                 </Col>
               </Row>
-              <Form horizontal ref="laodInputs">
+              <Form horizontal ref="loadInputs">
                 <h4 style={{textDecoration:'underline', marginTop: "50px"}}>Enter Your Load Balancer Information:</h4>
                   <Col xs={6} lg={3}>
                       <ControlLabel>NGINX IP Address:</ControlLabel>
-                      <FormControl onChange={this.handleIp.bind(this)} value={this.state.nginxIp}/>
+                      <FormControl onChange={this.handleIp.bind(this)} value={this.state.ip}/>
                   </Col>
                   <Col xs={6} lg={3}>
                       <ControlLabel>NGINX Port:</ControlLabel>
-                      <FormControl onChange={this.handlePort.bind(this)} value={this.state.nginxPort}/>
+                      <FormControl onChange={this.handlePort.bind(this)} value={this.state.port}/>
                   </Col>
                   <Col xs={6} lg={3}>
                       <ControlLabel>Zone:</ControlLabel>
                       <FormControl onChange={this.handleZone.bind(this)} value={this.state.zone}/>
                   </Col>
                   <Col xs={6} lg={3}>
-                      <h1></h1>
-                      <Button  onClick={this.handleSubmit.bind(this)} bsSize="large" bsStyle="success">
-                        Add Load Balancer
-                      </Button>
+                      <ControlLabel>Image id for adding servers:</ControlLabel>
+                      <FormControl onChange={this.handleImage.bind(this)} value={this.state.image}/>
                   </Col>
               </Form>
+                  <Row>
+                    <div style={{"margin":"auto", "textAlign":"center"}}>
+                      <Button style={{"margin":"30px 0"}} onClick={this.handleSubmit.bind(this)} bsSize="large" bsStyle="success">
+                        Add Load Balancer
+                      </Button>
+                    </div>
+                  </Row>
             </Grid>
           </Panel>
         </Row>

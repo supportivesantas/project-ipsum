@@ -14,7 +14,7 @@ var configureRequest = function(req, res, next) {
 
 
   // check if action exists
-  if (actions.indexOf(action) === -1) { 
+  if (actions.indexOf(action) === -1) {
     console.log('No action matched to this api endpoint');
     res.status(404).end('No action matched to this api endpoint');
     return;
@@ -36,8 +36,11 @@ var configureRequest = function(req, res, next) {
   }
 
   // configure request.option for makeRequest
-  platform.actions[action](req);;
-  // attach necessary tokens to req
+  platform.actions[action](req);
+  // attach necessary tokens
+  //look into database based on user and find digital ocean token: (user username)
+  console.log("USER" , req.user.id); //from browser
+  req.token = '6cf02de62bcb9a1c5530faf51c0cbfe46a7d24910faa1bc1dadffe802315961e';
   platform.authorize(req);
 
   // pass to makeRequest

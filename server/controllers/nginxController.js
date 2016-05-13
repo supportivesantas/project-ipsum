@@ -95,14 +95,20 @@ module.exports = {
 
   newLoadBalancer(req, res) {
     const data = req.body;
-    LoadBalancer.where({ users_id: data.owner, ip: data.ip }).fetch()
+    console.log("OWNDER",
+      typeof req.user.id,
+      typeof data.ip, data.port,
+      typeof data.zone,
+      typeof data.image);
+    LoadBalancer.where({ users_id: req.user.id, ip: data.ip }).fetch()
       .then((lb) => {
         if (!lb) {
           new LoadBalancer({
             ip: data.ip,
             port: data.port,
             zone: data.zone,
-            users_id: data.owner,
+            image: +data.image,
+            users_id: req.user.id,
             min_threshold: 10000,
             max_threshold: 50000,
           })
@@ -114,6 +120,9 @@ module.exports = {
         } else {
           res.send('That server has already been added');
         }
+      }).
+      catch((error) => {
+        console.error("Could not add load balancer", error);
       });
   },
 
