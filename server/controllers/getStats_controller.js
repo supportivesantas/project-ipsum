@@ -75,10 +75,9 @@ exports.formatDataByHour = function(allRoutes, serverStats, dataRange) {
 };
 
 exports.singleApp = function(req, res) {
-  var appId = req.body.appId || 3; //TODO: leave until server IDs are fixed
-  var hoursvar = req.body.hours || 12; //default to last twelve hours
+  var appId = req.body.appId; //TODO: leave until server IDs are fixed
+  var hoursvar = 24 //req.body.hours; //default to last twelve hours
   var dataRange = _.range(1, hoursvar + 1);
- // var userId = req.user.id;//======================================================Put check in Later
 
   if (!appId) {
     console.log('Error, could not get appID', error);
@@ -86,7 +85,7 @@ exports.singleApp = function(req, res) {
     return;
   }
 
-  stats.model.where('clientApps_id', appId)
+  stats.model.where({users_id: req.user.id, clientApps_id: appId})
   .fetchAll()
   //get all routes to fill data points if no activity in the hours requested
     .then(function(appRoutesByStamp) {
@@ -99,7 +98,7 @@ exports.singleApp = function(req, res) {
     })
     .then(function(allRoutes) {
       //get hits for the specified time interval
-      stats.model.where('clientApps_id', appId)
+      stats.model.where({users_id: req.user.id, clientApps_id: appId})
       .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
       .fetchAll()
         .then(function(serverStats) {
@@ -115,8 +114,8 @@ exports.singleApp = function(req, res) {
 
 
 exports.singleServer = function(req, res) {
-  var serverId = req.body.serverId || 1; //TODO: leave until server IDs are fixed
-  var hoursvar = req.body.hours || 12; //default to last twelve hours
+  var serverId = req.body.serverId;
+  var hoursvar = 24 //req.body.hours;
   var dataRange = _.range(1, hoursvar + 1);
 
   if (!serverId) {
@@ -125,7 +124,7 @@ exports.singleServer = function(req, res) {
     return;
   }
 
-  stats.model.where('clientServers_id', serverId)
+  stats.model.where({users_id: req.user.id, clientServers_id: serverId})
   .fetchAll()
   //get all routes to fill data points if no activity in the hours requested
     .then(function(serverRoutesByStamp) {
@@ -138,7 +137,7 @@ exports.singleServer = function(req, res) {
     })
     .then(function(allRoutes) {
       //get hits for the specified time interval
-      stats.model.where('clientServers_id', serverId)
+      stats.model.where({users_id: req.user.id, clientServers_id: serverId})
       .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
       .fetchAll()
         .then(function(serverStats) {
@@ -155,7 +154,7 @@ exports.singleServer = function(req, res) {
 exports.serverTotalsForApp = function(req, res, next) {
   // check if appid is specified
   var appid = req.body.appid;
-  var hoursvar = req.body.hours || 24;
+  var hoursvar = 24;
   // var userid = req.user.id;
 
   if (!appid) {
@@ -165,7 +164,7 @@ exports.serverTotalsForApp = function(req, res, next) {
     return;
   }
 
-  stats.model.where({clientApps_id: appid})
+  stats.model.where({users_id: req.user.id, clientApps_id: appid})
   .where(knex.raw("created_at > (NOW() - INTERVAL '" + hoursvar + " hour'" + ")"))
   .fetchAll()
   .then(function(data) {
@@ -197,12 +196,12 @@ exports.serverTotalsForApp = function(req, res, next) {
         serverStats[serverInfo.id].hostname = serverInfo.hostname;
       });
       res.status(200).json(serverStats);
-      console.log('Done processing.')
+      console.log('Done processing.');
     })
     .catch(function(err) {
       var message = 'Error while processing server totals. ';
       console.log(message, err);
-      res.status(500).send(message)
+      res.status(500).send(message);
     });
 
   })
@@ -211,5 +210,5 @@ exports.serverTotalsForApp = function(req, res, next) {
     console.log(err);
     res.status(500).send(message);
   });
-}
+};
 
