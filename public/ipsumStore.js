@@ -14,7 +14,6 @@ import tokensReducer from './reducers/tokensReducer.js';
 import myAppHistoryReducer from './reducers/myAppHistoryReducer.js';
 import loadBalancersReducer from './reducers/loadBalancersReducer.js';
 
-const middleware = [logger()];
 const getInitialState = () => {
   if (localStorage.getItem('state')) {
     const restoredState = JSON.parse(localStorage.getItem('state'));
@@ -54,9 +53,8 @@ export default function configureStore(browserHistory, initialState = getInitial
     appServerTotals: changeAppServerTotalsReducer,
     tokens: tokensReducer,
     loadBalancers: loadBalancersReducer,
-    myAppHistory: myAppHistoryReducer
+    myAppHistory: myAppHistoryReducer,
   }), initialState, compose(
-    applyMiddleware(...middleware),
     window.devToolsExtension ? window.devToolsExtension() : f => f
     ));
   return store;

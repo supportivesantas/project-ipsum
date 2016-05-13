@@ -26,22 +26,6 @@ module.exports = {
         }
         res.status(200).send(appData);
       });
-
-    // var id = req.session.passport.user.githubid;
-    // App.where({ githubid: id})
-    //   .fetch()
-    //   .then((apps) => {
-    //     console.log(apps);
-           // var appData = [];
-           // for (var i = 0; i < apps.length; i++) {
-           //   appData.push(apps[i].attributes);
-           // }
-           // console.log(appData);
-           // res.status(200).send(appData);
-    //   })
-    //   .catch((err) => {
-    //     res.send(401);
-    //   });
   },
 
   getUserServers: (req, res) => {
@@ -54,22 +38,6 @@ module.exports = {
         }
         res.status(200).send(servData);
       });
-
-    // var id = req.session.passport.user.githubid;
-    // Server.where({ githubid: id})
-    //   .fetch()
-    //   .then((servers) => {
-    //     console.log(servers);
-           // var servData = [];
-           // for (var i = 0; i < servers.length; i++) {
-           //   servData.push(servers[i].attributes);
-           // }
-           // console.log(servData);
-           // res.status(200).send(servData);
-    //   })
-    //   .catch((err) => {
-    //     res.send(401);
-    //   });
   },
 
   postUserServers: (req, res) => {
@@ -296,34 +264,6 @@ module.exports = {
         console.log('ERROR: Failed to get init data', error);
         res.status(500).send(error);
       });
-
-    // const id = req.session.passport.user.githubid;
-    // Server.where({ githubid: id})
-    //   .fetch()
-    //   .then((servers) => {
-    //     console.log(servers);
-           // const servData = [];
-           // for (let i = 0; i < servers.length; i++) {
-           //   servData.push(servers[i].attributes);
-           // }
-           // App.where({ githubid: id})
-           //   .fetch()
-           //   .then((apps) => {
-           //     console.log(apps);
-                  // const appData = [];
-                  // for (let i = 0; i < apps.length; i++) {
-                  //   appData.push(apps[i].attributes);
-                  // }
-                  // console.log(appData);
-                  // res.status(200).send({ servers: servData, apps: appData });
-           //   })
-           //   .catch((err) => {
-           //     res.send(401);
-           //   });
-    //   })
-    //   .catch((err) => {
-    //     res.send(401);
-    //   });
   },
 
 };
