@@ -220,7 +220,7 @@ internalTasks.spinUpServerInLB = function (lbID) {
         throw 'ERROR: No nginx hosts received';
       } else if (nginxHosts.length >= max_servers) {
         // greater than max servers contained in LB so just bail
-        throw 'ERROR: Already reached max servers on LB: ';
+        throw 'ERROR: Already reached max servers on LB';
       }
       
       let lbIPs = [];
