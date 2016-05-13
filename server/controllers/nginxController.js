@@ -57,8 +57,24 @@ module.exports = {
   add(nginxipandport, targetipandport, zone) {
     exec("curl http://" + nginxipandport + "/upstream_conf?add=&upstream=" + zone + "&server=" + targetipandport, log);
   },
-  remove(nginxipandport, targetipandport, zone) {
+  remove(nginxipandport, zone, id) {
     // exec("curl http://" + nginxipandport + "/upstream_conf?remove=&upstream=" + zone + "&id=" + id, log);
+    let options = {
+      uri: 'http://' + nginxipandport + '/upstream_conf?remove=',
+      qs: {
+        upstream: zone,
+        id: id
+      }
+    };
+
+    return requestP(options)
+    .then(function(resp){
+      console.log('Reponse from nginx:', resp)
+      return resp;
+    })
+    .catch(function(err) {
+      console.log('Error while trying to unhook from lb:', err);
+    })
   },
 
   newLoadBalancer(req, res) {

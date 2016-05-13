@@ -7,7 +7,7 @@ var configureRequest = function(req, res, next) {
   console.log('Request body is:', req.body);
   console.log('Request action is:', req.params.action);
 
-  var platform = req.platform = 'digital_ocean'; // should come from db later
+  var platform = req.body.platform = 'digital_ocean'; // should come from db later
   var action = req.params.action;
   var username = req.body.username;
   var target_id = req.body.target_id;
@@ -37,7 +37,7 @@ var configureRequest = function(req, res, next) {
 
   // configure request.option for makeRequest
   platform.actions[action](req);;
-  // attach necessary tokens
+  // attach necessary tokens to req
   platform.authorize(req);
 
   // pass to makeRequest

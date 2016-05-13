@@ -3,9 +3,12 @@ const clientApps = require('../db/collections/client-apps');
 const clientServers = require('../db/collections/client-server');
 const Creds = require('../db/collections/service-creds');
 const LoadBalancers = require('../db/collections/loadbalancers');
+const Users = require('../db/collections/users.js');
 const internalRequest = require('../api/internalRequest');
+const requestP = requrie('request-promise');
 const Promise = require('bluebird');
 const nginxController = require('./nginxController');
+const configureRequest = require('../api/configure.js');
 var internalTasks = {};
 
 internalTasks.syncServersToPlatforms = function (userID, overwriteAll) {
@@ -156,9 +159,6 @@ internalTasks.createServer = function (userID, serverID, image_id) {
     });
 };
 
-internalTasks.destroyServer = function (userID, serverID) {
-  
-};
 
 var spinServerHelper = function (cred, server_id) {
   return new Promise(function (resolve, reject) {
@@ -256,9 +256,74 @@ internalTasks.spinUpServerInLB = function (userID, lbID) {
     });
 };
 
-internalTasks.spinDownServer = function (userID, serverID) {
-  
-};
+internalTasks.unhookAndDestoryServer = function(lbID, cb)
+  // this combines .spinDownServer and .destroyServer (both promises)
+  // into a new promise returning composite function
+  return internalTasks.unhookServer(lbID)
+    .then(function(serverID) {
+      return internalTasks.destroyServer(serverID)
+    })
+    .then(function(res) {
+      console.log('Server removed from LB and destroyed. Message:', res);
+      cb(null, res);
+    })
+    .catch(function(err){
+      console.log('Error during unhookAndDestoryServer:', err);
+      cb(err);
+    });
+});
+
+
+internalTasks.unhookServer = 
+Promise.promisify(function (lbID, cb) {
+  // the ngingx lb tells us which server was unhooked
+  return LoadBalancers.model.where({id: lbID}).fetch()
+  .then(function(lb) {
+    // returns a list of servers hooked up to lb
+    return nginxController.listParsed(lb.ip + lb.port, lb.zone);
+  })
+  .then(function(list){
+    // choose the last one from the list to remove
+    var id = list[list.length - 1].id; 
+    return nginxController.remove(lb.ip + ':' + lb.port, lb.zone, id);
+  })
+  .then(function(res){
+    cb(null, res);
+  })
+  .catch(function(err) {
+    cb(err);
+  });
+});
+
+
+var DOconfig = require('../api/platformConfigs/digitalOceanConfig.js');
+
+internalTasks.destroyServer  = 
+Promise.promisify(function (serverID, cb) {
+
+  // grab the token associated with this server
+  return clientServers.model.where({id: serverID,}).fetchOne()
+  .then(function(server){
+    var token = serviceCreds_id;
+
+    // simulate a call to our frontend api
+    var req = {body: {server_id: serverID}, token: token};
+    req = DOconfig.actions.delete_server(req);
+    req = DOconfig.authorize.(req);
+
+    // send the destroy command to the platform
+    requestP(req)
+    .then(function(resp) {
+      console.log('Response from platform:', resp);
+      cb(null, resp);
+    })
+    .catch(function(err) {
+      console.log('Error whilte trying to send a destroy command to platform');
+      cb(err);
+    });
+
+  });
+});
 
 internalTasks.attachServerLB = function (userID, serverID, lbID) {
   
