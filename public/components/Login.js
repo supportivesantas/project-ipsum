@@ -24,7 +24,7 @@ class Login extends React.Component {
           <Jumbotron style={{"backgroundColor":"#66D9EF"}}>
             <Row>
               <Col xs={12} sm={8}>
-                <h2> Welcome to Project Ipsum! </h2>
+                <h2> Welcome to DJ Deploy! </h2>
                 <p> The easiest way to manage all your deployment servers </p>
               </Col>
               <Col xs={12} sm={4} >

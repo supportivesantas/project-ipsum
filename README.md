@@ -1,4 +1,4 @@
-# Project Name
+# DJ Deploy
 
 ## Team
 
@@ -46,7 +46,7 @@ View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
 ```
                                                  +---------------------------+
                                                  |                           |
-  +----------------+                             |      PROJECT IPSUM        |
+  +----------------+                             |         DJ Deploy         |
   | User interface |    Credentials, commands    |                           |
   | * add app (LB) +-----------------------------> *collect stats            |
   | * add creds    |                             | *prepare summaries        |
