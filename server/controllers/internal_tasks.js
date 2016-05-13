@@ -286,18 +286,16 @@ Promise.promisify(function (lbID, cb) {
   })
   .then(function(list){
     length = list.length; 
-    console.log('LB list is:', list);
-    console.log('Number of slaves:', length);
-    if (!(length > 1)) { throw new Error('Aborting unhookAndDestory: only one slave left on this load balancer!') }
+    console.log('LB list is:', list, '\n');
+    if (length === 1) { throw new Error('Aborting unhookAndDestory: only one slave left on this load balancer!') }
     if (length === 0) { throw new Error('No servers on this LB to unhook'); }
     // choose the last one from the list to remove
     var id = Number(list[length - 1].id);
-    removedIP = list[length -1].ip;
+    removedIP = list[length - 1].ip;
     return nginxController.remove(LB.get('ip') + ':' + LB.get('port'), LB.get('zone'), id);
   })
   .then(function(newList){
-    console.log('Newlist is:', newList)
-    console.log('Newlist length is:', newList.length)
+    console.log('Newlist is:', newList, '\n');
     if (newList.length < length) {
       cb(null, removedIP);
     } else {
@@ -305,6 +303,7 @@ Promise.promisify(function (lbID, cb) {
     }
   })
   .catch(function(err) {
+    console.log('Error while trying to unhook server from lb:', err)
     cb(err);
   });
 });
@@ -314,13 +313,19 @@ var DOconfig = require('../api/platformConfigs/digitalOceanConfig.js');
 
 internalTasks.destroyServer  = 
 Promise.promisify(function (serverIP, cb) {
-  // grab the token associated with this server
   var req = {};
+  var serverModel = null;
+  console.log('Attempting to destroy server with IP:', serverIP);
 
-  return clientServers.model.where({ip: serverIP,}).fetch()
+  // grab the token associated with this server
+  return clientServers.model.where({ip: serverIP}).fetch()
   .then(function(server){
+    if (!server) { throw new Error('Server with this IP could not be found in db')}
+    // save a ref to model to destroy later
+    serverModel = server;
     // simulate a call to our frontend api
     console.log('server id is:', server.get('server_id'))
+    if (!server.get('server_id')) { throw new Error('platform server_id of this server not in db')}
     req.body = {server_id: server.get('server_id')};
     DOconfig.actions.delete_server(req);
 
@@ -333,11 +338,16 @@ Promise.promisify(function (serverIP, cb) {
       return requestP(req.options)
     })
     .then(function(resp) {
-      console.log('Response from platform:', resp);
-      cb(null, resp);
+      return server.destroy().then(function() {
+        console.log('Server deleted from db')
+        cb(null, resp);
+      })
+      .catch(function(err) {
+        console.log('Error while trying to delete server from db:', err)
+      })
     })
     .catch(function(err) {
-      console.log('Error whilte trying to send a destroy command to platform');
+      console.log('Error while trying to send a destroy command to platform');
       cb(err);
     });
   }); 
