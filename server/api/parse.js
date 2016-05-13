@@ -2,7 +2,7 @@ var platforms = require('./platforms');
 var actions = require('./actions');
 
 var parse = function (action, platform, response) {
-  
+
   if (!action || !platform || !response) {
     console.log('ERROR: Missing parameter in parse function');
     return null;
@@ -16,7 +16,7 @@ var parse = function (action, platform, response) {
     console.log('ERROR: Action is not defined for this platform in parse function');
     return null;
   }
-  
+
   return platforms[platform].parsers[action](response);
 };
 
@@ -36,13 +36,13 @@ module.exports = parse;
 //   backup_ids: [],
 //   next_backup_window: null,
 //   snapshot_ids: [],
-//   image: 
+//   image:
 //    { id: 16539246,
 //      name: 'LAMP on 14.04',
 //      distribution: 'Ubuntu',
 //      slug: 'lamp',
 //      public: true,
-//      regions: 
+//      regions:
 //       [ 'nyc1',
 //         'sfo1',
 //         'nyc2',
@@ -59,7 +59,7 @@ module.exports = parse;
 //      type: 'snapshot',
 //      size_gigabytes: 1.86 },
 //   drives: [],
-//   size: 
+//   size:
 //    { slug: '1gb',
 //      memory: 1024,
 //      vcpus: 1,
@@ -67,7 +67,7 @@ module.exports = parse;
 //      transfer: 2,
 //      price_monthly: 10,
 //      price_hourly: 0.01488,
-//      regions: 
+//      regions:
 //       [ 'ams1',
 //         'ams2',
 //         'ams3',
@@ -82,7 +82,7 @@ module.exports = parse;
 //      available: true },
 //   size_slug: '1gb',
 //   networks: { v4: [ [Object], [Object] ], v6: [] },
-//   region: 
+//   region:
 //    { name: 'San Francisco 1',
 //      slug: 'sfo1',
 //      sizes: [ '32gb', '16gb', '2gb', '1gb', '4gb', '8gb', '512mb', '64gb', '48gb' ],
@@ -96,7 +96,7 @@ module.exports = parse;
 //   disk: 20,
 //   locked: false,
 //   status: 'active',
-//   kernel: 
+//   kernel:
 //    { id: 5175,
 //      name: 'Ubuntu 14.04 x64 vmlinuz-3.13.0-57-generic',
 //      version: '3.13.0-57-generic' },
@@ -105,7 +105,7 @@ module.exports = parse;
 //   backup_ids: [],
 //   next_backup_window: null,
 //   snapshot_ids: [],
-//   image: 
+//   image:
 //    { id: 17075455,
 //      name: 'mean-spawn-1-1462000309694',
 //      distribution: 'Ubuntu',
@@ -117,7 +117,7 @@ module.exports = parse;
 //      type: 'snapshot',
 //      size_gigabytes: 5.9 },
 //   drives: [],
-//   size: 
+//   size:
 //    { slug: '512mb',
 //      memory: 512,
 //      vcpus: 1,
@@ -125,7 +125,7 @@ module.exports = parse;
 //      transfer: 1,
 //      price_monthly: 5,
 //      price_hourly: 0.00744,
-//      regions: 
+//      regions:
 //       [ 'ams1',
 //         'ams2',
 //         'ams3',
@@ -140,7 +140,7 @@ module.exports = parse;
 //      available: true },
 //   size_slug: '512mb',
 //   networks: { v4: [ [Object], [Object] ], v6: [] },
-//   region: 
+//   region:
 //    { name: 'San Francisco 1',
 //      slug: 'sfo1',
 //      sizes: [ '32gb', '16gb', '2gb', '1gb', '4gb', '8gb', '512mb', '64gb', '48gb' ],
@@ -154,7 +154,7 @@ module.exports = parse;
 //   disk: 20,
 //   locked: false,
 //   status: 'active',
-//   kernel: 
+//   kernel:
 //    { id: 5175,
 //      name: 'Ubuntu 14.04 x64 vmlinuz-3.13.0-57-generic',
 //      version: '3.13.0-57-generic' },
@@ -163,7 +163,7 @@ module.exports = parse;
 //   backup_ids: [],
 //   next_backup_window: null,
 //   snapshot_ids: [],
-//   image: 
+//   image:
 //    { id: 17075455,
 //      name: 'mean-spawn-1-1462000309694',
 //      distribution: 'Ubuntu',
@@ -175,7 +175,7 @@ module.exports = parse;
 //      type: 'snapshot',
 //      size_gigabytes: 5.9 },
 //   drives: [],
-//   size: 
+//   size:
 //    { slug: '512mb',
 //      memory: 512,
 //      vcpus: 1,
@@ -183,7 +183,7 @@ module.exports = parse;
 //      transfer: 1,
 //      price_monthly: 5,
 //      price_hourly: 0.00744,
-//      regions: 
+//      regions:
 //       [ 'ams1',
 //         'ams2',
 //         'ams3',
@@ -198,7 +198,7 @@ module.exports = parse;
 //      available: true },
 //   size_slug: '512mb',
 //   networks: { v4: [ [Object], [Object] ], v6: [] },
-//   region: 
+//   region:
 //    { name: 'San Francisco 1',
 //      slug: 'sfo1',
 //      sizes: [ '32gb', '16gb', '2gb', '1gb', '4gb', '8gb', '512mb', '64gb', '48gb' ],
@@ -212,7 +212,7 @@ module.exports = parse;
 //   disk: 20,
 //   locked: false,
 //   status: 'active',
-//   kernel: 
+//   kernel:
 //    { id: 5175,
 //      name: 'Ubuntu 14.04 x64 vmlinuz-3.13.0-57-generic',
 //      version: '3.13.0-57-generic' },
@@ -221,7 +221,7 @@ module.exports = parse;
 //   backup_ids: [],
 //   next_backup_window: null,
 //   snapshot_ids: [],
-//   image: 
+//   image:
 //    { id: 17075455,
 //      name: 'mean-spawn-1-1462000309694',
 //      distribution: 'Ubuntu',
@@ -233,7 +233,7 @@ module.exports = parse;
 //      type: 'snapshot',
 //      size_gigabytes: 5.9 },
 //   drives: [],
-//   size: 
+//   size:
 //    { slug: '512mb',
 //      memory: 512,
 //      vcpus: 1,
@@ -241,7 +241,7 @@ module.exports = parse;
 //      transfer: 1,
 //      price_monthly: 5,
 //      price_hourly: 0.00744,
-//      regions: 
+//      regions:
 //       [ 'ams1',
 //         'ams2',
 //         'ams3',
@@ -256,7 +256,7 @@ module.exports = parse;
 //      available: true },
 //   size_slug: '512mb',
 //   networks: { v4: [ [Object], [Object] ], v6: [] },
-//   region: 
+//   region:
 //    { name: 'San Francisco 1',
 //      slug: 'sfo1',
 //      sizes: [ '32gb', '16gb', '2gb', '1gb', '4gb', '8gb', '512mb', '64gb', '48gb' ],

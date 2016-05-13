@@ -31,8 +31,7 @@ function getDates(startDate, stopDate) {
 }
 
 exports.allAppSummaries = function(req, res) {
-  userId = req.body.userId || 1;
-
+  userId = req.user.id;
   //To fill in any missing data points week summary (last seven dates)
   var dateArray = getDates(new Date().subDays(1), (new Date()).subDays(7));
 
@@ -103,6 +102,10 @@ exports.allAppSummaries = function(req, res) {
 
 
 exports.myServerSummary = (req, res) => {
+  if (typeof req.body.days !== "number") {
+    res.status(400).end("Invalid input");
+    return;
+  }
 //update to req.body variables below
   var userId = 1;
   var serverId = 1;
@@ -244,7 +247,11 @@ exports.myServerSummary = (req, res) => {
 
 exports.myAppSummary = (req, res) => {
 //update to req.body variables below
-  var userId = req.body.userId ;
+  if (typeof req.body.days !== "number") {
+    res.status(400).end("Invalid input");
+    return;
+  }
+  var userId = req.user.id ;
   var appId = req.body.appId;
   var days = req.body.days;
 

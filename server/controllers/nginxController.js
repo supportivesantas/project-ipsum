@@ -70,7 +70,7 @@ module.exports = {
       qs: {
         upstream: zone,
         id: id
-      } 
+      }
     };
 
     return requestP(options)
@@ -95,16 +95,18 @@ module.exports = {
 
   newLoadBalancer(req, res) {
     const data = req.body;
-    LoadBalancer.where({ users_id: data.owner, ip: data.ip }).fetch()
+    LoadBalancer.where({ users_id: req.user.id, ip: data.ip }).fetch()
       .then((lb) => {
         if (!lb) {
           new LoadBalancer({
             ip: data.ip,
             port: data.port,
             zone: data.zone,
-            users_id: data.owner,
-            min_threshold: 10000,
-            max_threshold: 50000,
+            image: +data.image,
+            users_id: req.user.id,
+            min_threshold: data.min_threshold || 10000,
+            max_threshold: data.max_threshold || 50000,
+            max_servers: data.max_servers || 5,
           })
           .save()
           .then((newlb) => {
@@ -114,6 +116,9 @@ module.exports = {
         } else {
           res.send('That server has already been added');
         }
+      }).
+      catch((error) => {
+        console.error("Could not add load balancer", error);
       });
   },
 
@@ -152,6 +157,13 @@ module.exports = {
                 res.send('Great Success!');
               });
           });
+      });
+  },
+
+  getLoadBalancers(req, res) {
+    LoadBalancer.where({users_id: req.user.id}).fetchAll()
+      .then((LoadBalancers) => {
+        res.send(LoadBalancers);
       });
   },
 
