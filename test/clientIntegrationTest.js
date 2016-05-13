@@ -369,7 +369,7 @@ describe('Client Integration Tests', () => {
       });
   });
 
-  xit('should remove a load balancer', (done) => {
+  it('should remove a load balancer', (done) => {
     requestP({
       method: 'DELETE',
       uri: 'http://localhost:' + port + '/nginx/balancers',
@@ -379,23 +379,17 @@ describe('Client Integration Tests', () => {
       },
     })
       .then(() => {
-        client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
-          .then((result) => {
-            expect(result.length).to.equal(0);
-            client.query('SELECT * FROM "clientServers" WHERE "users_id" = ' + userID)
-              .then((res) => {
-                expect(res[0].master).to.equal(null);
-                done();
-              })
-              .catch((err) => {
-                expect(err).to.not.exist;
-                done();
-              });
-          })
-          .catch((error) => {
-            expect(error).to.not.exist;
-            done();
-          });
+        return client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ${userID}',
+          { userID: userID });
+      })
+      .then((result) => {
+        expect(result.length).to.equal(0);
+        return client.query('SELECT * FROM "clientServers" WHERE "users_id" = ${userID}',
+          { userID: userID });
+      })
+      .then((res) => {
+        expect(res[0].master).to.equal(null);
+        done();
       })
       .catch((error) => {
         expect(error).to.not.exist;
