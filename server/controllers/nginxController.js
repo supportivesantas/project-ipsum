@@ -95,11 +95,6 @@ module.exports = {
 
   newLoadBalancer(req, res) {
     const data = req.body;
-    console.log("OWNDER",
-      typeof req.user.id,
-      typeof data.ip, data.port,
-      typeof data.zone,
-      typeof data.image);
     LoadBalancer.where({ users_id: req.user.id, ip: data.ip }).fetch()
       .then((lb) => {
         if (!lb) {

@@ -22,6 +22,13 @@ class AddLoadBalancer extends React.Component {
   }
 
   componentDidMount() {
+    //TODO: fetch images list and load balancers list (how do we associate load balancers to servers)
+
+    request.get('/api/list_all_images', (error, res) => {
+      if (error) {console.log("Error getting image list", error)}
+      console.log(res);
+    });
+
     //sample before adding restHandlers
     this.props.dispatch(actions.POPULATE_LOAD_BALANCERS([{
       id: "#",

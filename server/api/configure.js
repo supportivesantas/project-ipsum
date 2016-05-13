@@ -39,7 +39,7 @@ var configureRequest = function(req, res, next) {
   platform.actions[action](req);
   // attach necessary tokens
   //look into database based on user and find digital ocean token: (user username)
-  console.log("USER" , req.user.id); //from browser
+  console.log("USER" , req.user); //from browser
   req.token = '6cf02de62bcb9a1c5530faf51c0cbfe46a7d24910faa1bc1dadffe802315961e';
   platform.authorize(req);
 

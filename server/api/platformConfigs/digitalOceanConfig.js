@@ -139,7 +139,9 @@ module.exports = {
       return parsedData;
     },
     list_all_images: function (res) {
-      return res;
+      var data = JSON.parse(res);
+      console.log(data);
+      return data.images;
     },
     get_server: function (res) {
       var parsedData = {
