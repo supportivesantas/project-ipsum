@@ -91,6 +91,12 @@ node server/summaries/generateSummaries.js
 ``` 
 node middleware/sample.js
 ```
+- Set the correct environment variables:
+```
+export PG_CONNECTION_STRING=postgres://localhost
+export GITHUB_CLIENT_SECRET=YOUR_SECRET_HERE
+export MAILGUN_SECRET=YOUR_SECRET_HERE
+```
 
 ### Testing
 Run the test Mocha-Chai suite with `npm test`
