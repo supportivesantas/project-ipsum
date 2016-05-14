@@ -3,7 +3,6 @@ const path = require('path');
 
 module.exports = {
   entry: [
-    'webpack-hot-middleware/client',
     './public/index.js'],
   output: {
     path: path.resolve('./public/build'),
@@ -11,13 +10,28 @@ module.exports = {
   },
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
+    new webpack.optimize.DedupePlugin(),
     new webpack.NoErrorsPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
         warnings: false,
-        screw_ie8: true
-      }
+        screw_ie8: true,
+        sequences: true,
+        dead_code: true,
+        conditionals: true,
+        booleans: true,
+        unused: true,
+        if_return: true,
+        join_vars: true,
+        drop_console: true
+      },
+      minimize: true,
+      output: {
+        comments: false
+      },
+      mangle: {
+        except: ['$super', '$', 'exports', 'require']
+      },
     }),
     new webpack.DefinePlugin({
       'process.env': {
@@ -32,8 +46,8 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-          presets: ['react', 'es2015', 'react-hmre'],
-          cacheDirectory: true
+          presets: ['react', 'es2015'],
+          cacheDirectory: false
         },
       },
       { test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css" },

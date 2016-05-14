@@ -15,16 +15,24 @@ const ensureAuthenticated = require('./auth/passport.js');
 
 const app = express();
 
-const isDeveloping = process.env.NODE_ENV !== 'production';
+var isDeveloping = process.env.NODE_ENV !== 'production'; // do not change this to const
 const port = isDeveloping ? 1337 : process.env.port;
 
-if (isDeveloping) {
+//To server the bundled file in a dev environment (simulating prod environment):
+//  1. run `webpack  --config webpack.production.config.js` to create the bundle (20-30 sec)
+//  2. uncomment the line below to disable webpack's dev server
+     // isDeveloping = false
+//  3. npm start
+if (isDeveloping) {  
   const compiler = webpack(config);
   app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
   app.use(webpackHotMiddleware(compiler));
 } else {
-  app.use(express.static('../public/build'));
+  app.use(express.static(path.resolve(__dirname, '../public')));
 }
+/* ========================== */
+
+
 
 // const jsonParser = bodyParser.json();
 app.use(bodyParser.json()); // for parsing application/json
