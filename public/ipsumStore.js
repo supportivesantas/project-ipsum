@@ -13,6 +13,7 @@ import appSelectionReducer from './reducers/appSelectionReducer.js';
 import tokensReducer from './reducers/tokensReducer.js';
 import myAppHistoryReducer from './reducers/myAppHistoryReducer.js';
 import loadBalancersReducer from './reducers/loadBalancersReducer.js';
+import imageListReducer from './reducers/imageListReducer.js';
 
 const getInitialState = () => {
   if (localStorage.getItem('state')) {
@@ -30,6 +31,7 @@ const getInitialState = () => {
       },
       servers: [],
       serverSelection: {},
+      imageList: [],
       lineGraphTitle: [],
       graphData: [],
       tokens: [],
@@ -46,6 +48,7 @@ export default function configureStore(browserHistory, initialState = getInitial
     user: userReducer,
     lineGraphTitle: lineGraphTitleReducer,
     serverSelection: serverSelectReducer,
+    imageList: imageListReducer,
     allAppSummaries: allAppSummariesReducer,
     servers: serverReducer,
     graphData: getDataReducer,

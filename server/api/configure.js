@@ -2,6 +2,7 @@
 // var makeRequest = require('./makeRequest.js');
 var platforms = require('./platforms');
 var actions = require('./actions');
+var serviceCreds = require('../db/collections/service-creds.js');
 
 var configureRequest = function(req, res, next) {
   console.log('Request body is:', req.body);
@@ -38,13 +39,25 @@ var configureRequest = function(req, res, next) {
   // configure request.option for makeRequest
   platform.actions[action](req);
   // attach necessary tokens
-  //look into database based on user and find digital ocean token: (user username)
-  // console.log("USER" , req.user); //from browser
-  req.token = '6cf02de62bcb9a1c5530faf51c0cbfe46a7d24910faa1bc1dadffe802315961e';
-  platform.authorize(req);
 
-  // pass to makeRequest
-  next();
+  if (req.token) {
+    platform.authorize(req);
+    next();
+    return;
+  }
+
+  serviceCreds.model.where({users_id: req.user.id, platform: platform.platformName})
+    .fetch()
+      .then((serviceCreds) => {
+        req.token = serviceCreds.attributes.value;
+        platform.authorize(req);
+        next();
+      })
+      .catch((error) => {
+        console.log('Error getting service credentials', error);
+        platform.authorize(req);
+        next();
+      });
 };
 
 module.exports = configureRequest;

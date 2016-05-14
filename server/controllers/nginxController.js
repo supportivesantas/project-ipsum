@@ -102,7 +102,7 @@ module.exports = {
             ip: data.ip,
             port: data.port,
             zone: data.zone,
-            image: +data.image,
+            image: data.image,
             users_id: req.user.id,
             min_threshold: data.min_threshold || 10000,
             max_threshold: data.max_threshold || 50000,
@@ -166,5 +166,21 @@ module.exports = {
         res.send(LoadBalancers);
       });
   },
+
+  updateImage(req, res) {
+    console.log("...............", req.body)
+    LoadBalancer.where({users_id: req.user.id, id: req.body.loadBalancerId})
+      .fetch()
+      .then((lb) => {
+        lb.set('image', req.body.image)
+        .save()
+        .then((updatedLb) => {
+          res.send(updatedLb);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: Could not update image", error)
+      });
+  }
 
 };

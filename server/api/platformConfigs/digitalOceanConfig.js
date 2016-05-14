@@ -1,3 +1,5 @@
+const _ = require('underscore');
+
 module.exports = {
   platformName: 'digital_ocean',
   baseUrl: 'https://api.digitalocean.com/v2',
@@ -140,7 +142,11 @@ module.exports = {
     },
     list_all_images: function (res) {
       var data = JSON.parse(res);
-      return data.images;
+      var response = [];
+      _.each(data.images, (image) => {
+        response.push({value: image.id, label: image.name});
+      });
+      return response;
     },
     get_server: function (res) {
       var parsedData = {
