@@ -7,7 +7,13 @@ const LoadBalancers = require('../db/collections/loadbalancers.js');
 const internalTasks = require('../controllers/internal_tasks');
 const _ = require('underscore');
 const Promise = require('bluebird');
+const redis = require("redis");
 
+
+
+Promise.promisifyAll(redis.RedisClient.prototype);
+Promise.promisifyAll(redis.Multi.prototype);
+const client = redis.createClient({detect_buffers: true});
 
 const doOneLb = (id) => {
   return new Promise((resolve, reject) => {
@@ -26,12 +32,27 @@ const checkAll = () => {
             if (order === 'incr') {
               //SPIN UP NEW SERVER
               return internalTasks.spinUpServerInLB(item.get('id'))
+                .then((result) => {
+                  // store the time we spin up a server for this LB ID
+                  return client.hsetAsync('cooldown', item.get('id'), Date.now());
+                })
                 .catch((error) => {
                   console.log('ERROR: Failed to spin up and attach server for LB: ' + item.get('id'), error);
                 });
             } else if (order === 'decr') {
               //DESTROY A SERVER
-              return internalTasks.unhookAndDestoryServer(item.get('id'))
+              return client.hgetAsync('cooldown', item.get('id'))
+                .then((value) => {
+                  if (value) {
+                    let timeDiff = (Date.now() - value) / 1000 / 60; // diff in time in minutes
+                    if (timeDiff <= 120) {
+                      // lockout spindown by 2 hours
+                      console.log('Inside lockout period for spin down.  Do nothing.');
+                      return true;
+                    }
+                  }
+                  return internalTasks.unhookAndDestoryServer(item.get('id'));
+                })
                 .then((result) => {
                   console.log('SUCCESSFULLY REMOVED SERVER FROM LB');
                 })
