@@ -5,8 +5,8 @@ const ip2long = (ip) => {
   let components;
 
   if (components = ip.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)) {
-    const iplong = 0;
-    const power  = 1;
+    let iplong = 0;
+    let power  = 1;
     for (let i = 4; i >= 1; i -= 1) {
       iplong += power * parseInt(components[i]);
       power *= 256;
