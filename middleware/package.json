@@ -1,7 +1,7 @@
 {
-  "name": "lib-project-ipsum",
+  "name": "lib-dj-deploy",
   "version": "0.0.1",
-  "description": "Express middleware for reporting statistics to project-ipsum",
+  "description": "Express middleware for reporting statistics to DJ Deploy",
   "main": "index.js",
   "dependencies": {
     "express": "^4.13.4",
@@ -15,8 +15,8 @@
     "express",
     "statistics",
     "middleware",
-    "project-ipsum"
+    "DJ Deploy"
   ],
-  "author": "supportive santas",
+  "author": "Jonathan Mah",
   "license": "ISC"
 }
