@@ -1,3 +1,4 @@
+'use strict';
 const azureList = require('../azureIpRanges.js');
 const awsList = require('../awsRanges.js');
 
