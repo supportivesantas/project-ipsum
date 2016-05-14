@@ -39,6 +39,13 @@ var configureRequest = function(req, res, next) {
   // configure request.option for makeRequest
   platform.actions[action](req);
   // attach necessary tokens
+
+  if (req.token) {
+    platform.authorize(req);
+    next();
+    return;
+  }
+
   serviceCreds.model.where({users_id: req.user.id, platform: platform.platformName})
     .fetch()
       .then((serviceCreds) => {
