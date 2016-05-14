@@ -1,48 +1,74 @@
 # DJ Deploy
-
-## Team
-
-  - __Product Owner__: Jonathan Mah
-  - __Scrum Master__: Rane Gridley
-  - __Development Team Members__: Matt Bresnan, Roland Fung
+![Travis Build Image](https://travis-ci.org/supportivesantas/project-ipsum.svg?branch=master)
 
 ## Table of Contents
-
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
-    1. [Installing Dependencies](#installing-dependencies)
-    1. [Tasks](#tasks)
 1. [Team](#team)
-1. [Contributing](#contributing)
+2. [Usage](#usage)
+  2.1 [Install Middleware](#installing-middleware)  
+  2.2 [Register Your App](#register-your-app)
+3. [Development](#development)
+  3.1. [Requirements](#requirements)
+  3.2. [Installing Dependencies](#installing-dependencies)
+  3.3. [Getting Started](#getting-started) 
+  3.4. [Requirements](#requirements)
+4. [Contributing](#contributing)
+5. [License](https://github.com/supportivesantas/project-ipsum/blob/master/LICENSE.md)
+
+## Team
+  - __Product Owner__: [Jonathan Mah](https://github.com/zelifus)
+  - __Scrum Master__: [Rane Gridley](https://github.com/ranebo)
+  - __Development Team Members__: [Matt Bresnan](https://github.com/mbresnan1701), [Roland Fung](https://github.com/rolandfung)
+
 
 ## Usage
 
-> Some usage instructions
+### Installing Middleware
 
-## Requirements
+### Register Your App 
 
-- Node 0.10.x
-- Redis 2.6.x
-- Postgresql 9.1.x
-- etc
-- etc
+
 
 ## Development
 
+### Requirements
+- Node 5.x
+- Redis 3.x
+- Postgresql 9.5.x
+- **Nginx+ load balanced system to run scaling features**
+
 ### Installing Dependencies
+Run `npm install` from the root directory.
 
-From within the root directory:
-
-`npm install
-`
+### Getting Started
+- Start the web server with `npm start`
+- Redis: This application uses Redis for session persistence. 
+    - Run `brew install redis` to install
+    - Run `redis-server` to start the serve
+  
+### Example Data and Application
+- Generate example traffic data:
+```
+node seed_data/index.js EXAMPLE_USER_NAME
+```
+- Generate example summary data:
+```
+node server/summaries/generateSummaries.js
+```
+- Start a sample user application with the following command, after changing the appropriate fields in middleware/sample.js
+``` 
+node middleware/sample.js
+```
 
 ### Testing
-`npm test`
+Run the test Mocha-Chai suite with `npm test`
 
-### Roadmap
 
-View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
+
+
+
+## Application Architecture ##
+
+<!-- View the project roadmap [here](LINK_TO_PROJECT_ISSUES) -->
 ```
                                                  +---------------------------+
                                                  |                           |
@@ -68,9 +94,9 @@ View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
    |                                                           |    |
    |                                                           |    |
 +--v-----------+   +-----------------------+                   |    |
+|              |   |                       |                   |    |
 |  Deployment  |   |                       |                   |    |
-| Platform API |   |                       |                   |    |
-|(DigitalOcean)|   |  nginx load balancer  |                   |    |
+| Platform API |   |  nginx load balancer  |                   |    |
 |              |   |                       |                   |    |
 +--+-----------+   |                       |                   |    |
    |               |                       |                   |    |
@@ -95,6 +121,14 @@ View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
 
 ```
 
+
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+
+### License
+See [License](https://github.com/supportivesantas/project-ipsum/blob/master/LICENSE)
+
+
+
