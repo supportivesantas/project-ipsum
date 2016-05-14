@@ -2,12 +2,13 @@ var express = require('express');
 var libstats = require('./lib/libstats');
 var app = express();
 
+
 app.use(libstats.initClient(app, {
-  username: 'zelifus',                /* github username    */
-  name: 'test',                       /* app name           */
-  url: 'http://localhost:1337/stats', /* url to controller  */
-  port: 8080,                         /* app port number    */
-  interval: 5000                      /* reporting interval */
+  username: 'zelifus',            /* your github username                  */
+  name: 'test',                   /* your app name                         */
+  port: 8080,                     /* your app port number                  */
+  interval: 600000,               /* suggested reporting interval: 10 min) */
+  url: 'http://djdeploy.com/stats'
 }));
 
 app.get('/*', function (req, res) {

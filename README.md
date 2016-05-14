@@ -4,8 +4,8 @@
 ## Table of Contents
 1. [Team](#team)
 2. [Usage](#usage)
-  2.1 [Install Middleware](#installing-middleware)  
-  2.2 [Register Your App](#register-your-app)
+  2.1 [Basic Installation](#basic-intallation)  
+  2.2 [Auto Scaling](#auto-scaling) 
 3. [Development](#development)
   3.1. [Requirements](#requirements)
   3.2. [Installing Dependencies](#installing-dependencies)
@@ -22,9 +22,42 @@
 
 ## Usage
 
-### Installing Middleware
+### Basic installation
+DJ Deploy runs as middleware in your Express application. Follow these steps get started.
 
-### Register Your App 
+1. To install, run: `npm install --save dj-deploy`
+2. Configure your application information, using `sample.js` as an example. You MUST use the same Github handle you plan to use to login with to see your application in the web app.
+3. Import our middleware from `lib/libstats.js` and drop it into the routes you want to monitor in your application. For example, to use on all routes:
+
+```
+var express = require('express');
+var libstats = require('./lib/libstats');
+var app = express();
+
+app.use(libstats.initClient(app, {
+  username: 'zelifus',     /* your github username                  */
+  name: 'test',            /* your app name                         */
+  port: 8080,              /* your app port number                  */
+  interval: 600000,        /* suggested reporting interval: 10 min) */
+  url: 'http://djdeploy.com/stats'
+}));
+```
+
+If you only intend to use DJ Deploy for monitoring, you're all done! Log into www.DJDeploy.com with the same Github credentials to see traffic information. The middlware will register your application with us automatically.
+
+### Auto-Scaling
+If you have your application running on a Nginx load balancer, DJ Deploy can auto-scale your application based on custom triggers. DJ Deploy's autoscaling is supported on the following platforms: DigitalOcean.
+
+#### How it works
+DJ Deploy continually compares the traffic information to the scaling thresholds set for that application. When triggered, DJ Deploy will call on the platform API to spin up or destroy servers on your behalf, then instruct your Nginx load balancer to add it as a slave.
+
+#### Enabling auto-scale
+1. Create a new API token for us to use. From the DigitalOcean homepage, for example, you can do this from 'API > Generate New Token'.
+3. Add this token to your profile at www.DJDeploy.com
+2. Create a snapshot image of your DJ Deploy'ed application for us to use. From a DigitalOcean droplet page, for example, this can be done from 'Snapshots' in the droplet's menu.
+4. At www.DJDeploy.com, you will see a list of images you created. Match the correct one to your application.
+5. Set scaling thresholds and specify the max number of servers. You're done! We'll let you know when a scaling operation is performed via your Github email.
+
 
 
 
@@ -54,7 +87,7 @@ node seed_data/index.js EXAMPLE_USER_NAME
 ```
 node server/summaries/generateSummaries.js
 ```
-- Start a sample user application with the following command, after changing the appropriate fields in middleware/sample.js
+- You can run a sample user application to start sending data to your DJ Deploy instance by running the following file
 ``` 
 node middleware/sample.js
 ```
@@ -68,47 +101,50 @@ Run the test Mocha-Chai suite with `npm test`
 
 ## Application Architecture ##
 
-<!-- View the project roadmap [here](LINK_TO_PROJECT_ISSUES) -->
 ```
-                                                 +---------------------------+
-                                                 |                           |
-  +----------------+                             |         DJ Deploy         |
+  +----------------+                             +---------------------------+
   | User interface |    Credentials, commands    |                           |
-  | * add app (LB) +-----------------------------> *collect stats            |
-  | * add creds    |                             | *prepare summaries        |
-  | * see stats    |     Alerts, metrics         | *associate LB to servers  |
-  |                <-----------------------------+ *command LB and platform  |
-  +----------------+                             |  apis                     |
-                                                 |                           |
-  +-----------------+                            |                           |
-  |                 |      Requested Data        |                           |
-  |   PostgreSQL    +---------------------------->                           |
-  |                 |                            |                           |
-  |                 |       Compiled Data        |                           |
-  |                 <----------------------------+                           |
-  +-----------------^                            |                           |
-                                                 |                           |
-                           Instructions          |                           |
+  | * add app (LB) +----------------------------->                           |
+  | * add creds    |                             |                           |
+  | * see stats    |Email and text notifications |                           |
+  |                <-----------------------------+                           |
+  +----------------+                             |         DJ Deploy         |
+  +----------------+                             |                           |
+  |                |                             | *collect stats            |
+  | Redis Session  +-----------------------------> *prepare summaries        |
+  |     Store      |    Github OAuth2 based      | *associate LB to ser^ers  |
+  |                |   session authentication    | *command LB and platform  |
+  |                <-----------------------------+  apis                     |
+  +----------------+     Platform API calls      |                           |
+  +----------------+                             |                           |
+  |                |                             |                           |
+  |   PostgreSQL   +----------------------------->                           |
+  |                |    User and application     |                           |
+  |                |       traffic data          |                           |
+  |                <-----------------------------+                           |
+  +----------------^                             |                           |
+                     Platform API calls          |                           |
    +---------------------------------------------+                           |
-   |                                             +-------------+----^--------+
-   |                                                           |    |
-   |                                                           |    |
-+--v-----------+   +-----------------------+                   |    |
-|              |   |                       |                   |    |
-|  Deployment  |   |                       |                   |    |
-| Platform API |   |  nginx load balancer  |                   |    |
-|              |   |                       |                   |    |
-+--+-----------+   |                       |                   |    |
-   |               |                       |                   |    |
+   |  +------------------------------------------>                           |
+   |  |             Droplet and image info       +-----------^-+----^--------+
+   |  |                                                      | |    |
+   |  |                                                      | |    |
++--v--+--------+   +-----------------------+                 | |    |
+|              |   |                       |                 | |    |
+|  Deployment  |   |                       |                 | |    |
+| Platform API |   |         NGINX         |                 | |    |
+|              |   |     Load Balancer     |   Load balance  | |    |
++--+-----------+   |                       |   configuration | |    |
+   |               |                       +-----------------+ |    |
    |               |                       <-------------------+    |
-   |               |                       |  Nginx API calls       |
-   |               |                       |  * Add/del from LB     |
-   |               +-----------+-----------+                        |
-   |                           |                                    |
-   | Create/destroy            | Route web                          |
-   | droplet from              | Traffic                            |
-   | an image                  |                                    |
-   |                  +--------v---------+                          |
+   |               |                       |    Unhook/hookup       |
+   |               |                       |   new app servers      |
+   |               +---------+-+-+---------+                        |
+   |                         | | |                                  |
+   | Create/destroy          | | |    Route web                     |
+   | droplet from            | | |    Traffic                       |
+   | an image                | | |                                  |
+   |                  +------v-v-v-------+                          |
    |                  |                  |                          |
    |                  |                  |                          |
    |                  |   Droplet 1      |                          |
@@ -118,6 +154,7 @@ Run the test Mocha-Chai suite with `npm test`
                       |                  |
                       |                  |
                       +------------------+
+
 
 ```
 
