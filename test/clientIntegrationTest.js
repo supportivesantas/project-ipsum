@@ -315,7 +315,7 @@ describe('Client Integration Tests', () => {
       });
   });
 
-  it('should add a load balancer', (done) => {
+  xit('should add a load balancer', (done) => {
     requestP({
       method: 'POST',
       uri: 'http://localhost:' + port + '/nginx/balancers',
@@ -328,16 +328,13 @@ describe('Client Integration Tests', () => {
       },
     })
       .then(() => {
-        client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
-          .then((result) => {
-            expect(result[0].zone).to.equal('MAGA');
-            lbID = result[0].id;
-            done();
-          })
-          .catch((error) => {
-            expect(error).to.not.exist;
-            done();
-          });
+        return client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ${userID}',
+          { userID: userID });
+      })
+      .then((result) => {
+        expect(result[0].zone).to.equal('MAGA');
+        lbID = result[0].id;
+        done();
       })
       .catch((error) => {
         expect(error).to.not.exist;
@@ -382,23 +379,17 @@ describe('Client Integration Tests', () => {
       },
     })
       .then(() => {
-        client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ' + userID)
-          .then((result) => {
-            expect(result.length).to.equal(0);
-            client.query('SELECT * FROM "clientServers" WHERE "users_id" = ' + userID)
-              .then((res) => {
-                expect(res[0].master).to.equal(null);
-                done();
-              })
-              .catch((err) => {
-                expect(err).to.not.exist;
-                done();
-              });
-          })
-          .catch((error) => {
-            expect(error).to.not.exist;
-            done();
-          });
+        return client.query('SELECT * FROM "loadbalancers" WHERE "users_id" = ${userID}',
+          { userID: userID });
+      })
+      .then((result) => {
+        expect(result.length).to.equal(0);
+        return client.query('SELECT * FROM "clientServers" WHERE "users_id" = ${userID}',
+          { userID: userID });
+      })
+      .then((res) => {
+        expect(res[0].master).to.equal(null);
+        done();
       })
       .catch((error) => {
         expect(error).to.not.exist;
