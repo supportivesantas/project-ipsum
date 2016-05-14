@@ -19,20 +19,17 @@ var isDeveloping = process.env.NODE_ENV !== 'production'; // do not change this 
 const port = isDeveloping ? 1337 : process.env.port;
 
 //To server the bundled file in a dev environment (simulating prod environment):
-//  1. run `webpack  --config webpack.production.config.js` to create the bundle (20-30 sec)
-//  2. uncomment the line below to disable webpack's dev server
-     // isDeveloping = false
+//  1. run `webpack  --config webpack.production.config.js` to create the bundle in /build (20-30 sec)
+//  2. set isDeveloping to false (uncomment the line below)
+// isDeveloping = false;
 //  3. npm start
 if (isDeveloping) {  
   const compiler = webpack(config);
   app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
   app.use(webpackHotMiddleware(compiler));
-} else {
-  app.use(express.static(path.resolve(__dirname, '../public')));
 }
-/* ========================== */
 
-
+app.use(express.static(path.resolve(__dirname, '../public')));
 
 // const jsonParser = bodyParser.json();
 app.use(bodyParser.json()); // for parsing application/json

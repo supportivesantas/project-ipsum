@@ -6,7 +6,7 @@ module.exports = {
     './public/index.js'],
   output: {
     path: path.resolve('./public/build'),
-    filename: 'bundle.min.js',
+    filename: 'bundle.min.js'
   },
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
