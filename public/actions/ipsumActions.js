@@ -106,4 +106,10 @@ module.exports = {
       data: data
     };
   },
+  POPULATE_IMAGES(data) {
+    return {
+      type: 'POPULATE_IMAGES',
+      data: data
+    };
+  },
 };

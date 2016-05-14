@@ -3,6 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import request from '../util/restHelpers.js';
 import { Button, Col, ControlLabel, FormControl, FormGroup, Grid, Panel, Row, Form } from 'react-bootstrap';
+import Select from 'react-select';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
 const selectRowProp = {
@@ -14,13 +15,13 @@ class AddLoadBalancer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ip: "",
-      port: "",
-      zone: "",
-      image: "",
-      min_threshold: "",
-      max_threshold: "",
-      max_servers: "",
+      ip: undefined,
+      port: undefined,
+      zone: undefined,
+      image: undefined,
+      min_threshold: undefined,
+      max_threshold: undefined,
+      max_servers: undefined,
 
     };
   }
@@ -29,23 +30,17 @@ class AddLoadBalancer extends React.Component {
     //TODO: fetch images list and load balancers list (how do we associate load balancers to servers)
     request.get('/nginx/balancers', (error, res) => {
       if (error) {console.log("Error getting Load Balancers", error)};
-
-      console.log("Load Balancers", res);
+      this.props.dispatch(actions.POPULATE_LOAD_BALANCERS(res.body));
+      console.log("Load Balancers", this.props.state.loadBalancers);
     });
 
     request.get('/api/list_all_images', (error, res) => {
       if (error) {console.log("Error getting image list", error)}
-      console.log("Images", res);
+      this.props.dispatch(actions.POPULATE_IMAGES(res.body));
+      console.log("Images", this.props.state.imageList);
     });
 
     //sample before adding restHandlers
-    this.props.dispatch(actions.POPULATE_LOAD_BALANCERS([{
-      id: "#",
-      ip: "1.1.1.1",
-      hostname: "IDK",
-      platform: "azDOaws",
-      active: "Elite",
-      apps: "Coool" }]));
     // console.log(this.props.state.loadBalancers);
   }
 
@@ -56,6 +51,15 @@ class AddLoadBalancer extends React.Component {
       request.post('/nginx/balancers', this.state, (error, res) => {
         if (error) {console.log("Error adding new lb",error)}
         console.log("THIS IS THE RESPONSE", res);
+      });
+      this.setState({
+        ip: undefined,
+        port: undefined,
+        zone: undefined,
+        image: undefined,
+        min_threshold: undefined,
+        max_threshold: undefined,
+        max_servers: undefined,
       });
     }
   }
@@ -80,7 +84,25 @@ class AddLoadBalancer extends React.Component {
 
   handleImage(e) {
     this.setState({
-      image: e.target.value
+      image: e.value
+    });
+  }
+
+  handleMinThresh(e) {
+    this.setState({
+      min_threshold: e.target.value
+    });
+  }
+
+  handleMaxThresh(e) {
+    this.setState({
+      max_threshold: e.target.value
+    });
+  }
+
+  handleMaxServers(e) {
+    this.setState({
+      max_servers: e.target.value
     });
   }
 
@@ -152,26 +174,32 @@ class AddLoadBalancer extends React.Component {
                   <Col xs={6} lg={3}>
                       <ControlLabel>NGINX IP Address:</ControlLabel>
                       <FormControl onChange={this.handleIp.bind(this)} value={this.state.ip}/>
-                  </Col>
-                  <Col xs={6} lg={3}>
                       <ControlLabel>NGINX Port:</ControlLabel>
                       <FormControl onChange={this.handlePort.bind(this)} value={this.state.port}/>
                   </Col>
                   <Col xs={6} lg={3}>
                       <ControlLabel>Zone:</ControlLabel>
                       <FormControl onChange={this.handleZone.bind(this)} value={this.state.zone}/>
+                      <ControlLabel>Image for adding servers:</ControlLabel>
+                      <Select value={this.state.image} options={this.props.state.imageList} clearable={false} name='imageSelect' onChange={this.handleImage.bind(this)} />
                   </Col>
                   <Col xs={6} lg={3}>
-                      <ControlLabel>Choose Image for adding servers:</ControlLabel>
-                      <FormControl onChange={this.handleImage.bind(this)} value={this.state.image}/>
+                      <ControlLabel>Minimum Threshold:</ControlLabel>
+                      <FormControl type="number" onChange={this.handleMinThresh.bind(this)} value={this.state.min_threshold}/>
+                      <ControlLabel>Maximum Threshold:</ControlLabel>
+                      <FormControl type="number" onChange={this.handleMaxThresh.bind(this)} value={this.state.max_threshold}/>
+                  </Col>
+                  <Col xs={6} lg={3}>
+                      <ControlLabel>Max Number of Servers:</ControlLabel>
+                      <FormControl type="number" onChange={this.handleMaxServers.bind(this)} value={this.state.max_servers}/>
+                      <div style={{"margin":"auto", "textAlign":"center"}}>
+                        <Button style={{"marginTop":"25px"}} onClick={this.handleSubmit.bind(this)} bsStyle="success">
+                          Add Load Balancer
+                        </Button>
+                      </div>
                   </Col>
               </Form>
                   <Row>
-                    <div style={{"margin":"auto", "textAlign":"center"}}>
-                      <Button style={{"margin":"30px 0"}} onClick={this.handleSubmit.bind(this)} bsSize="large" bsStyle="success">
-                        Add Load Balancer
-                      </Button>
-                    </div>
                   </Row>
             </Grid>
           </Panel>
@@ -183,3 +211,4 @@ class AddLoadBalancer extends React.Component {
 
 AddLoadBalancer = connect(state => ({state: state}))(AddLoadBalancer);
 export default AddLoadBalancer;
+                      // <FormControl onChange={this.handleImage.bind(this)} value={this.state.image}/>

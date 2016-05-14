@@ -102,7 +102,7 @@ module.exports = {
             ip: data.ip,
             port: data.port,
             zone: data.zone,
-            image: +data.image,
+            image: data.image,
             users_id: req.user.id,
             min_threshold: data.min_threshold || 10000,
             max_threshold: data.max_threshold || 50000,
