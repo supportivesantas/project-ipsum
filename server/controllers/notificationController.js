@@ -1,6 +1,6 @@
 const api_key = 'key-XXXXXXXXXXXXXXXXXXXXXXX';
 const domain = 'mydomain.mailgun.org';
-const mailgun = require('mailgun-js')({ apiKey: api_key, domain: domain });
+const mailgun = require('mailgun-js')({ apiKey: api_key, domain: 'djdeploy.com' });
 const client = require('twilio')('YOUR_SID', 'YOUR_KEY');
 
 const generateEmailMsg = (type, target) => {

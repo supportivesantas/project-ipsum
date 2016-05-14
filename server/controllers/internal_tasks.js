@@ -1,5 +1,6 @@
 "use strict";
 const clientApps = require('../db/collections/client-apps');
+const clientServer = require('../db/models/client-server');
 const clientServers = require('../db/collections/client-server');
 const hashes = require('../db/collections/hashes');
 const Creds = require('../db/collections/service-creds');
@@ -434,11 +435,19 @@ internalTasks.attachServerLB = function (userID, serverID, appPort, lbID) {
 };
 
 internalTasks.removeServerLB = function (userID, serverID, lbID) {
-  
+
 };
 
 internalTasks.checkThreshold = function (userID, serverID) {
-  
+
+};
+
+internalTasks.assignPlatform = (id, platform) => {
+  clientServers.model.where({ id: id }).fetch()
+    .then((server) => {
+      server.set('platform', platform);
+      server.save();
+    });
 };
 
 

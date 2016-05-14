@@ -8,6 +8,7 @@ var lookup = require('./lookup');
 var internalTasks = require('./internal_tasks');
 var nginxController = require('./nginxController');
 var Promise = require('bluebird');
+var ipHelpers = require('./ipHelpers.js');
 var statsController = {};
 
 /* store the stats into postgresql */
@@ -114,10 +115,20 @@ statsController.registerClient = function (req, res) {
     })
     .then(function (clientServer) {
       if (!clientServer) {
+        let platform;
+        if (ipHelpers.isAzure(ip)) {
+          platform = 'Azure';
+        } else if (ipHelpers.isAWS(ip)) {
+          platform = 'AWS';
+        } else {
+          platform = 'Digital Ocean';
+        }
+
         return new clientServers.model({
           users_id: userID,
           ip: ip,
-          hostname: hostname
+          hostname: hostname,
+          platform: platform,
         }).save();
       } else {
         return clientServer;
@@ -166,6 +177,8 @@ statsController.registerClient = function (req, res) {
       internalTasks.syncServersToPlatforms(userID);
       internalTasks.syncServersToLB(userID);
       // internalTasks.spinUpServerInLB(userID, 1);
+
+      //HEREE MATT
 
       // testing for unhook and destroy, with hardcoded lb id#
       // internalTasks.unhookAndDestoryServer(3, function(err, res) {
