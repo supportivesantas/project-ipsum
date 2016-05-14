@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import request from '../util/restHelpers.js';
 import { Button, Col, ControlLabel, FormControl, FormGroup, Grid, Panel, Row, Form } from 'react-bootstrap';
 import Select from 'react-select';
+import _ from 'underscore';
+import LoadBalancerListEntry from './loadBalancerListEntry.js';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
 const selectRowProp = {
@@ -27,21 +29,24 @@ class AddLoadBalancer extends React.Component {
   }
 
   componentDidMount() {
-    //TODO: fetch images list and load balancers list (how do we associate load balancers to servers)
     request.get('/nginx/balancers', (error, res) => {
       if (error) {console.log("Error getting Load Balancers", error)};
-      this.props.dispatch(actions.POPULATE_LOAD_BALANCERS(res.body));
-      console.log("Load Balancers", this.props.state.loadBalancers);
+      let allLoadBalancers = res.body;
+      request.get('/api/list_all_images', (error, res) => {
+        if (error) {console.log("Error getting image list", error)}
+          let imageList = res.body;
+          let loadBalancersWithImageLabel = [];
+          _.each(allLoadBalancers, (lb) => {
+            let foundImage = _.findWhere(imageList, {value: lb.image});
+            lb.imageLabel = foundImage ? foundImage.label : "Not a real image. testing here";
+            loadBalancersWithImageLabel.push(lb);
+          });
+        this.props.dispatch(actions.POPULATE_IMAGES(imageList));
+        this.props.dispatch(actions.POPULATE_LOAD_BALANCERS(loadBalancersWithImageLabel));
+        console.log("Images", this.props.state.imageList);
+        console.log("Load Balancers", this.props.state.loadBalancers);
+      });
     });
-
-    request.get('/api/list_all_images', (error, res) => {
-      if (error) {console.log("Error getting image list", error)}
-      this.props.dispatch(actions.POPULATE_IMAGES(res.body));
-      console.log("Images", this.props.state.imageList);
-    });
-
-    //sample before adding restHandlers
-    // console.log(this.props.state.loadBalancers);
   }
 
   handleSubmit() {
@@ -50,7 +55,6 @@ class AddLoadBalancer extends React.Component {
     } else {
       request.post('/nginx/balancers', this.state, (error, res) => {
         if (error) {console.log("Error adding new lb",error)}
-        console.log("THIS IS THE RESPONSE", res);
       });
       this.setState({
         ip: undefined,
@@ -107,20 +111,18 @@ class AddLoadBalancer extends React.Component {
   }
 
   render() {
+    console.log("RENDERING")
     return (
       <Grid>
 
         <Row>
-          <Col md={12} xs={12}>
-            <BootstrapTable ref='table' data={this.props.state.loadBalancers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
-              <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Load Balancer ID</TableHeaderColumn>
-              <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Load Balancer IP</TableHeaderColumn>
-              <TableHeaderColumn dataField="hostname" dataAlign="center" dataSort={true}>Hostname</TableHeaderColumn>
-              <TableHeaderColumn dataField="platform" dataSort={true}>Platform</TableHeaderColumn>
-              <TableHeaderColumn dataField="active" dataSort={true}>Status</TableHeaderColumn>
-              <TableHeaderColumn dataField="apps" dataSort={true}>Application</TableHeaderColumn>
-            </BootstrapTable>
-          </Col>
+          <Panel header={<h1>Your Load Balancers</h1>}>
+            <Grid fluid>
+              {this.props.state.loadBalancers.map((loadBalancer) => {
+                return <LoadBalancerListEntry key={loadBalancer.id} lb={loadBalancer} renderLoadBalancer={this.render.bind(this)}/>
+              })}
+            </Grid>
+          </Panel>
         </Row>
 
         <Row>

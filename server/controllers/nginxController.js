@@ -167,4 +167,20 @@ module.exports = {
       });
   },
 
+  updateImage(req, res) {
+    console.log("...............", req.body)
+    LoadBalancer.where({users_id: req.user.id, id: req.body.loadBalancerId})
+      .fetch()
+      .then((lb) => {
+        lb.set('image', req.body.image)
+        .save()
+        .then((updatedLb) => {
+          res.send(updatedLb);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: Could not update image", error)
+      });
+  }
+
 };
