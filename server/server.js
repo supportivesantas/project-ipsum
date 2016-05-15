@@ -11,18 +11,36 @@ const userRouter = require('./routes/userRouter.js');
 const nginxRouter = require('./routes/nginxRouter.js');
 const msgCtrl = require('./controllers/notificationController.js');
 //add this middleware to protected routes. redirects to github login page if not authenticated
-const ensureAuthenticated = require('./auth/passport.js').ensureAuthenticated;
+const ensureAuthenticated = require('./auth/passport.js');
 
 const app = express();
 
-const compiler = webpack(config);
+var isDeveloping = process.env.NODE_ENV !== 'production'; // do not change this to const
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
+//To server the bundled file in a dev environment (simulating prod environment):
+//  1. run `webpack  --config webpack.production.config.js` to create the bundle in /build (20-30 sec)
+//  2. set isDeveloping to false (uncomment the line below)
+// isDeveloping = false;
+//  3. npm start
+if (isDeveloping) {
+  const compiler = webpack(config);
+  const middleware = webpackDevMiddleware(compiler, {
+    publicPath: config.output.publicPath,
+    contentBase: 'src',
+    stats: {
+      colors: true,
+      hash: false,
+      timings: true,
+      chunks: false,
+      chunkModules: false,
+      modules: false
+    }
+  });
+
+  app.use(middleware);
   app.use(webpackHotMiddleware(compiler));
 }
 
-// const jsonParser = bodyParser.json();
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -33,7 +51,6 @@ require('./auth/passport')(passport); // pass passport for configuration
 configRoutes.configRoutes(app, passport); // pass app for configuration
 /*================================================*/
 
-app.use(express.static('./dist'));
 app.use('/getStats', /*configRoutes.ensureAuthenticated,*/ getStats_controller);
 app.use('/stats', stats_controller);
 app.use('/user', /*configRoutes.ensureAuthenticated,*/ userRouter);
@@ -45,14 +62,9 @@ const makeRequest = require('./api/makeRequest.js');
 const sendReply = require('./api/sendReply');
 app.use('/api/:action', configureRequest, makeRequest, sendReply);
 
-app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../public/index.html'));
+app.use(express.static(__dirname + '/../public'));
+app.get('*', function response(req, res) {
+  res.sendFile(path.join(__dirname, '/../public/index.html'));
 });
-
-app.get('*', (request, response) => {
-  console.log('directing to index');
-  response.sendFile(path.resolve(__dirname, '../public/index.html'));
-});
-
 
 module.exports = app;
