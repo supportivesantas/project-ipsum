@@ -9,3 +9,6 @@ jsconfig.json
 
 # OSX Specific
 **/.DS_Store
+public/build
+npm-debug.log
+dump.rdb
