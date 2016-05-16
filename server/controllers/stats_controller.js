@@ -115,13 +115,11 @@ statsController.registerClient = function (req, res) {
     })
     .then(function (clientServer) {
       if (!clientServer) {
-        let platform;
+        let platform = '';
         if (ipHelpers.isAzure(ip)) {
           platform = 'Azure';
         } else if (ipHelpers.isAWS(ip)) {
           platform = 'AWS';
-        } else {
-          platform = 'Digital Ocean';
         }
 
         return new clientServers.model({
