@@ -4,11 +4,9 @@ path {
   stroke-width: 3;
   fill: none;
 }
-
 .panel {
   transition: all .5 ease;
 }
-
 .axis {
   shape-rendering: crispEdges;
 }
@@ -44,29 +42,25 @@ svg#serverGraph {
   /*color: red;*/
   text-align: left;
 }
-
 .appsbar {
   fill: #66D9EF;
 }
-
 .appsbar:hover {
   fill: #A6E22E;
 }
-
 .axisM {
   font: 10px sans-serif;
 }
-
 .axisM path,
 .axisM line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
-
 .x.axisM path {
   display: none;
 }
+
 .d3-tip {
   line-height: 1;
   font-weight: bold;
@@ -104,7 +98,6 @@ svg#serverGraph {
 ::-webkit-scrollbar {
     width: 0px;
 }
-
 .server-route-list {
   max-height: 478px;
   overflow-y: scroll;
@@ -176,7 +169,20 @@ button {
 }
 /*============================================*/
 /*=========== WELCOME PAGE STYLING ============*/
-
+.container-fluid .jumbotron{
+  border-radius: 0px;
+}
+.technologies {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: row wrap;
+}
+.techbadge{
+  margin:1em;
+  max-width:10em;
+  max-height:10em;
+}
 
 
 

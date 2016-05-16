@@ -22,7 +22,7 @@ class MainPage extends React.Component {
         this.props.dispatch(actions.MASS_POPULATE_APPS(data.apps));
         this.props.dispatch(actions.MASS_POPULATE_SERVERS(data.servers));
       } else {
-        browserHistory.push('/login');
+        browserHistory.push('/logout');
       }
     });
   }
