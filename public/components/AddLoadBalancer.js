@@ -32,6 +32,7 @@ const getImagesAndLoadBalancers = (that) => {
       });
       that.props.dispatch(actions.POPULATE_IMAGES(imageList));
       that.props.dispatch(actions.POPULATE_LOAD_BALANCERS(sortedLBs));
+      console.log("Load Balancer store", that.props.state.loadBalancers)
     });
   });
 };
