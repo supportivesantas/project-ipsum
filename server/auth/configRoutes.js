@@ -10,8 +10,7 @@ const configRoutes = function(app, passport) {
   app.use(methodOverride());
   app.use(session({
     store: new RedisStore({
-      host: 'localhost',
-      port: 6379,
+      url: process.env.REDIS_CONNECTION_STRING,
       db: 1,
       client: redisClient,
     }),
