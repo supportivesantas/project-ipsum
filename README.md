@@ -4,13 +4,12 @@
 ## Table of Contents
 1. [Team](#team)
 2. [Usage](#usage)
-  2.1 [Basic Installation](#basic-intallation)  
-  2.2 [Auto Scaling](#auto-scaling) 
+  - [Basic Installation](#basic-intallation)  
+  - [Auto Scaling](#auto-scaling) 
 3. [Development](#development)
-  3.1. [Requirements](#requirements)
-  3.2. [Installing Dependencies](#installing-dependencies)
-  3.3. [Getting Started](#getting-started) 
-  3.4. [Requirements](#requirements)
+  - [Requirements](#requirements)
+  - [Installing Dependencies](#installing-dependencies)
+  - [Getting Started](#getting-started) 
 4. [Contributing](#contributing)
 5. [License](https://github.com/supportivesantas/project-ipsum/blob/master/LICENSE.md)
 
@@ -63,6 +62,11 @@ DJ Deploy continually compares the traffic information to the scaling thresholds
 
 ## Development
 
+To serve the bundled file in a dev environment (simulating a prod environment):
+1. run `webpack --config webpack.production.config.js` to create the bundle in the /build folder (20-30 sec)
+2. change isDeveloping to 'false' in server/server.js
+3. npm start
+
 ### Requirements
 - Node 5.x
 - Redis 3.x
@@ -76,7 +80,7 @@ Run `npm install` from the root directory.
 - Start the web server with `npm start`
 - Redis: This application uses Redis for session persistence. 
     - Run `brew install redis` to install
-    - Run `redis-server` to start the serve
+    - Run `redis-server` to start the server
   
 ### Example Data and Application
 - Generate example traffic data:
@@ -90,6 +94,12 @@ node server/summaries/generateSummaries.js
 - You can run a sample user application to start sending data to your DJ Deploy instance by running the following file
 ``` 
 node middleware/sample.js
+```
+- Set the correct environment variables:
+```
+export PG_CONNECTION_STRING=postgres://localhost
+export GITHUB_CLIENT_SECRET=YOUR_SECRET_HERE
+export MAILGUN_SECRET=YOUR_SECRET_HERE
 ```
 
 ### Testing

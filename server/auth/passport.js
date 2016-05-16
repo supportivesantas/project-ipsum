@@ -1,13 +1,18 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
-// const GITHUB_CLIENT_ID = "--insert-github-client-id-here--";
-// const GITHUB_CLIENT_SECRET = "--insert-github-client-secret-here--";
 
-const GITHUB_CLIENT_ID = '339d89727f88765571b3';
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
-var User = require('../db/models/user');
 
+if (process.env.NODE_ENV === 'production'){
+  var GITHUB_CLIENT_ID = '3aef3c6212ed88f6ca56';
+  var callbackURL = 'http://djdeploy.com/auth/github/callback';
+} else {
+  var GITHUB_CLIENT_ID = '3b2b57a04b678dd74de1';
+  var callbackURL = 'http://localhost:1337/auth/github/callback';
+}
+
+var User = require('../db/models/user');
 
 module.exports = function(passport) {
   // =========================================================================
@@ -39,7 +44,7 @@ module.exports = function(passport) {
   passport.use(new GitHubStrategy({
       clientID: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.NODE_ENV === 'production' ? "http://djdeploy.com/auth/github/callback" : "http://localhost:1337/auth/github/callback"
+      callbackURL: callbackURL
     },
     function(token, refreshToken, profile, done) {
       new User({username: profile.username}).fetch()
