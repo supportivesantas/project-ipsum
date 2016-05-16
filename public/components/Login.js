@@ -92,6 +92,7 @@ class Login extends React.Component {
               <img className='techbadge' src="/assets/badges/psql.png"/>
               <img className='techbadge' src="/assets/badges/react.png"/>
               <img className='techbadge' src="/assets/badges/redis.png"/>
+              <img className='techbadge' src="/assets/badges/redux.png"/>
             </div>
           </Col>
         </Row>
