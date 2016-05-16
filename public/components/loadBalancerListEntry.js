@@ -27,11 +27,41 @@ class LoadBalancerListEntry extends React.Component {
     });
   }
 
+  thresholdValidation() {
+    if ( isNaN(this.state.max_threshold) ||
+      isNaN(this.state.min_threshold) || 
+      parseInt(this.state.min_threshold) > parseInt(this.state.max_threshold)
+      ) {
+      return 'error'
+    }
+  }
+
+  maxServersValidation() {
+    if ( 
+      isNaN(this.state.max_servers) ||
+      parseInt(this.state.max_servers <= 0) ) {
+      return 'error'
+    }
+  }
+
+  handleSettingUpdate(e) {
+    if (e.target.value) {
+      this.setState({
+        [e.target.id]: e.target.value
+      });
+    } else {
+      this.setState({
+        [e.target.id]: this.props.lb[e.target.id]
+      })
+    }
+  }
+
   handleSubmit() {
-    if (!this.state.image) { return; }
     request.put('/nginx/balancers', {
         loadBalancerId: this.props.lb.id,
-        image: this.state.image
+        max_threshold: parseInt(this.state.max_threshold),
+        min_threshold: parseInt(this.state.min_threshold),
+        max_servers: parseInt(this.state.max_servers)
       }, (error, res) => {
         request.get('/nginx/balancers', (error, res) => {
           this.props.remount();
@@ -42,7 +72,7 @@ class LoadBalancerListEntry extends React.Component {
   render() {
     return (
       <Row style={{borderBottom:"1px solid grey", paddingBottom:"20px"}}>
-        <h3> <span style={{fontSize:"16px", color:'grey'}}>Load Balancer At IP:</span> {this.props.lb.ip} </h3>
+        <h3> <span style={{fontSize:"1em", color:'grey'}}>Load Balancer At IP:</span> {this.props.lb.ip} </h3>
         <Col xs={12} md={4}>
         <h4>Info:</h4>
           <p>Zone: {this.props.lb.zone}</p>
@@ -50,36 +80,36 @@ class LoadBalancerListEntry extends React.Component {
           <h4>Settings:</h4>
 
           <Form horizontal>
-             <FormGroup controlId="formHorizontalEmail">
+             <FormGroup controlId="min_threshold" validationState={this.thresholdValidation.call(this)}>
                <Col componentClass={ControlLabel} sm={6}>
                  Minimum Threshold
                </Col>
                <Col sm={6}>
-                 <FormControl type="min_threshold" placeholder={this.state.min_threshold} />
+                 <FormControl placeholder={this.state.min_threshold} onChange={this.handleSettingUpdate.bind(this)}/>
                </Col>
              </FormGroup>
 
-             <FormGroup controlId="formHorizontalPassword">
+             <FormGroup controlId="max_threshold" validationState={this.thresholdValidation.call(this)}>
                <Col componentClass={ControlLabel} sm={6}>
                  Maximum Threshold
                </Col>
                <Col sm={6}>
-                 <FormControl type="max_threshold" placeholder={this.state.max_threshold} />
+                 <FormControl placeholder={this.state.max_threshold} onChange={this.handleSettingUpdate.bind(this)}/>
                </Col>
              </FormGroup>
 
-             <FormGroup controlId="formHorizontalPassword">
+             <FormGroup controlId="max_servers">
                <Col componentClass={ControlLabel} sm={6}>
                  Max Servers
                </Col>
                <Col sm={6}>
-                 <FormControl type="max_servers" placeholder={this.state.max_servers} />
+                 <FormControl placeholder={this.state.max_servers} onChange={this.handleSettingUpdate.bind(this)}/>
                </Col>
              </FormGroup>
 
              <FormGroup>
                <Col smOffset={2} sm={10}>
-                 <Button type="submit">
+                 <Button type="submit" onClick={this.handleSubmit.bind(this)}>
                    Update
                  </Button>
                </Col>
@@ -99,7 +129,7 @@ class LoadBalancerListEntry extends React.Component {
           <p> {this.props.lb.imageLabel}</p>
           <Select value={this.state.image} options={this.props.state.imageList} clearable={false} name='imageSelect' onChange={this.handleImage.bind(this)} />
           <div style={{"margin":"auto", "textAlign":"center"}}>
-            <Button style={{"marginTop":"25px"}} onClick={this.handleSubmit.bind(this)} bsStyle="success">
+            <Button style={{"marginTop":"25px"}} onClick={this.handleSubmit.bind(this)} >
               Update Image
             </Button>
           </div>
