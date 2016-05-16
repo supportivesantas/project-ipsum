@@ -1,4 +1,4 @@
-const api_key = 'key-XXXXXXXXXXXXXXXXXXXXXXX';
+const api_key = 'key-SOMETHING';
 const domain = 'mydomain.mailgun.org';
 const mailgun = require('mailgun-js')({ apiKey: api_key, domain: 'djdeploy.com' });
 const client = require('twilio')('YOUR_SID', 'YOUR_KEY');
@@ -7,14 +7,14 @@ const generateEmailMsg = (type, target) => {
   switch (type) {
     case ('servOffline'):
       return {
-        from: 'PROJECT IPSUM <me@samples.mailgun.org>',
+        from: 'DJ Deploy <me@djdeploy.com>',
         to: target,
         subject: 'Your server may be offline',
         text: 'Check it out',
       };
     case ('ddos'):
       return {
-        from: 'PROJECT IPSUM <me@samples.mailgun.org>',
+        from: 'DJ Deploy <me@djdeploy.com>',
         to: target,
         subject: 'ATTENTION! DDOS ATTACK PROBABLE!',
         text: 'You\'re getting DDOS\'d probably',

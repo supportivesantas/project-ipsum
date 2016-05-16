@@ -1,3 +1,3 @@
 const msgCtrl = require('./notificationController.js');
 
-msgCtrl.sendTextMessage('ddos');
+msgCtrl.sendEmailMessage('ddos', 'ranegri3@gmail.com');
