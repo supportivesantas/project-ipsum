@@ -112,4 +112,10 @@ module.exports = {
       data: data
     };
   },
+  POPULATE_SLAVE_SERVERS(data) {
+    return {
+      type: 'POPULATE_SLAVE_SERVERS',
+      data: data
+    };
+  },
 };
