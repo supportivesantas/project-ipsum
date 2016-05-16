@@ -49,6 +49,9 @@ class LoadBalancerListEntry extends React.Component {
         </Col>
         <Col xs={12} md={4}>
           <h4>Slave Servers:</h4>
+            { _.map(this.props.state.slaveServers[this.props.lb.slavesArrayIndex], (slave) => {
+              return <li> {slave.hostname} @ {slave.ip}</li>
+            })}
         </Col>
         <Col xs={12} md={4}>
           <h5 style={{color:'grey'}}>Current image:</h5>

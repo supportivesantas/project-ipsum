@@ -26,12 +26,19 @@ const getImagesAndLoadBalancers = (that) => {
         let foundImage = _.findWhere(imageList, {value: lb.image});
         lb.imageLabel = foundImage ? foundImage.label : "No Image specified, please choose one now";
         loadBalancersWithImageLabel.push(lb);
+        _.each(that.props.state.slaveServers, (slaveServer, index) => {
+          if (slaveServer[0].master === lb.id) {
+            lb.slavesArrayIndex = index;
+            return;
+          }
+        });
       });
       let sortedLBs = _.sortBy(loadBalancersWithImageLabel, (obj) => {
         return -obj.id;
       });
       that.props.dispatch(actions.POPULATE_IMAGES(imageList));
       that.props.dispatch(actions.POPULATE_LOAD_BALANCERS(sortedLBs));
+
     });
   });
 };
@@ -54,7 +61,8 @@ class AddLoadBalancer extends React.Component {
   componentWillMount() {
     request.get('/nginx/slaves', (err, res) => {
       if (err) { console.log("Error: Could not get slaves", err); }
-      console.log(res.body);
+      this.props.dispatch(actions.POPULATE_SLAVE_SERVERS(res.body));
+      console.log(this.props.state.slaveServers);
     });
   }
 

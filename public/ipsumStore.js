@@ -14,6 +14,7 @@ import tokensReducer from './reducers/tokensReducer.js';
 import myAppHistoryReducer from './reducers/myAppHistoryReducer.js';
 import loadBalancersReducer from './reducers/loadBalancersReducer.js';
 import imageListReducer from './reducers/imageListReducer.js';
+import slaveServersReducer from './reducers/slaveServersReducer.js';
 
 const getInitialState = () => {
   if (localStorage.getItem('state')) {
@@ -36,6 +37,7 @@ const getInitialState = () => {
       graphData: [],
       tokens: [],
       loadBalancers: [],
+      slaveServers: [],
     };
   }
 };
@@ -57,6 +59,7 @@ export default function configureStore(browserHistory, initialState = getInitial
     tokens: tokensReducer,
     loadBalancers: loadBalancersReducer,
     myAppHistory: myAppHistoryReducer,
+    slaveServers: slaveServersReducer,
   }), initialState, compose(
     window.devToolsExtension ? window.devToolsExtension() : f => f
     ));

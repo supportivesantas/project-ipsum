@@ -192,11 +192,16 @@ module.exports = {
       });
   },
 
-  updateImage(req, res) {
+  updateLoadBalancer(req, res) {
+    let updatedFields = {}
+    if (req.body.image) { updatedFields.image = req.body.image};
+    if (req.body.min_threshold) { updatedFields.min_threshold = req.body.min_threshold};
+    if (req.body.max_threshold) { updatedFields.max_threshold = req.body.max_threshold};
+    if (req.body.max_servers) { updatedFields.max_servers = req.body.max_servers};
     LoadBalancer.where({users_id: req.user.id, id: req.body.loadBalancerId})
       .fetch()
       .then((lb) => {
-        lb.set('image', req.body.image)
+        lb.set(updatedFields)
         .save()
         .then((updatedLb) => {
           res.send(updatedLb);
