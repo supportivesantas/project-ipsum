@@ -28,9 +28,9 @@ const inSubNet = (ip, subnet) => {
 module.exports = {
   isAzure(ip) {
     const addresses = azureList.AzurePublicIpAddresses.IpRange;
-    console.log(addresses);
     for (let i = 0; i < addresses.length; i++) {
-      if (inSubNet(ip, addresses[i])) {
+      if (inSubNet(ip, addresses[i]['-Subnet'])) {
+        console.log('Azure server found');
         return true;
       }
     }
@@ -39,9 +39,10 @@ module.exports = {
 
   isAWS(ip) {
     const addresses = awsList.prefixes;
-    console.log(addresses);
     for (let i = 0; i < addresses.length; i++) {
       if (inSubNet(ip, addresses[i].ip_prefix)) {
+        console.log('AWS server found');
+
         return true;
       }
     }
