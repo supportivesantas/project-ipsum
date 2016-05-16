@@ -137,6 +137,31 @@ module.exports = {
       });
   },
 
+  allSlaves(req, res) {
+    LoadBalancer.where({users_id: req.user.id}).fetchAll()
+    .then((LoadBalancers) => {
+      var promises = _.map(LoadBalancers.models, (model) => {
+        return  Servers.model.where({master: model.attributes.id})
+                  .fetchAll()
+                  .then((servers) => {
+                    return servers;
+                  })
+                  .catch((error) => {
+                    console.error("Error: Couldn't get slaves", error);
+                  });
+      });
+      return Promise.all(promises).then((lbServers) => {
+        return lbServers;
+      })
+      .then((lbServers) => {
+        res.send(lbServers);
+      });
+    })
+    .catch((error) => {
+      console.error("Error: could not get all slaves", error);
+    });
+  },
+
   removeLoadBalancer(req, res) {
     LoadBalancer.where({ id: req.body.id }).fetch()
       .then((lb) => {
@@ -168,7 +193,6 @@ module.exports = {
   },
 
   updateImage(req, res) {
-    console.log("...............", req.body)
     LoadBalancer.where({users_id: req.user.id, id: req.body.loadBalancerId})
       .fetch()
       .then((lb) => {

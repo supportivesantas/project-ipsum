@@ -9,6 +9,7 @@ nginxRouter.route('/balancers')
   .delete(auth.ensureAuthenticated, ctrl.removeLoadBalancer);
 
 nginxRouter.route('/slaves')
-  .post(auth.ensureAuthenticated, ctrl.addSlave);
+  .post(/*auth.ensureAuthenticated,*/ ctrl.addSlave)
+  .get(auth.ensureAuthenticated, ctrl.allSlaves);
 
 module.exports = nginxRouter;
