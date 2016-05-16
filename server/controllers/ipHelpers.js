@@ -27,7 +27,7 @@ const inSubNet = (ip, subnet) => {
 
 module.exports = {
   isAzure(ip) {
-    const addresses = JSON.parse(azureList).AzurePublicIpAddresses.IpRange;
+    const addresses = azureList.AzurePublicIpAddresses.IpRange;
     console.log(addresses);
     for (let i = 0; i < addresses.length; i++) {
       if (inSubNet(ip, addresses[i])) {
@@ -38,7 +38,7 @@ module.exports = {
   },
 
   isAWS(ip) {
-    const addresses = JSON.parse(awsList).prefixes;
+    const addresses = awsList.prefixes;
     console.log(addresses);
     for (let i = 0; i < addresses.length; i++) {
       if (inSubNet(ip, addresses[i].ip_prefix)) {
