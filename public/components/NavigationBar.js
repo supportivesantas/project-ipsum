@@ -1,33 +1,24 @@
 import React from 'react';
-import { Navbar, Nav, NavDropdown, MenuItem, NavItem } from 'react-bootstrap';
-import { Link } from 'react-router';
-import NavLink from './NavLink.js';
+import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 
 const NavigationBar = () => {
   return (
     <Navbar className="navigation" fluid>
       <Navbar.Header>
         <Navbar.Brand>
-          <NavLink to="/">DJ Deploy</NavLink>
+          <IndexLinkContainer to="/"><NavItem eventKey={1} href="#">DJ Deploy</NavItem></IndexLinkContainer>
         </Navbar.Brand>
         <Navbar.Toggle />
       </Navbar.Header>
       <Navbar.Collapse >
-        <Nav>
-{/*          <NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
-            <MenuItem eventKey={3.1}>Action</MenuItem>
-            <MenuItem eventKey={3.2}>Another action</MenuItem>
-            <MenuItem eventKey={3.3}>Something else here</MenuItem>
-            <MenuItem divider />
-            <MenuItem eventKey={3.3}>Separated link</MenuItem>
-          </NavDropdown>*/}
-        </Nav>
+
         <Nav pullRight>
-          <NavItem eventKey={1} href="#"><NavLink to="/">All Apps</NavLink></NavItem>
-          <NavItem eventKey={2} href="#"><NavLink to="/allServers">All Servers</NavLink></NavItem>
-          <NavItem eventKey={3} href="#"><NavLink to="/tokens">Tokens</NavLink></NavItem>
-          <NavItem eventKey={4} href="#"><NavLink to="/loadBalancer">Load Balancers</NavLink></NavItem>
-          <NavItem eventKey={5} href="#"><NavLink to="/logout">Logout</NavLink></NavItem>
+          <IndexLinkContainer to="/"><NavItem eventKey={1} href="#">All Apps</NavItem></IndexLinkContainer>
+          <LinkContainer to="/allServers"><NavItem eventKey={2} href="#">All Servers</NavItem></LinkContainer>
+          <LinkContainer to="/tokens"><NavItem eventKey={3} href="#">Tokens</NavItem></LinkContainer>
+          <LinkContainer to="/loadBalancer"><NavItem eventKey={4} href="#">Load Balancers</NavItem></LinkContainer>
+          <LinkContainer to="/logout"><NavItem eventKey={5} href="#">Logout</NavItem></LinkContainer>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

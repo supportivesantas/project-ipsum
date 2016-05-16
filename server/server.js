@@ -18,7 +18,7 @@ var isDeveloping = process.env.NODE_ENV !== 'production'; // do not change this 
 //To server the bundled file in a dev environment (simulating prod environment):
 //  1. run `webpack  --config webpack.production.config.js` to create the bundle in /build (20-30 sec)
 //  2. set isDeveloping to false (uncomment the line below)
-//isDeveloping = false;
+// isDeveloping = false;
 //  3. npm start
 if (isDeveloping) {
   const compiler = webpack(config);
