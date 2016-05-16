@@ -1,5 +1,6 @@
 import React from 'react';
 import actions from '../actions/ipsumActions.js';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import request from '../util/restHelpers.js';
 import { Button, Col, ControlLabel, FormControl, FormGroup, Grid, Panel, Row, Form } from 'react-bootstrap';
@@ -13,6 +14,28 @@ const selectRowProp = {
   bgColor: 'rgb(238, 193, 213)',
 };
 
+const getImagesAndLoadBalancers = (that) => {
+  request.get('/nginx/balancers', (error, res) => {
+    if (error) {console.log("Error getting Load Balancers", error)};
+    let allLoadBalancers = res.body;
+    request.get('/api/list_all_images', (error, res) => {
+      if (error) {console.log("Error getting image list", error)}
+      let imageList = res.body;
+      let loadBalancersWithImageLabel = [];
+      _.each(allLoadBalancers, (lb) => {
+        let foundImage = _.findWhere(imageList, {value: lb.image});
+        lb.imageLabel = foundImage ? foundImage.label : "No Image specified, please choose one now";
+        loadBalancersWithImageLabel.push(lb);
+      });
+      let sortedLBs = _.sortBy(loadBalancersWithImageLabel, (obj) => {
+        return -obj.id;
+      });
+      that.props.dispatch(actions.POPULATE_IMAGES(imageList));
+      that.props.dispatch(actions.POPULATE_LOAD_BALANCERS(sortedLBs));
+    });
+  });
+};
+
 class AddLoadBalancer extends React.Component {
   constructor(props) {
     super(props);
@@ -24,29 +47,19 @@ class AddLoadBalancer extends React.Component {
       min_threshold: undefined,
       max_threshold: undefined,
       max_servers: undefined,
-
+      remount: 0,
     };
   }
 
-  componentDidMount() {
-    request.get('/nginx/balancers', (error, res) => {
-      if (error) {console.log("Error getting Load Balancers", error)};
-      let allLoadBalancers = res.body;
-      request.get('/api/list_all_images', (error, res) => {
-        if (error) {console.log("Error getting image list", error)}
-          let imageList = res.body;
-          let loadBalancersWithImageLabel = [];
-          _.each(allLoadBalancers, (lb) => {
-            let foundImage = _.findWhere(imageList, {value: lb.image});
-            lb.imageLabel = foundImage ? foundImage.label : "Not a real image. testing here";
-            loadBalancersWithImageLabel.push(lb);
-          });
-        this.props.dispatch(actions.POPULATE_IMAGES(imageList));
-        this.props.dispatch(actions.POPULATE_LOAD_BALANCERS(loadBalancersWithImageLabel));
-        console.log("Images", this.props.state.imageList);
-        console.log("Load Balancers", this.props.state.loadBalancers);
-      });
+  componentWillMount() {
+    request.get('/nginx/slaves', (err, res) => {
+      if (err) { console.log("Error: Could not get slaves", err); }
+      console.log(res.body);
     });
+  }
+
+  componentDidMount() {
+    getImagesAndLoadBalancers(this);
   }
 
   handleSubmit() {
@@ -55,6 +68,8 @@ class AddLoadBalancer extends React.Component {
     } else {
       request.post('/nginx/balancers', this.state, (error, res) => {
         if (error) {console.log("Error adding new lb",error)}
+        this.remount();
+        ReactDom.findDOMNode(this).scrollIntoView();
       });
       this.setState({
         ip: undefined,
@@ -110,16 +125,22 @@ class AddLoadBalancer extends React.Component {
     });
   }
 
+  remount() {
+    getImagesAndLoadBalancers(this);
+    this.setState({
+      remount: ++this.state.remount
+    });
+  }
+
   render() {
-    console.log("RENDERING")
     return (
-      <Grid>
+      <Grid key={this.state.remount}>
 
         <Row>
           <Panel header={<h1>Your Load Balancers</h1>}>
             <Grid fluid>
               {this.props.state.loadBalancers.map((loadBalancer) => {
-                return <LoadBalancerListEntry key={loadBalancer.id} lb={loadBalancer} renderLoadBalancer={this.render.bind(this)}/>
+                return <LoadBalancerListEntry key={loadBalancer.id} remount={this.remount.bind(this)}lb={loadBalancer} renderLoadBalancer={this.render.bind(this)}/>
               })}
             </Grid>
           </Panel>
@@ -171,6 +192,7 @@ class AddLoadBalancer extends React.Component {
                   </pre>
                 </Col>
               </Row>
+
               <Form horizontal ref="loadInputs">
                 <h4 style={{textDecoration:'underline', marginTop: "50px"}}>Enter Your Load Balancer Information:</h4>
                   <Col xs={6} lg={3}>
@@ -201,8 +223,7 @@ class AddLoadBalancer extends React.Component {
                       </div>
                   </Col>
               </Form>
-                  <Row>
-                  </Row>
+
             </Grid>
           </Panel>
         </Row>
@@ -213,4 +234,3 @@ class AddLoadBalancer extends React.Component {
 
 AddLoadBalancer = connect(state => ({state: state}))(AddLoadBalancer);
 export default AddLoadBalancer;
-                      // <FormControl onChange={this.handleImage.bind(this)} value={this.state.image}/>

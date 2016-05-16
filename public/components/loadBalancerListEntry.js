@@ -17,11 +17,6 @@ class LoadBalancerListEntry extends React.Component {
     };
   }
 
-  componentWillMount() {
-    console.log(this.props.renderLoadBalancer);
-
-  }
-
   handleImage(e) {
     this.setState({
       image: e.value
@@ -34,24 +29,30 @@ class LoadBalancerListEntry extends React.Component {
         loadBalancerId: this.props.lb.id,
         image: this.state.image
       }, (error, res) => {
-        console.log("IMAGE UPDATE LB", res.body);
         request.get('/nginx/balancers', (error, res) => {
-          this.props.renderLoadBalancer()
-          // this.props.dispatch(actions.POPULATE_LOAD_BALANCERS(res.body));
+          this.props.remount();
         });
     });
-
   }
 
   render() {
     return (
-      <Row>
-        <h3> Load Balancer At IP: {this.props.lb.ip} </h3>
-        <Col xs={12} md={6}>
+      <Row style={{borderBottom:"1px solid grey", paddingBottom:"20px"}}>
+        <h3> <span style={{fontSize:"16px", color:'grey'}}>Load Balancer At IP:</span> {this.props.lb.ip} </h3>
+        <Col xs={12} md={4}>
           <h4>Info:</h4>
+          Minimum Threshold: {this.props.lb.min_threshold} <br/>
+          Maximum Threshold: {this.props.lb.max_threshold} <br/>
+          Server Limit: {this.props.lb.max_servers} <br/>
+          Zone: {this.props.lb.zone} <br/>
+          Port: {this.props.lb.port}
         </Col>
-        <Col xs={12} md={6}>
-          <h4>Current image: {this.props.lb.imageLabel}</h4>
+        <Col xs={12} md={4}>
+          <h4>Slave Servers:</h4>
+        </Col>
+        <Col xs={12} md={4}>
+          <h5 style={{color:'grey'}}>Current image:</h5>
+          <h4> {this.props.lb.imageLabel}</h4>
           <Select value={this.state.image} options={this.props.state.imageList} clearable={false} name='imageSelect' onChange={this.handleImage.bind(this)} />
           <div style={{"margin":"auto", "textAlign":"center"}}>
             <Button style={{"marginTop":"25px"}} onClick={this.handleSubmit.bind(this)} bsStyle="success">
