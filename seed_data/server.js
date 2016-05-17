@@ -24,7 +24,7 @@ class server {
   save(client) {
     let self = this;
     if (!this.saved) {
-      client.query('INSERT INTO "clientServers" (users_id, ip, hostname, platform) VALUES ($1, $2, $3) RETURNING id', [this.userID, this.ip, this.hostname])
+      client.query('INSERT INTO "clientServers" (users_id, ip, hostname) VALUES ($1, $2, $3) RETURNING id', [this.userID, this.ip, this.hostname])
         .then((result) => {
           self.id = result[0].id;
         })
