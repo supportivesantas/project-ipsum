@@ -1,14 +1,22 @@
 /* ============ BOOTSTRAP OVERRIDES =======  */
+html {
+  display: flex;
+  justify-content: center;
+}
 body {
   font-family: 'Varela';
   color:black;
 }
+
 .navbar-brand {
   font-weight: bold;
   font-size: 2em;
 }
 nav.navbar {
   background-color: #66D9EF;
+}
+.row {
+  overflow:hidden;
 }
 /* override the gray link from navbar.less */
 .navbar-default .navbar-nav>li>a {
@@ -183,13 +191,15 @@ button {
 }
 /*============================================*/
 /*=========== WELCOME PAGE STYLING ============*/
+.loginJumbo {
+}
 .container-fluid .jumbotron{
   border-radius: 0px;
   height: 70vh;
 }
 .technologies {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-flow: row wrap;
 }
@@ -201,6 +211,7 @@ button {
 .layout-middle {
   height: 70vh;
   padding:0;
+  margin: 4em 0 4em 0;
 }
 .layout-middle-row,
 .layout-middle-row > div{
