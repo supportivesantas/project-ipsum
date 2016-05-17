@@ -1,18 +1,36 @@
 /* ============ BOOTSTRAP OVERRIDES =======  */
 body {
+  margin-top:80px;
   font-family: 'Varela';
   color:black;
+}
+.navbar {
+  position:fixed;
+  top:0;
+  width:100%;
+  opacity: .8;
+  z-index:1111;
+}
+.container{
+  padding:0;
 }
 .navbar-brand {
   font-weight: bold;
   font-size: 2em;
 }
 nav.navbar {
-  background-color: #66D9EF;
+  background-color: dodgerblue;
+}
+.row {
+  overflow:hidden;
 }
 /* override the gray link from navbar.less */
 .navbar-default .navbar-nav>li>a {
   color:white;
+}
+.navbar-default .navbar-nav>li>a:hover{
+  color: #555;
+  background-color: #e7e7e7;
 }
 /*navbar links*/
 .navbar a, .navbar-brand{
@@ -78,7 +96,7 @@ svg#serverGraph {
   text-align: left;
 }
 .appsbar {
-  fill: #66D9EF;
+  fill: dodgerblue;
 }
 .appsbar:hover {
   fill: #A6E22E;
@@ -154,7 +172,7 @@ svg#serverGraph {
   color: #F92672;
 }
 .text-blue {
-  color: #66D9EF;
+  color: dodgerblue;
 }
 .text-orange {
   color: #FD971F;
@@ -183,13 +201,23 @@ button {
 }
 /*============================================*/
 /*=========== WELCOME PAGE STYLING ============*/
+.loginJumbo {
+  background-color: white;
+}
+.jumbo-image{
+  background-size:cover;
+  height:100%;
+}
 .container-fluid .jumbotron{
   border-radius: 0px;
   height: 70vh;
 }
+.container-fluid .jumbotron > .row {
+  height: 100%;
+}
 .technologies {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-flow: row wrap;
 }
@@ -201,6 +229,7 @@ button {
 .layout-middle {
   height: 70vh;
   padding:0;
+  margin: 4em 0 4em 0;
 }
 .layout-middle-row,
 .layout-middle-row > div{
@@ -208,16 +237,10 @@ button {
   overflow: hidden;
 }
 .layout-middle-img-cover {
-  text-align:center;
-  padding:0;
-}
-.layout-middle-img-cover img {
-  min-width: 100%;
-  height:100%;
-  overflow:hidden;
+  background-size: cover;
   opacity:.7;
-  position: relative;
 }
+
 .layout-middle-text {
   display: flex;
   flex-direction: column;
@@ -226,10 +249,14 @@ button {
   padding-right: 10em;
   background-color: #eee;
 }
+.tour-button {
+  width:8em;
+  height: 8em;
+}
 
 /* ============== BAR GRAPH STYLING ============= */
 .barGraph rect {
-  fill: #66D9EF;
+  fill: dodgerblue;
 }
 .barGraph rect:hover {
   fill: #A6E22E;
