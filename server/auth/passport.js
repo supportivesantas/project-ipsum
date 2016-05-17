@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'production'){
 
 var User = require('../db/models/user');
 
-module.exports = function(passport) {
+module.exports = function (passport) {
   // =========================================================================
   // passport session setup ==================================================
   // =========================================================================
@@ -22,57 +22,57 @@ module.exports = function(passport) {
   // passport needs ability to serialize and unserialize users out of session
 
   // used to serialize the user for the session
-  passport.serializeUser(function(user, done) {
+  passport.serializeUser(function (user, done) {
     console.log('SERIALIZING SESSION');
     if (!user) {
-      done('ERROR: Failed to serialize user', null);
+      return done('ERROR: Failed to serialize user', null);
     }
-    done(null, {githubid: user.get('githubid')});
+    done(null, { githubid: user.get('githubid') });
   });
 
   // used to deserialize the user
-  passport.deserializeUser(function(id, done) {
+  passport.deserializeUser(function (id, done) {
     console.log('DESERIALIZING SESSION');
     if (!id || !id.githubid) {
-      done('ERROR: Failed to deserialize user.', null);
+      return done('ERROR: Failed to deserialize user.', null);
     }
-    new User({ githubid: id.githubid})
+    new User({ githubid: id.githubid })
       .fetch()
-      .then(function(user) {
+      .then(function (user) {
         var theuser = user.attributes;
         done(null, theuser);
       })
-      .catch(function(err){
+      .catch(function (err) {
         done(err, null);
       });
   });
 
   passport.use(new GitHubStrategy({
-      clientID: GITHUB_CLIENT_ID,
-      clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: callbackURL
-    },
-    function(token, refreshToken, profile, done) {
-      new User({username: profile.username}).fetch()
-      .then(function(user){
-        if (!user) { user = new User(); console.log('User not found, creating a new one!')}
-        // if there is a user id already but no token (user was linked at one point and then removed)
-        if (! (user.get('githubtoken') && user.get('githubemail') && user.get('githubid') )) {
-          user.save({
-            username: profile.username,
-            githubtoken: token,
-            githubemail: (profile._json.email || '').toLowerCase(),
-            githubid: profile.id
-          })
-          .then(function(user){
-            return done(null, user);
-          })
-          .catch(function(err){
-            return done(err, null);
-          });
-        }
-
-        return done(null, user); // user found, return that user
-      });
+    clientID: GITHUB_CLIENT_ID,
+    clientSecret: GITHUB_CLIENT_SECRET,
+    callbackURL: callbackURL
+  },
+    function (token, refreshToken, profile, done) {
+      new User({ username: profile.username }).fetch()
+        .then(function (user) {
+          if (!user) { user = new User(); console.log('User not found, creating a new one!') }
+          // if there is a user id already but no token (user was linked at one point and then removed)
+          if (!(user.get('githubtoken') && user.get('githubemail') && user.get('githubid'))) {
+            user.save({
+              username: profile.username,
+              githubtoken: token,
+              githubemail: (profile._json.email || '').toLowerCase(),
+              githubid: profile.id
+            })
+              .then(function (user) {
+                return done(null, user);
+              })
+              .catch(function (err) {
+                return done(err, null);
+              });
+          } else {
+            return done(null, user); // user found, return that user 
+          }
+        });
     }));
-}
+};
