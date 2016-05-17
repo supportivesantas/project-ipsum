@@ -59,15 +59,9 @@ class AllServers extends React.Component {
     return enumObject(cell);
   }
 
-  getSelectedRowKeys() {
-    console.log(this.refs.table.state.selectedRowKeys);
-  }
-
   render() {
     return (
       <Grid><Row><Col md={12} xs={12}>
-        <button onClick={this.getSelectedRowKeys.bind(this)}>Get selected row keys</button>
-
         <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
           <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Server ID</TableHeaderColumn>
           <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>

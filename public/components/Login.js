@@ -4,12 +4,6 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import { Navbar, Grid, Panel, Col, Row, Well, Button, Jumbotron, Container, Image } from 'react-bootstrap';
 
-const headers = {
-  1: <h3> Management </h3>,
-  2: <h3> Monitoring </h3>,
-  3: <h3> Middleware </h3>,
-  4: <h3> Technologies </h3>
-};
 class Login extends React.Component {
 
   handleSubmit(e) {
@@ -25,7 +19,7 @@ class Login extends React.Component {
           <Jumbotron>
             <Row>
               <Col xs={12} sm={8}>
-                <h2> Welcome to DJ Deploy! </h2>
+                <h1> DJ DEPLOY</h1>
                 <p> The easiest way to manage all your deployment servers </p>
               </Col>
               <Col xs={12} sm={4} >
@@ -45,29 +39,52 @@ class Login extends React.Component {
         </Row>
         <Row>
           <Col lg={12}>
-            <Well>Get started with DJ Deploy Today! Free for personal use! </Well>
+            <Panel>Get started with DJ Deploy Today! Free for personal use! </Panel>
           </Col>
         </Row>
         <Row>
+          <Grid fluid className='layout-middle'>
+            <Row className='layout-middle-row'>
+            <Col md={6} className='layout-middle-img-cover'>
+              <img src="assets/img/using-phone.jpg"/>
+            </Col>
+            <Col md={6} className='layout-middle-text'>
+              <h3> Management </h3>
+              <p>Manage all your deployment servers in one place! Heroku, Digital Ocean, AWS, and Azure supported!</p>
+            </Col>
+            </Row>
+          </Grid>
+        </Row>
+        <Row>
           <Col sm={4}>
-            <Panel header={headers[1]}>
+          <h3> Management </h3>
               Manage all your deployment servers in one place! Heroku, Digital Ocean, AWS, and Azure supported!
-            </Panel>
           </Col>
           <Col sm={4}>
-            <Panel header={headers[2]}>
+          <h3> Monitoring </h3>
               Get real time data on all your servers, applications, and even individual API endpoints!
-            </Panel>
           </Col>
           <Col sm={4}>
-            <Panel header={headers[3]}>
+          <h3> Middleware </h3>
               Add our proprietary middleware to your applications, and watch the data flow!
-            </Panel>
           </Col>
+        </Row>
+        <Row>
+        <Grid fluid className='layout-middle'>
+          <Row className='layout-middle-row'>
+          <Col md={6} className='layout-middle-text'>
+            <h3> Management </h3>
+            <p>Manage all your deployment servers in one place! Heroku, Digital Ocean, AWS, and Azure supported!</p>
+          </Col>
+          <Col md={6} className='layout-middle-img-cover'>
+            <img src="assets/img/using-phone.jpg"/>
+          </Col>
+          </Row>
+        </Grid>
         </Row>
         <Row>
           <Col sm={12} md={12} xs={12}>
-            <Panel header={headers[4]}>
+            <h3> Technologies </h3> 
             <div className="technologies">
               <img className='techbadge' src="/assets/badges/js2.png"/>
               <img className='techbadge' src="/assets/badges/nginx.png"/>
@@ -75,8 +92,8 @@ class Login extends React.Component {
               <img className='techbadge' src="/assets/badges/psql.png"/>
               <img className='techbadge' src="/assets/badges/react.png"/>
               <img className='techbadge' src="/assets/badges/redis.png"/>
+              <img className='techbadge' src="/assets/badges/redux.png"/>
             </div>
-            </Panel>
           </Col>
         </Row>
       </Grid>

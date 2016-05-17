@@ -1,12 +1,47 @@
+/* ============ BOOTSTRAP OVERRIDES =======  */
+body {
+  font-family: 'Varela';
+  color:black;
+}
+.navbar-brand {
+  font-weight: bold;
+  font-size: 2em;
+}
+nav.navbar {
+  background-color: #66D9EF;
+}
+/* override the gray link from navbar.less */
+.navbar-default .navbar-nav>li>a {
+  color:white;
+}
+/*navbar links*/
+.navbar a, .navbar-brand{
+  color: white;
+}
+.navbar-default .navbar-brand {
+  color: white;
+  transition: letter-spacing 0.5s ease;
+}
+.navbar-default .navbar-brand:hover {
+  letter-spacing: .05em;
+}
+.panel, .well, .navbar {
+  border-radius: 0px;
+}
+li.navbar-brand, li.navbar-brand a, li.navbar-brand a:hover {
+  list-style:none;
+  text-decoration: none;
+}
+.panel-default>.panel-heading {
+  background-color: white;
+}
 /*=========== GRAPH STYLING  ===========*/
 path {
   stroke: #A6E22E;
   stroke-width: 3;
   fill: none;
 }
-.panel {
-  transition: all .5 ease;
-}
+
 .axis {
   shape-rendering: crispEdges;
 }
@@ -134,28 +169,7 @@ svg#serverGraph {
 
 
 /*=========== ALL APPS PAGE STYLING ============*/
-body {
-  color: black;
-}
-nav.navbar {
-  background-color: #66D9EF;
-}
-/* override the gray link from navbar.less */
-.navbar-default .navbar-brand:focus, 
-.navbar-default .navbar-brand:hover{
-  color:white;
-}
-/*navbar links*/
-.navbar a, .navbar-brand{
-  color: white;
-}
-.navbar-default .navbar-brand {
-  color: white;
-  transition: letter-spacing 0.5s ease;
-}
-.navbar-default .navbar-brand:hover {
-  letter-spacing: .05em;
-}
+
 button {
   color: #272822;
 }
@@ -171,6 +185,7 @@ button {
 /*=========== WELCOME PAGE STYLING ============*/
 .container-fluid .jumbotron{
   border-radius: 0px;
+  height: 70vh;
 }
 .technologies {
   display: flex;
@@ -179,12 +194,38 @@ button {
   flex-flow: row wrap;
 }
 .techbadge{
-  margin:1em;
+  margin:.3em;
   max-width:10em;
   max-height:10em;
 }
-
-
+.layout-middle {
+  height: 70vh;
+  padding:0;
+}
+.layout-middle-row,
+.layout-middle-row > div{
+  height: 100%;
+  overflow: hidden;
+}
+.layout-middle-img-cover {
+  text-align:center;
+  padding:0;
+}
+.layout-middle-img-cover img {
+  min-width: 100%;
+  height:100%;
+  overflow:hidden;
+  opacity:.7;
+  position: relative;
+}
+.layout-middle-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 10em;
+  padding-right: 10em;
+  background-color: #eee;
+}
 
 /* ============== BAR GRAPH STYLING ============= */
 .barGraph rect {
@@ -213,7 +254,6 @@ svg.barGraph {
 .loading {
   visibility: hidden;
 }
-
 
 /*=========== Add Load Balancer ============*/
 
