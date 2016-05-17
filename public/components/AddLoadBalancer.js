@@ -62,7 +62,6 @@ class AddLoadBalancer extends React.Component {
     request.get('/nginx/slaves', (err, res) => {
       if (err) { console.log("Error: Could not get slaves", err); }
       this.props.dispatch(actions.POPULATE_SLAVE_SERVERS(res.body));
-      console.log(this.props.state.slaveServers);
     });
   }
 
@@ -134,21 +133,19 @@ class AddLoadBalancer extends React.Component {
   }
 
   remount() {
+    console.log('remount clled')
     getImagesAndLoadBalancers(this);
-    this.setState({
-      remount: ++this.state.remount
-    });
   }
 
   render() {
     return (
-      <Grid key={this.state.remount}>
+      <Grid>
 
         <Row>
           <Panel header={<h1>Your Load Balancers</h1>}>
             <Grid fluid>
-              {this.props.state.loadBalancers.map((loadBalancer) => {
-                return <LoadBalancerListEntry key={loadBalancer.id} remount={this.remount.bind(this)}lb={loadBalancer} renderLoadBalancer={this.render.bind(this)}/>
+              {this.props.state.loadBalancers.map((loadBalancer, idx) => {
+                return <LoadBalancerListEntry index={idx} remount={this.remount.bind(this)}lb={loadBalancer} />
               })}
             </Grid>
           </Panel>
