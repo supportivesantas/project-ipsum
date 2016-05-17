@@ -164,9 +164,7 @@ var initAppsServers = () => {
   setTimeout(compileStats, 1000);
 }  
 
-var client = pgp({
-  connectionString: process.env.PG_CONNECTION_STRING
-});
+var client = pgp(process.env.PG_CONNECTION_STRING);
 
 if (process.argv.length < 3) {
   console.log('Usage node ./seed_data/index.js github_user_name');

@@ -23,14 +23,20 @@ module.exports = function(passport) {
 
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
-    console.log('SERIALIZING SESSION')
+    console.log('SERIALIZING SESSION');
+    if (!user) {
+      done('ERROR: Failed to serialize user', null);
+    }
     done(null, {githubid: user.get('githubid')});
   });
 
   // used to deserialize the user
   passport.deserializeUser(function(id, done) {
-    console.log('DESERIALIZING SESSION')
-    new User({ githubid: id})
+    console.log('DESERIALIZING SESSION');
+    if (!id || !id.githubid) {
+      done('ERROR: Failed to deserialize user.', null);
+    }
+    new User({ githubid: id.githubid})
       .fetch()
       .then(function(user) {
         var theuser = user.attributes;
