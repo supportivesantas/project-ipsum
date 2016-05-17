@@ -215,8 +215,8 @@ module.exports = {
             id: curServer.id,
             hostname: curServer.hostname,
             ip: curServer.ip,
-            // platform: curServer.platform,
-            platform: 'Digital Ocean',
+            platform: curServer.platform || 'Unknown',
+            // platform: 'Digital Ocean',
             active: 'active', // fix me later
             apps: [],
           };

@@ -22,41 +22,46 @@ class MainPageAppView extends React.Component {
         this.props.dispatch(actions.ADD_ALL_APP_SUMMARIES(res.body));
         var apps = this.props.state.allAppSummaries || {};
         var id = this.props.selected.id;
-         var app;
-          for (var i = 0; i < apps.length; i++) {
-            if (+apps[i].appid === id) {
-              app = apps[i];
-              break;
-            }
-          }
-        barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
-            return obj.date;
-        })); 
-      } else {
-        browserHistory.push('/login');
-      }
-    });
-    this.setState({resizefunc: this.resizedb()}, () => {
-      window.addEventListener('resize', this.state.resizefunc);
-    });
-  }
-
-  resizedb() {
-    var resize = function() {
-      var apps = this.props.state.allAppSummaries || {};
-      var id = this.props.selected.id;
-       var app;
+        var app;
         for (var i = 0; i < apps.length; i++) {
           if (+apps[i].appid === id) {
             app = apps[i];
             break;
           }
         }
-      barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
+        if (app && app.data) {
+          barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
+            return obj.date;
+          }));
+        }  
+      } else {
+        browserHistory.push('/login');
+      }
+    });
+    this.setState({ resizefunc: this.resizedb() }, () => {
+      window.addEventListener('resize', this.state.resizefunc);
+    });
+  }
+
+  resizedb() {
+    var resize = function () {
+      var apps = this.props.state.allAppSummaries || {};
+      var id = this.props.selected.id;
+      var app;
+      for (var i = 0; i < apps.length; i++) {
+        if (+apps[i].appid === id) {
+          app = apps[i];
+          break;
+        }
+      }
+
+      if (app && app.data) {
+        barGraph("Graph" + id, _.sortBy(app.data, (obj) => {
           return obj.date;
-      }));
-    }
-    return _.debounce(resize.bind(this), 500)
+        }));
+      }
+    };
+    return _.debounce(resize.bind(this), 500);
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.state.resizefunc);
