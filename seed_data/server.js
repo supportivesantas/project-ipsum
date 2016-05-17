@@ -24,12 +24,12 @@ class server {
   save(client) {
     let self = this;
     if (!this.saved) {
-      client.query('INSERT INTO "clientServers" (users_id, ip, hostname, platform) VALUES ($1, $2, $3) RETURNING id', [this.userID, this.ip, this.hostname, 'Azure'])
+      client.query('INSERT INTO "clientServers" (users_id, ip, hostname, platform) VALUES ($1, $2, $3) RETURNING id', [this.userID, this.ip, this.hostname])
         .then((result) => {
           self.id = result[0].id;
         })
         .catch((error) => {
-          console.log('ERROR: Failed to insert into clientApps:', error);
+          console.log('ERROR: Failed to insert into clientServers:', error);
         });
       this.saved = true;
     }
