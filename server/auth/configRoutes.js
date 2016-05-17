@@ -40,7 +40,8 @@ const configRoutes = function(app, passport) {
       if (err) {
         console.log(err);
       }
-      res.clearCookie('il');
+      console.log('logout endpoint called!')
+      // res.clearCookie('il');
       res.redirect('/login');
     });
   });

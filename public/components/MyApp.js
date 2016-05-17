@@ -118,13 +118,13 @@ class MyApp extends React.Component {
     return (
        <Grid>
         <Row><Col xs={12} md={12}><PageHeader>{this.props.state.appSelection.appname} <small>at a glance</small></PageHeader></Col></Row>
-        <Row className="app-control-panel">
+        {/*<Row className="app-control-panel">
           <Col xs={12} md={12}>
             <Panel header={<h1>Control Panel</h1>}>
             Cool controls to come! Scale up, scale down, emergency shut down, etc.
             </Panel>
           </Col>
-        </Row>
+        </Row>*/}
 
         <Row className='serverStatContainer'>
 
