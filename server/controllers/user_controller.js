@@ -66,8 +66,7 @@ module.exports = {
 
   postUserCreds: (req, res) => {
     console.log('post user creds');
-    // var userID = req.user.id;
-    const userID = req.body.id || 1;
+    const userID = req.user.id;
     const platform = req.body.platform;
     const value = req.body.value;
 
@@ -142,8 +141,7 @@ module.exports = {
 
   getUserCreds: (req, res) => {
     console.log('Get user creds');
-    // var userID = req.user.id;
-    const userID = req.query.id || 1;
+    const userID = req.user.id;
 
     if (userID === undefined) {
       console.log('ERROR: Missing Parameter');
@@ -172,8 +170,7 @@ module.exports = {
 
   deleteUserCreds: (req, res) => {
     console.log('Delete user creds');
-      // let userID = req.user.id;
-    const userID = 1;
+    const userID = req.user.id;
     const credsIDs = req.body.ids;
 
     if (userID === undefined || credsIDs === undefined) {
