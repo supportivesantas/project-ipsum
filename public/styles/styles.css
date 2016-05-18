@@ -1,15 +1,20 @@
 /* ============ BOOTSTRAP OVERRIDES =======  */
+html, body {
+  margin: 40px 0 0 0;
+  height: 100%;
+}
 body {
-  margin-top:80px;
+  margin-top:40px;
   font-family: 'Varela';
   color:black;
 }
 .navbar {
   position:fixed;
   top:0;
+  left:0;
   width:100%;
   opacity: .8;
-  z-index:1111;
+  z-index:2;
 }
 .container{
   padding:0;
@@ -247,7 +252,7 @@ button {
   justify-content: center;
   padding-left: 10em;
   padding-right: 10em;
-  background-color: #eee;
+  background-color: #fffcf4;
 }
 .tour-button {
   width:8em;
@@ -289,3 +294,16 @@ svg.barGraph {
   padding: 25px;
   background-color: #FFEBEB;
 }
+
+
+/* =============== about page ==================== */
+.team-member {
+  min-height:100%;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  justify-content: center;
+  align-content:center;
+}
+
+/* ============================================== */

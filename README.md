@@ -54,10 +54,8 @@ DJ Deploy continually compares the traffic information to the scaling thresholds
 1. Create a new API token for us to use. From the DigitalOcean homepage, for example, you can do this from 'API > Generate New Token'.
 3. Add this token to your profile at www.DJDeploy.com
 2. Create a snapshot image of your DJ Deploy'ed application for us to use. From a DigitalOcean droplet page, for example, this can be done from 'Snapshots' in the droplet's menu.
-4. At www.DJDeploy.com, you will see a list of images you created. Match the correct one to your application.
-5. Set scaling thresholds and specify the max number of servers. You're done! We'll let you know when a scaling operation is performed via your Github email.
-
-
+4. Place a configuration file on your Nginx load balancer so that it will open up a port and listen for commands from our server (see the Load Balancers page for specific instructions.)
+5. Set scaling thresholds, specify the max number of servers, and select the image you made earlier from the DJ Deploy site. You're done! We'll let you know when a scaling operation is performed via your Github email.
 
 
 ## Development

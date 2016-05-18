@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
 import MainPageAppView from './MainPageAppView.js';
-import { Grid, Row } from 'react-bootstrap';
+import { Grid, Row, PageHeader } from 'react-bootstrap';
+import {Link} from 'react-router';
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -29,11 +30,20 @@ class MainPage extends React.Component {
 
   appList() {
     // Create a view for each app
-    return this.props.state.applications.map((app, index) => {
+    if (!this.props.state.applications.length) {
+      return this.props.state.applications.map((app, index) => {
+        return (
+          <MainPageAppView key={index} selected={app} />
+        );
+      });
+    } else {
       return (
-        <MainPageAppView selected={app} />
-      );
-    });
+      <div>
+        <PageHeader>Uh oh! <small>no apps to display</small></PageHeader>
+        <p>Visit the <a href="https://github.com/supportivesantas/project-ipsum">repo</a> to get started.</p>
+      </div>
+      )
+    }
   }
 
   render() {
