@@ -5,7 +5,8 @@
   "main": "./public/index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-register --recursive ./test",
-    "start": "nodemon ./server/index.js --ignore public --history-api-fallback"
+    "start": "nodemon ./server/index.js --ignore public --history-api-fallback",
+    "postinstall": "node deploy"
   },
   "repository": {
     "type": "git",
