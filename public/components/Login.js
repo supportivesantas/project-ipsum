@@ -5,6 +5,7 @@ import maps from '../mappingFunctions.js';
 import NavigationBarLogin from './NavigationBarLogin.js';
 import { Grid, Panel, Col, Row, Button, Jumbotron, Image, PageHeader } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router';
 
 
 class Login extends React.Component {
@@ -20,7 +21,7 @@ class Login extends React.Component {
             <Row>
               <Col xs={12} sm={8}>
                 <h1> The easiest way to manage all your deployments</h1>
-                <LinkContainer to="/about"><Button className='tour-button'>Take the tour</Button></LinkContainer>
+                <Link to={'/about'}>Take the tour</Link>
               </Col>
             </Row>
           </Jumbotron>
@@ -63,21 +64,6 @@ class Login extends React.Component {
           </Col>
           </Row>
         </Grid>
-        </Row>
-        <Row>
-          <Col sm={12} md={12} xs={12}>
-            <h3> Technologies </h3> 
-            <div className="technologies">
-              <img className='techbadge' src="/assets/badges/react.png"/>
-              <img className='techbadge' src="/assets/badges/redux.png"/>
-              <img className='techbadge' src="/assets/badges/node.png"/>
-              <img className='techbadge' src="/assets/badges/express.png"/>
-              <img className='techbadge' src="/assets/badges/psql.png"/>
-              <img className='techbadge' src="/assets/badges/redis.png"/>
-              <img className='techbadge' src="/assets/badges/docker.png"/>
-              <img className='techbadge' src="/assets/badges/nginx.png"/>
-            </div>
-          </Col>
         </Row>
       </Grid>
 

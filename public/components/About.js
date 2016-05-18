@@ -44,7 +44,7 @@ export default class About extends React.Component {
 
   render() {
     return (
-      <Grid fluid>
+      <Grid>
       <Row>
       <Col>
         <NavigationBarLogin />
@@ -63,9 +63,12 @@ export default class About extends React.Component {
         <h3>Overview</h3>
         <p>The core of DJ Deploy runs as middleware in your Express application. Simply 
         install it with <code>npm install lib-dj-deploy</code>, set it up on a 
-        route you want to monitor, and login at www.djdeploy.com to see the data. Check out
+        route you want to monitor, and login at www.djdeploy.com to see the data in a quick and
+        and easy to read format. Sub-select data by route, server or app,, and check server statuses. See
         the Readme at the repo for <a href="https://github.com/supportivesantas/project-ipsum">details</a>.</p>
         
+        <p>Other convenient features include text and email alerts seng to you if we detech an abnomral event.</p>
+
         <h3>Advanced Features</h3>
         <p>DJ Deploy can also be configured as a no-frills auto-scaling tool for your 
         Nginx load balanced deployments* on select platforms (currently only DigitalOcean).</p>
@@ -74,6 +77,9 @@ export default class About extends React.Component {
         to spin up or destroy servers on your behalf, then instruct your load balancer
         to make the appropriate update. Check out the <a href="https://github.com/supportivesantas/project-ipsum">repo</a> for details.</p>
         <p><small>* Currently requires the use of NginxPlus</small></p>
+        <h2>Security</h2>
+        <p>Security is a top priority at DJ Deploy. We know you trust us with your data and API tokens. 
+        All and web traffic and authentication is sent over a secure HTTPS channel.</p>
       </Col>
 
 
@@ -105,7 +111,8 @@ export default class About extends React.Component {
       </Row>
 
       <Row>
-      <Col md={12}>
+      <Col md={12} > 
+      <hr />
         <h2>Development Team</h2>
         <Grid fluid>
           <Row>
@@ -124,6 +131,22 @@ export default class About extends React.Component {
       </Col>
       </Row>
 
+      <Row>
+        <Col sm={12} md={12} xs={12}>
+          <h2> Built On </h2> 
+          <div className="technologies">
+            <img className='techbadge' src="/assets/badges/react.png"/>
+            <img className='techbadge' src="/assets/badges/redux.png"/>
+            <img className='techbadge' src="/assets/badges/node.png"/>
+            <img className='techbadge' src="/assets/badges/express.png"/>
+            <img className='techbadge' src="/assets/badges/psql.png"/>
+            <img className='techbadge' src="/assets/badges/redis.png"/>
+            <img className='techbadge' src="/assets/badges/docker.png"/>
+            <img className='techbadge' src="/assets/badges/nginx.png"/>
+          </div>
+          <br />
+        </Col>
+      </Row>
 
       </Grid>
       ) 

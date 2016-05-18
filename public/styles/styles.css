@@ -1,15 +1,17 @@
 /* ============ BOOTSTRAP OVERRIDES =======  */
 html, body {
+  margin: 40px 0 0 0;
   height: 100%;
 }
 body {
-  margin-top:80px;
+  margin-top:40px;
   font-family: 'Varela';
   color:black;
 }
 .navbar {
   position:fixed;
   top:0;
+  left:0;
   width:100%;
   opacity: .8;
   z-index:2;
@@ -250,7 +252,7 @@ button {
   justify-content: center;
   padding-left: 10em;
   padding-right: 10em;
-  background-color: #eee;
+  background-color: #fffcf4;
 }
 .tour-button {
   width:8em;

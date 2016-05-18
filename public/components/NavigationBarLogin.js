@@ -10,7 +10,7 @@ var handleSubmit = (e) => {
 
 const NavigationBarLogin = () => {
   return (
-    <Navbar className="navigation-login" fluid>
+    <Navbar className="navigation-login">
       <Navbar.Header>
         <Navbar.Brand>
           <IndexLinkContainer to="/"><NavItem eventKey={1} href="#">DJ Deploy</NavItem></IndexLinkContainer>
