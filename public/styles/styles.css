@@ -26,9 +26,6 @@ body {
 nav.navbar {
   background-color: dodgerblue;
 }
-.row {
-  overflow:hidden;
-}
 /* override the gray link from navbar.less */
 .navbar-default .navbar-nav>li>a {
   color:white;

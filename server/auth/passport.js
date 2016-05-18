@@ -32,6 +32,7 @@ module.exports = function (passport) {
     new User({ githubid: id.githubid })
       .fetch()
       .then(function (user) {
+        if (!user) { throw new Error('user not found in db')}
         var theuser = user.attributes;
         done(null, theuser);
       })
