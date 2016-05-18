@@ -172,8 +172,11 @@ statsController.registerClient = function (req, res) {
     .then(function (hash) {
       console.log('Stats Client Successfully Registered for IP: ' + ip);
       res.status(200).send(computedHash);
-      internalTasks.syncServersToPlatforms(userID);
-      internalTasks.syncServersToLB(userID);
+      internalTasks.syncServersToPlatforms(userID)
+        .then(() => {
+          return internalTasks.syncServersToLB(userID);
+        });
+      
       // internalTasks.spinUpServerInLB(userID, 1);
 
       //HEREE MATT
