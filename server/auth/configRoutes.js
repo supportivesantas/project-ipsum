@@ -15,7 +15,7 @@ const configRoutes = function(app, passport) {
       client: redisClient,
     }),
     cookie: { maxAge: (24 * 3600 * 1000 * 30) },
-    secret: 'my_precious',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   }));

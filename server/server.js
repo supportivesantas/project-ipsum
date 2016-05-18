@@ -1,10 +1,9 @@
+"use strict";
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const config = require('../webpack.config.js');
 const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
 const stats_controller = require('./routes/stats_route');
 const getStats_controller = require('./routes/getStats_route');
 const userRouter = require('./routes/userRouter.js');
@@ -21,8 +20,10 @@ var isDeveloping = process.env.NODE_ENV !== 'production'; // do not change this 
 // isDeveloping = false;
 //  3. npm start
 if (isDeveloping) {
-  const compiler = webpack(config);
-  const middleware = webpackDevMiddleware(compiler, {
+  let webpackDevMiddleware = require('webpack-dev-middleware');
+  let webpackHotMiddleware = require('webpack-hot-middleware');
+  let compiler = webpack(config);
+  let middleware = webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath,
     contentBase: 'src',
     stats: {

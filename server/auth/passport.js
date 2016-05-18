@@ -2,15 +2,8 @@ const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
-
-
-if (process.env.NODE_ENV === 'production'){
-  var GITHUB_CLIENT_ID = '3aef3c6212ed88f6ca56';
-  var callbackURL = 'http://djdeploy.com/auth/github/callback';
-} else {
-  var GITHUB_CLIENT_ID = '3b2b57a04b678dd74de1';
-  var callbackURL = 'http://localhost:1337/auth/github/callback';
-}
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const callbackURL = process.env.GITHUB_CALLBACK_URL;
 
 var User = require('../db/models/user');
 
