@@ -111,11 +111,14 @@ statsController.registerClient = function (req, res) {
     .then(function (user) {
       userID = user.get('id');
       /* put server ip and appname in db if it does't already exist */
-      return clientServers.model.where('ip', ip).fetch();
+      return clientServers.model.where({
+        ip: ip,
+        users_id: userID
+      }).fetch();
     })
     .then(function (clientServer) {
       if (!clientServer) {
-        let platform = '';
+        let platform = null;
         if (ipHelpers.isAzure(ip)) {
           platform = 'Azure';
         } else if (ipHelpers.isAWS(ip)) {
@@ -134,7 +137,10 @@ statsController.registerClient = function (req, res) {
     })
     .then(function (clientServer) {
       serverID = clientServer.id;
-      return clientApps.model.where('appname', appname).fetch();
+      return clientApps.model.where({
+        appname: appname,
+        users_id: userID
+      }).fetch();
     })
     .then(function (clientApp) {
       if (!clientApp) {
