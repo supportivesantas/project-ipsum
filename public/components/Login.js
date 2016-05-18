@@ -3,7 +3,9 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import NavigationBarLogin from './NavigationBarLogin.js';
-import { Navbar, Grid, Panel, Col, Row, Well, Button, Jumbotron, Container, Image, PageHeader } from 'react-bootstrap';
+import { Grid, Panel, Col, Row, Button, Jumbotron, Image, PageHeader } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+
 
 class Login extends React.Component {
 
@@ -18,7 +20,7 @@ class Login extends React.Component {
             <Row>
               <Col xs={12} sm={8}>
                 <h1> The easiest way to manage all your deployments</h1>
-                <button className='tour-button'>Take a tour</button>
+                <LinkContainer to="/about"><Button className='tour-button'>Take the tour</Button></LinkContainer>
               </Col>
             </Row>
           </Jumbotron>
@@ -76,28 +78,6 @@ class Login extends React.Component {
               <img className='techbadge' src="/assets/badges/nginx.png"/>
             </div>
           </Col>
-        </Row>
-        <Row>
-        <Col md={12}>
-            <h3>About</h3>
-            <h4>The Team</h4>
-          <Grid>
-            <Row>
-              <Col xs={6} md={3} style={{marginBottom: '1em', display: 'flex', alignItems: 'center', justifyContent: 'space-around', alignContent: 'center'}}>
-                <Image width="150" src="https://avatars0.githubusercontent.com/u/15022604?v=3&s=460" responsive circle />
-              </Col>
-              <Col xs={6} md={3} style={{marginBottom: '1em', display: 'flex', alignItems: 'center', justifyContent: 'space-around', alignContent: 'center'}}>
-                <Image width="150" src="https://avatars1.githubusercontent.com/u/15720430?v=3&s=460" responsive circle />
-              </Col>
-              <Col xs={6} md={3} style={{marginBottom: '1em', display: 'flex', alignItems: 'center', justifyContent: 'space-around', alignContent: 'center'}}>
-                <Image width="150" src="https://avatars0.githubusercontent.com/u/9397100?v=3&s=460" responsive circle />
-              </Col>
-              <Col xs={6} md={3} style={{marginBottom: '1em', display: 'flex', alignItems: 'center', justifyContent: 'space-around', alignContent: 'center'}}>
-                <Image width="150" src="https://avatars2.githubusercontent.com/u/16583445?v=3&s=460" responsive circle/>
-              </Col>
-            </Row>
-          </Grid> 
-        </Col>         
         </Row>
       </Grid>
 

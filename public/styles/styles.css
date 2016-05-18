@@ -1,4 +1,7 @@
 /* ============ BOOTSTRAP OVERRIDES =======  */
+html, body {
+  height: 100%;
+}
 body {
   margin-top:80px;
   font-family: 'Varela';
@@ -9,7 +12,7 @@ body {
   top:0;
   width:100%;
   opacity: .8;
-  z-index:1111;
+  z-index:2;
 }
 .container{
   padding:0;
@@ -289,3 +292,16 @@ svg.barGraph {
   padding: 25px;
   background-color: #FFEBEB;
 }
+
+
+/* =============== about page ==================== */
+.team-member {
+  min-height:100%;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  justify-content: center;
+  align-content:center;
+}
+
+/* ============================================== */

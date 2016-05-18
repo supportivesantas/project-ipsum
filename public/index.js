@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import App from './components/app.js';
 import Login from './components/Login.js';
+import About from './components/About.js';
 import MyApp from './components/MyApp.js';
 import MyServer from './components/MyServer.js';
 import AllApps from './components/AllApplications.js';
@@ -50,6 +51,7 @@ restoreSession()
         <Router history={history}>
 
           <Route path="/login" component={Login} />
+          <Route path="/about" component={About} />
           <Route path="/logout" onEnter={logout} />
           <Route path="/auth/github/callback" />
 
