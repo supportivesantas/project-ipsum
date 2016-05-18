@@ -27,7 +27,7 @@ const getImagesAndLoadBalancers = (that) => {
         lb.imageLabel = foundImage ? foundImage.label : "No Image specified, please choose one now";
         loadBalancersWithImageLabel.push(lb);
         _.each(that.props.state.slaveServers, (slaveServer, index) => {
-          if (slaveServer[0].master === lb.id) {
+          if (slaveServer.length && slaveServer[0].master === lb.id) {
             lb.slavesArrayIndex = index;
             return;
           }
@@ -133,7 +133,6 @@ class AddLoadBalancer extends React.Component {
   }
 
   remount() {
-    console.log('remount clled')
     getImagesAndLoadBalancers(this);
   }
 

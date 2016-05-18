@@ -28,7 +28,7 @@ class LoadBalancerListEntry extends React.Component {
 
   thresholdValidation() {
     if ( isNaN(this.state.max_threshold) ||
-      isNaN(this.state.min_threshold) || 
+      isNaN(this.state.min_threshold) ||
       parseInt(this.state.min_threshold) > parseInt(this.state.max_threshold)
       ) {
       return 'error'
@@ -36,7 +36,7 @@ class LoadBalancerListEntry extends React.Component {
   }
 
   maxServersValidation() {
-    if ( 
+    if (
       isNaN(this.state.max_servers) ||
       parseInt(this.state.max_servers <= 0) ) {
       return 'error'
@@ -71,9 +71,10 @@ class LoadBalancerListEntry extends React.Component {
         this.setState({
           max_servers: '',
           min_threshold: '',
-          max_threshold: ''
+          max_threshold: '',
+          image: null
         })
-        
+
     });
   }
 
@@ -95,7 +96,7 @@ class LoadBalancerListEntry extends React.Component {
           })}
         </ul>
         </Col>
-        
+
         <Col xs={12} md={4}>
 
           <h4>Settings:</h4>
