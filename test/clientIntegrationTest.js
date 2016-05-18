@@ -259,21 +259,17 @@ describe('Client Integration Tests', () => {
       uri: 'http://localhost:' + port + '/user/usercreds',
       json: true,
       body: {
-        id: userID,
+        userid: userID,
         platform: 'Donald Trump',
         value: 'Make America Great Again',
       },
     })
       .then(() => {
-        client.query('SELECT * FROM "serviceCreds" WHERE "users_id" = ' + userID)
-          .then((result) => {
-            expect(result[0].value).to.equal('Make America Great Again');
-            done();
-          })
-          .catch((error) => {
-            expect(error).to.not.exist;
-            done();
-          });
+        return client.query('SELECT * FROM "serviceCreds" WHERE "users_id" = ' + userID);
+      })
+      .then((result) => {
+        expect(result[0].value).to.equal('Make America Great Again');
+        done();
       })
       .catch((error) => {
         expect(error).to.not.exist;
@@ -286,6 +282,9 @@ describe('Client Integration Tests', () => {
       method: 'GET',
       uri: 'http://localhost:' + port + '/user/usercreds?id=' + userID,
       json: true,
+      body: {
+        userid: userID,
+      }
     })
       .then((response) => {
         expect(response[0].value).to.equal('Make America Great Again');
