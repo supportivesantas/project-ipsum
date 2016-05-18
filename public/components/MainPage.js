@@ -30,7 +30,7 @@ class MainPage extends React.Component {
 
   appList() {
     // Create a view for each app
-    if (!this.props.state.applications.length) {
+    if (this.props.state.applications.length) {
       return this.props.state.applications.map((app, index) => {
         return (
           <MainPageAppView key={index} selected={app} />

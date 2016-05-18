@@ -3,6 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router';
+import _ from 'underscore';
 import request from '../util/restHelpers.js';
 import {Grid, Row, Col} from 'react-bootstrap';
 
@@ -30,7 +31,8 @@ class AllServers extends React.Component {
   }
 
   goToServer(cell) {
-    this.props.dispatch(actions.ADD_SERVER_SELECTION(this.refs.table.props.data[cell - 1]));
+    let serverSelection = _.findWhere(this.refs.table.props.data, {id: cell})
+    this.props.dispatch(actions.ADD_SERVER_SELECTION(serverSelection));
   }
 
   goToApp(appId) {
