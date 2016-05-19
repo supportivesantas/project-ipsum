@@ -13,7 +13,7 @@ body {
   position: relative;
 }
 .mainContainer{
-  padding-bottom: 280px;
+  padding: 0 0 280px 0;
 }
 .footer {
   position: absolute;
@@ -84,8 +84,9 @@ nav.navbar {
   background-color: #e7e7e7;
 }
 /*navbar links*/
-.navbar a, .navbar-brand{
+.navbar a, .navbar-brand, .navbar a:active{
   color: white;
+  outline: 0;
 }
 .panel, .well, .navbar {
   border-radius: 0px;
@@ -254,7 +255,7 @@ button {
 }
 .container-fluid .jumbotron{
   border-radius: 0px;
-  height: 70vh;
+  height: 80vh;
 }
 .container-fluid .jumbotron > .row {
   height: 100%;
@@ -272,26 +273,40 @@ button {
 }
 .layout-middle {
   height: 70vh;
+  width:100%;
   padding:0;
   margin: 4em 0 4em 0;
-}
-.layout-middle-row,
-.layout-middle-row > div{
-  height: 100%;
-  overflow: hidden;
-}
-.layout-middle-img-cover {
-  background-size: cover;
-  opacity:.7;
+  display: flex;
+  flex-flow: row wrap;
 }
 
+.layout-middle-img-cover {
+  overflow: hidden;
+  background-size: cover;
+  opacity:.7;
+  width:50%;
+  background-position: center; 
+}
 .layout-middle-text {
   display: flex;
+  width:50%;
   flex-direction: column;
   justify-content: center;
-  padding-left: 10em;
-  padding-right: 10em;
+  padding: 8em;
   background-color: #fffcf4;
+}
+@media screen and (max-width: 800px){
+ /* CSS definitions here */
+ .layout-middle {
+    margin: 1em 0 1em 0;
+ }
+ .layout-middle-img-cover {
+  display:none;
+ }
+  .layout-middle-text {
+    width:100%;
+    padding: 3em
+  }
 }
 .tour-button {
   width:8em;

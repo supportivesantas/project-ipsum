@@ -46,7 +46,7 @@ export default class About extends React.Component {
   render() {
     return (
       <div className="outerContainer">
-      <Grid fluid className="mainContainer">
+      <Grid fluid className="mainContainer" style={{margin:'0 2em'}}>
       <Row>
       <Col>
         <NavigationBarLogin />
