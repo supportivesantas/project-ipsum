@@ -199,6 +199,7 @@ module.exports = {
     const id = req.user ? req.user.id : req.query.id;
     const serverQuickLook = {};
     const servData = [];
+    var username = null;
 
     Servers.query('where', 'users_id', '=', id, 'orderBy', 'id', 'ASC').fetch()
       .then((servers) => {
@@ -248,13 +249,19 @@ module.exports = {
 
         return Apps.query('where', 'users_id', '=', id).fetch();
       })
+      .then(() => {
+        Users.model.where({id: id}).fetch()
+        .then(function(user){ 
+          username = user.username
+        })
+      })
       .then((apps) => {
         const appData = [];
         for (let i = 0; i < apps.models.length; i++) {
           appData.push(apps.models[i].attributes);
         }
         // console.log(appData);
-        res.status(200).json({ servers: servData, apps: appData });
+        res.status(200).json({ servers: servData, apps: appData, userhandle: username});
       })
       .catch((error) => {
         console.log('ERROR: Failed to get init data', error);

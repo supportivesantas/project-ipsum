@@ -20,9 +20,9 @@ class MainPage extends React.Component {
     restHandler.get('/user/init', (err, res) => {
       if (res.status !== 401) {
         const data = JSON.parse(res.text);
-        console.log(data)
         this.props.dispatch(actions.MASS_POPULATE_APPS(data.apps));
         this.props.dispatch(actions.MASS_POPULATE_SERVERS(data.servers));
+        this.props.dispatch(actions.POPULATE_USER_DATA(data.userhandle));
       } else {
         browserHistory.push('/logout');
       }

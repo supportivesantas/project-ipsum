@@ -50,8 +50,7 @@ const configRoutes = function(app, passport) {
 exports.ensureAuthenticated = function(req, res, next) {
   if (req.isAuthenticated() || process.env.testing === 'true') { return next(); }
   console.log('failed auth');
-  res.status(401);
-  res.end();
+  res.redirect('/logout');
 };
 
 exports.configRoutes = configRoutes;
