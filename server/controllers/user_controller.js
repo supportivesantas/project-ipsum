@@ -17,7 +17,7 @@ module.exports = {
   },
 
   getUserApps: (req, res) => {
-    const id = process.env.testing ? req.body.userid : req.user.id;
+    const id = process.env.testing ? req.query.id : req.user.id;
     Apps.query('where', 'users_id', '=', id).fetch()
       .then((apps) => {
         const appData = [];
@@ -29,7 +29,7 @@ module.exports = {
   },
 
   getUserServers: (req, res) => {
-    const id = process.env.testing ? req.body.userid : req.user.id;
+    const id = process.env.testing ? req.query.id : req.user.id;
     Servers.query('where', 'users_id', '=', id).fetch()
       .then((servers) => {
         const servData = [];
@@ -104,7 +104,7 @@ module.exports = {
 
   putUserCreds: (req, res) => {
     console.log('put user creds');
-    const userID = process.env.testing ? req.body.userid : req.user.id;
+    const userID = process.env.testing ? req.query.users_id : req.user.id;
     const id = req.body.id;
     const platform = req.body.platform;
     const value = req.body.value;
@@ -140,7 +140,7 @@ module.exports = {
 
   getUserCreds: (req, res) => {
     console.log('Get user creds');
-    const userID = process.env.testing ? req.body.userid : req.user.id;
+    const userID = process.env.testing ? req.query.id : req.user.id;
 
     if (userID === undefined) {
       console.log('ERROR: Missing Parameter');
@@ -169,7 +169,7 @@ module.exports = {
 
   deleteUserCreds: (req, res) => {
     console.log('Delete user creds');
-    const userID = process.env.testing ? req.body.userid : req.user.id;
+    const userID = process.env.testing ? req.query.users_id : req.user.id;
     const credsIDs = req.body.ids;
 
     if (userID === undefined || credsIDs === undefined) {
@@ -196,7 +196,7 @@ module.exports = {
 
 
   getInit: (req, res) => {
-    const id = process.env.testing ? req.body.userid : req.user.id;
+    const id = process.env.testing ? req.query.id : req.user.id;
     const serverQuickLook = {};
     const servData = [];
     var username = null;
