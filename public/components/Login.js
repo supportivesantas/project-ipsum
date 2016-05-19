@@ -3,16 +3,18 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import NavigationBarLogin from './NavigationBarLogin.js';
-import { Grid, Panel, Col, Row, Button, Jumbotron, Image, PageHeader } from 'react-bootstrap';
+import { Grid, Panel, Col, Row, Jumbotron } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Link } from 'react-router';
+import Footer from './Footer.js';
 
 
 class Login extends React.Component {
 
   render() {
     return (
-      <Grid fluid>
+      <div className="outerContainer">
+      <Grid fluid className="mainContainer">
       <Row><Col>
         <NavigationBarLogin />
       </Col></Row>
@@ -66,7 +68,8 @@ class Login extends React.Component {
         </Grid>
         </Row>
       </Grid>
-
+      <Footer />
+      </div>
     );
   }
 }

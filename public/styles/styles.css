@@ -1,12 +1,50 @@
 /* ============ BOOTSTRAP OVERRIDES =======  */
 html, body {
-  margin: 40px 0 0 0;
+  margin: 0 0 0 0;
   height: 100%;
 }
 body {
-  margin-top:40px;
+  margin: 40px 0 0 0;
   font-family: 'Varela', Verdana, sans-serif;
   color:black;
+  /* Margin bottom by footer height */
+}
+.outerContainer{
+  position: relative;
+}
+.mainContainer{
+  padding-bottom: 280px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(255,252,244, .7);
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: start;
+  width: 100%;   
+}
+.footer-row-brand{
+  width:100%;
+  margin :0 3em 0 3em;
+  padding: 0;
+}
+.footer-row {
+  width:100%;
+  display:flex;
+  margin :0 3em 0 3em;
+  padding: 2em 0 2em 0;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+.footer-col {
+  width:100%;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 1em 0 1em 0;
+}
+.footer-row > .col {
 }
 .navbar {
   position:fixed;
@@ -19,12 +57,23 @@ body {
 .container{
   padding:0;
 }
-.navbar-brand {
-  font-weight: bold;
-  font-size: 2em;
-}
 nav.navbar {
   background-color: dodgerblue;
+}
+.navbar-header{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.navbar>.container-fluid .navbar-brand{
+  margin-left: -5px;
+  font-weight: bold;
+  font-size: 2em;
+  color: white;
+  transition: letter-spacing 0.5s ease;
+}
+.navbar-default .navbar-brand:hover {
+  letter-spacing: .05em;
 }
 /* override the gray link from navbar.less */
 .navbar-default .navbar-nav>li>a {
@@ -37,13 +86,6 @@ nav.navbar {
 /*navbar links*/
 .navbar a, .navbar-brand{
   color: white;
-}
-.navbar-default .navbar-brand {
-  color: white;
-  transition: letter-spacing 0.5s ease;
-}
-.navbar-default .navbar-brand:hover {
-  letter-spacing: .05em;
 }
 .panel, .well, .navbar {
   border-radius: 0px;
