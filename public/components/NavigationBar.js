@@ -1,15 +1,15 @@
 import React from 'react';
-import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, Image} from 'react-bootstrap';
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 import { connect } from 'react-redux';
 
 
 class NavigationBar extends React.Component {
   render() {
-
     return (
       <Navbar className="navigation" fluid>
         <Navbar.Header>
+            <img style={{width: 40, height: 40}} src="assets/logo/logo_stroke_noedge.svg" />
           <Navbar.Brand>
             <IndexLinkContainer to="/"><NavItem eventKey={1} href="#">DJ Deploy</NavItem></IndexLinkContainer>
           </Navbar.Brand>

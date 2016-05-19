@@ -3,6 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import NavigationBarLogin from './NavigationBarLogin.js';
 import { Grid, Col, Row, Jumbotron, Image, PageHeader, Modal, Button } from 'react-bootstrap';
+import Footer from './Footer.js';
 
 var teamMembers = [
   {
@@ -11,7 +12,7 @@ var teamMembers = [
     githubUrl: 'https://github.com/mbresnan1701'
   },
   {
-    name: 'Rane Grildley',
+    name: 'Rane Gridley',
     imageUrl: 'https://avatars1.githubusercontent.com/u/15720430?v=3&s=460',
     githubUrl: 'https://github.com/ranebo'
   },
@@ -44,7 +45,8 @@ export default class About extends React.Component {
 
   render() {
     return (
-      <Grid>
+      <div className="outerContainer">
+      <Grid fluid className="mainContainer" style={{margin:'0 2em'}}>
       <Row>
       <Col>
         <NavigationBarLogin />
@@ -147,8 +149,11 @@ export default class About extends React.Component {
           <br />
         </Col>
       </Row>
-
       </Grid>
+
+      <Footer />
+
+      </div>
       ) 
     
   }
