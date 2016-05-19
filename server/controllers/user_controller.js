@@ -17,7 +17,7 @@ module.exports = {
   },
 
   getUserApps: (req, res) => {
-    const id = req.user ? req.user.id : req.query.id;
+    const id = process.env.testing ? req.body.userid : req.user.id;
     Apps.query('where', 'users_id', '=', id).fetch()
       .then((apps) => {
         const appData = [];
@@ -29,7 +29,7 @@ module.exports = {
   },
 
   getUserServers: (req, res) => {
-    const id = req.user ? req.user.id : req.query.id;
+    const id = process.env.testing ? req.body.userid : req.user.id;
     Servers.query('where', 'users_id', '=', id).fetch()
       .then((servers) => {
         const servData = [];
@@ -196,7 +196,7 @@ module.exports = {
 
 
   getInit: (req, res) => {
-    const id = req.user ? req.user.id : req.query.id;
+    const id = process.env.testing ? req.body.userid : req.user.id;
     const serverQuickLook = {};
     const servData = [];
     var username = null;
