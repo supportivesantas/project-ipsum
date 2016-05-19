@@ -22,7 +22,7 @@ class NavigationBar extends React.Component {
             <LinkContainer to="/allServers"><NavItem eventKey={2} href="#">All Servers</NavItem></LinkContainer>
             <LinkContainer to="/tokens"><NavItem eventKey={3} href="#">Tokens</NavItem></LinkContainer>
             <LinkContainer to="/loadBalancer"><NavItem eventKey={4} href="#">Load Balancers</NavItem></LinkContainer>
-            <LinkContainer to="/logout"><NavItem eventKey={5} href="#">Logout {this.props.state.user.handle ? this.props.state.user.handle  : null}</NavItem></LinkContainer>
+            <LinkContainer to="/logout"><NavItem eventKey={5} href="#">Logout {this.props.state.user.handle ? <u>{this.props.state.user.handle}</u>  : null}</NavItem></LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

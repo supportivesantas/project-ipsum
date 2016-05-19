@@ -5,7 +5,7 @@ html, body {
 }
 body {
   margin-top:40px;
-  font-family: 'Varela';
+  font-family: 'Varela', Verdana, sans-serif;
   color:black;
 }
 .navbar {
