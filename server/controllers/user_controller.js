@@ -200,6 +200,7 @@ module.exports = {
     const serverQuickLook = {};
     const servData = [];
     var username = null;
+    const appData = [];
 
     Servers.query('where', 'users_id', '=', id, 'orderBy', 'id', 'ASC').fetch()
       .then((servers) => {
@@ -250,16 +251,14 @@ module.exports = {
         return Apps.query('where', 'users_id', '=', id).fetch();
       })
       .then((apps) => {
-        const appData = [];
         for (let i = 0; i < apps.models.length; i++) {
           appData.push(apps.models[i].attributes);
         }
         // console.log(appData);
-        return Users.model.where({id: id}).fetch()
-        .then(function(user){ 
-          res.status(200).json({ servers: servData, apps: appData, userhandle: user.get('username')});
-        })
-
+        return Users.model.where({id: id}).fetch();
+      })
+      .then(function(user){ 
+         res.status(200).json({ servers: servData, apps: appData, userhandle: user.get('username')});
       })
       .catch((error) => {
         console.log('ERROR: Failed to get init data', error);
