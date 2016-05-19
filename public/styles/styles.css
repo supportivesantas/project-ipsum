@@ -9,12 +9,23 @@ body {
   color:black;
   /* Margin bottom by footer height */
 }
+.btn.btn-success {
+  background-color: dodgerblue;
+  border-color: lightblue;
+}
+
+/* for the login and about pages */
 .outerContainer{
   position: relative;
 }
 .mainContainer{
   padding: 0 0 280px 0;
 }
+
+#app {
+  margin: 0 0 5em 0;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
@@ -72,9 +83,16 @@ nav.navbar {
   color: white;
   transition: letter-spacing 0.5s ease;
 }
-.navbar-default .navbar-brand:hover {
+.navbar-header img  {
+  transition: all 0.5s ease;
+}
+.navbar-header:hover > img {
+  transform: rotate(18deg);
+}
+.navbar-header:hover li.navbar-brand {
   letter-spacing: .05em;
 }
+
 /* override the gray link from navbar.less */
 .navbar-default .navbar-nav>li>a {
   color:white;
@@ -87,6 +105,7 @@ nav.navbar {
 .navbar a, .navbar-brand, .navbar a:active{
   color: white;
   outline: 0;
+  transition: all .3s ease;
 }
 .panel, .well, .navbar {
   border-radius: 0px;
@@ -145,6 +164,7 @@ svg#serverGraph {
 }
 .appsbar:hover {
   fill: #A6E22E;
+  transition: all .4s ease;
 }
 .axisM {
   font: 10px sans-serif;
@@ -166,6 +186,7 @@ svg#serverGraph {
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
   border-radius: 2px;
+  transition: all .4s ease;
 }
 .d3-tip span {
   color: #A6E22E;
@@ -243,6 +264,9 @@ button {
 .table td {
   overflow-wrap: break-word;
   word-wrap: break-word;
+}
+.table tr {
+  transition: all .4s ease;
 }
 /*============================================*/
 /*=========== WELCOME PAGE STYLING ============*/
@@ -336,6 +360,7 @@ svg.barGraph {
   color: white;
   background-color: #FD971F;
   cursor: pointer;
+  transition: all .3s ease;
 }
 .loading {
   visibility: hidden;
