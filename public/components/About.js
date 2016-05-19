@@ -67,7 +67,7 @@ export default class About extends React.Component {
         and easy to read format. Sub-select data by route, server or app,, and check server statuses. See
         the Readme at the repo for <a href="https://github.com/supportivesantas/project-ipsum">details</a>.</p>
         
-        <p>Other convenient features include text and email alerts seng to you if we detech an abnomral event.</p>
+        <p>Other convenient features include text and email alerts if we detect an abnormal event.</p>
 
         <h3>Advanced Features</h3>
         <p>DJ Deploy can also be configured as a no-frills auto-scaling tool for your 
