@@ -299,7 +299,7 @@ describe('Client Integration Tests', () => {
   it('should get init data', (done) => {
     requestP({
       method: 'GET',
-      uri: 'http://localhost:' + port + '/user/init',
+      uri: 'http://localhost:' + port + '/user/init?id=' + userID,
       json: true,
     })
       .then((response) => {

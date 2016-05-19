@@ -27,12 +27,14 @@ module.exports = function (passport) {
   passport.deserializeUser(function (id, done) {
     console.log('DESERIALIZING SESSION');
     if (!id || !id.githubid) {
-      return done('ERROR: Failed to deserialize user.', null);
+      return done(null, false);
     }
     new User({ githubid: id.githubid })
       .fetch()
       .then(function (user) {
-        if (!user) { throw new Error('user not found in db')}
+        if (!user) {
+          return done(null, false);
+        }
         var theuser = user.attributes;
         done(null, theuser);
       })
