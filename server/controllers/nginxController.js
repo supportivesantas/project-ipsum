@@ -94,6 +94,7 @@ module.exports = {
   },
 
   newLoadBalancer(req, res) {
+    let internalTasks = require('./internal_tasks'); // hacks around circular dependency  FIXME
     const data = req.body;
     LoadBalancer.where({ users_id: req.user.id, ip: data.ip }).fetch()
       .then((lb) => {
@@ -108,11 +109,15 @@ module.exports = {
             max_threshold: data.max_threshold || 50000,
             max_servers: data.max_servers || 5,
           })
-            .save()
-            .then((newlb) => {
-              //DO AUTO DISCOVERY
-              res.send('success');
-            });
+          .save()
+          .then((newlb) => {
+            //DO AUTO DISCOVERY
+            res.send('success');
+            return internalTasks.syncServersToPlatforms(req.user.id);
+          })
+          .then(() => {
+            return internalTasks.syncServersToLB(req.user.id);
+          });
         } else {
           res.send('That server has already been added');
         }
