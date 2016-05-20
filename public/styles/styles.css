@@ -11,11 +11,11 @@ body {
 }
 .btn.btn-success, .btn.btn-primary {
   background-color: dodgerblue;
-  border-color: dodgerblue;
+  border: none;
 }
 .btn.btn-success:hover, .btn.btn-primary:hover {
   background-color: #A6E22E;
-  border-color: #A6E22E;
+  border: none;
 }
 .btn.btn-success:focus, .btn.btn-primary:focus {
   background-color: dodgerblue;

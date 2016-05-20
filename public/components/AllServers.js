@@ -17,6 +17,7 @@ class AllServers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false
     };
   }
 
@@ -31,6 +32,7 @@ class AllServers extends React.Component {
   }
 
   updateServers() {
+    this.setState({loading: true});
     request.get('/user/init', (err, res) => {
       if (res.status !== 401) {
         console.log('refreshed', res.text)
@@ -41,6 +43,7 @@ class AllServers extends React.Component {
       } else {
         browserHistory.push('/logout');
       }
+      this.setState({loading: false})
     });
   }
 
@@ -80,6 +83,7 @@ class AllServers extends React.Component {
       <Grid style={{marginBottom:'5em'}}>
       <Row><Col md={12} xs={12}> <Button bsStyle='primary' onClick={this.updateServers.bind(this)}>Refresh List</Button></Col></Row>
       <Row><Col md={12} xs={12}>
+      {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
         <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
           <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Server ID</TableHeaderColumn>
           <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>
@@ -89,6 +93,7 @@ class AllServers extends React.Component {
           <TableHeaderColumn dataField="apps" dataFormat={this.enumFormatter} formatExtraData={this.tableAppsLinkForm.bind(this)}>Application</TableHeaderColumn>
           <TableHeaderColumn dataField="id" dataFormat={this.enumFormatter} formatExtraData={this.tableLinkForm.bind(this)}>See Stats</TableHeaderColumn>
         </BootstrapTable>
+      }
       </Col></Row></Grid>
     );
   }
