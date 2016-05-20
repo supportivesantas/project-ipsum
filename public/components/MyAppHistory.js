@@ -37,7 +37,7 @@ class MyAppHistory extends React.Component {
 
   graphIt(){
     if (this.state.days) {
-      if (this.state.filterMode === 'total' || this.state.filterOptions && this.state.selectedFilters)
+      if (this.state.filterMode === 'total' || (this.state.filterOptions && this.state.selectedFilters))
         this.formatGraphData(() => {
           if (this.state.graphData) {
             barGraph('historyBargraph', this.state.graphData);
@@ -138,7 +138,7 @@ class MyAppHistory extends React.Component {
         return a.date - b.date;
       });
 
-      this.setState({graphData: arr}, () => cb() );
+      this.setState({graphData: arr}, cb.bind(this) );
     }
   }
 
