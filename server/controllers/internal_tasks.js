@@ -381,7 +381,7 @@ Promise.promisify(function (serverIP, cb) {
       return requestP(req.options)
     })
     .then(function(resp) {
-      return server.destroy().then(function() {
+      return serverModel.destroy().then(function() {
         console.log('Server deleted from db')
         cb(null, resp);
       })
