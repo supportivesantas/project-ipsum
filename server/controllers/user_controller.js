@@ -94,7 +94,10 @@ module.exports = {
       })
       .then((credential) => {
         res.status(200).json(credential.id);
-        internalTasks.syncServersToPlatforms(userID);
+        return internalTasks.syncServersToPlatforms(userID);
+      })
+      .then(() => {
+        return internalTasks.syncServersToLB(userID);
       })
       .catch((error) => {
         console.log('ERROR: Failed to insert into userCreds table', error);

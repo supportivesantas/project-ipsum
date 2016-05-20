@@ -112,6 +112,10 @@ module.exports = {
           .then((newlb) => {
             //DO AUTO DISCOVERY
             res.send('success');
+            return nternalTasks.syncServersToPlatforms(req.user.id);
+          })
+          .then(() => {
+            return internalTasks.syncServersToLB(req.user.id);
           });
         } else {
           res.send('That server has already been added');
