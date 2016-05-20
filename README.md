@@ -2,16 +2,21 @@
 ![Travis Build Image](https://travis-ci.org/supportivesantas/project-ipsum.svg?branch=master)
 
 ## Table of Contents
-1. [Team](#team)
-2. [Usage](#usage)
-  - [Basic Installation](#basic-intallation)  
-  - [Auto Scaling](#auto-scaling) 
-3. [Development](#development)
-  - [Requirements](#requirements)
-  - [Installing Dependencies](#installing-dependencies)
-  - [Getting Started](#getting-started) 
-4. [Contributing](#contributing)
-5. [License](https://github.com/supportivesantas/project-ipsum/blob/master/LICENSE.md)
+1. [Introduction](##introduction)
+2. [Team](##team)
+3. [Usage](##usage)
+  - [Basic Installation](###basic-intallation)  
+  - [Auto Scaling](###auto-scaling) 
+4. [Development](###development)
+  - [Requirements](###requirements)
+  - [Installing Dependencies](###installing-dependencies)
+  - [Getting Started](###getting-started) 
+  - [Application Architecture]
+5. [Contributing](###contributing)
+6. [License](###license)
+
+## Introduction
+DJ Deploy is  
 
 ## Team
   - __Product Owner__: [Jonathan Mah](https://github.com/zelifus)
@@ -107,7 +112,7 @@ Run the test Mocha-Chai suite with `npm test`
 
 
 
-## Application Architecture ##
+### Application Architecture ###
 
 ```
   +----------------+                             +---------------------------+
@@ -172,7 +177,7 @@ Run the test Mocha-Chai suite with `npm test`
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
-### License
+## License
 See [License](https://github.com/supportivesantas/project-ipsum/blob/master/LICENSE)
 
 
