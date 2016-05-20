@@ -7,6 +7,7 @@ const Server = require('../db/models/client-server.js');
 const Servers = require('../db/collections/client-server.js');
 var requestP = require('request-promise');
 var Promise = require('bluebird');
+const internalTasks = require('./internal_tasks');
 
 var log = function(error, stdout, stderr) {
   console.log(stdout);
