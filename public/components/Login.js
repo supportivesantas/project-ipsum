@@ -32,8 +32,7 @@ class Login extends React.Component {
 
       <Row><Col md={12}>
         <div className='layout-middle'>
-          <div className='layout-middle-img-cover' style={{backgroundImage: 'url(assets/img/using-phone.jpg)'}}>
-          </div>
+          <div className='layout-middle-img-cover' style={{backgroundImage: 'url(assets/img/using-phone.jpg)'}}></div>
           <div className='layout-middle-text'>
             <h1> <small> Control</small> </h1>
             <h3> The freedom to let go </h3>
@@ -44,13 +43,12 @@ class Login extends React.Component {
 
       <Row><Col md={12}>
       <div className='layout-middle'>
-        <div className='layout-middle-img-cover' style={{backgroundImage: 'url(assets/img/servers.jpg)'}}>
-        </div>
         <div className='layout-middle-text'>
           <h1> <small> Trust</small> </h1>
           <h3> A robust service at your disposal </h3>
           <p>Add our proprietary middleware to your applications, and watch the data flow!</p>
         </div>
+        <div className='layout-middle-img-cover' style={{backgroundImage: 'url(assets/img/servers.jpg)'}}></div>
       </div>
       </Col></Row>
 

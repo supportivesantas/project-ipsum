@@ -19,7 +19,8 @@ class MyAppHistory extends React.Component {
       days: 7,
       graphData: null,
       selectedFilters: null,
-      resizefunc: null
+      resizefunc: null,
+      loading: false
     };
   }
 
@@ -36,7 +37,7 @@ class MyAppHistory extends React.Component {
 
   graphIt(){
     if (this.state.days) {
-      if (this.state.filterMode === 'total' || this.state.filterOptions && this.state.selectedFilters)
+      if (this.state.filterMode === 'total' || (this.state.filterOptions && this.state.selectedFilters))
         this.formatGraphData(() => {
           if (this.state.graphData) {
             barGraph('historyBargraph', this.state.graphData);
@@ -51,6 +52,7 @@ class MyAppHistory extends React.Component {
 
 
   getData() {
+    this.setState({loading:true});
     request.post('/getStats/myAppSummary', {
       userId: this.props.state.appSelection.users_id,
       appId: this.props.state.appSelection.id,
@@ -62,7 +64,9 @@ class MyAppHistory extends React.Component {
       // var parsedData = this.parseHistoryResponse(sampledata);
       // save parsed and formatted data to store
       this.props.dispatch(actions.ADD_MYAPP_HISTORY(parsedData));
-      this.graphIt();
+      this.setState({loading: false}, () => {
+        this.graphIt();
+      })
     });
   }
 
@@ -134,7 +138,7 @@ class MyAppHistory extends React.Component {
         return a.date - b.date;
       });
 
-      this.setState({graphData: arr}, () => cb() );
+      this.setState({graphData: arr}, cb.bind(this) );
     }
   }
 
@@ -213,7 +217,9 @@ class MyAppHistory extends React.Component {
           </Col>
           <Col xs={12} md={8}>
             <h3>Selected Data</h3>
+            {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
             <div id='historyBargraph'></div>
+            }
 
           </Col>
         </Row>

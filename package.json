@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --compilers js:babel-register --recursive ./test",
     "start": "nodemon ./server/index.js --ignore public --history-api-fallback",
-    "postinstall": "node deploy"
+    "postinstall": "node deploy.js"
   },
   "repository": {
     "type": "git",

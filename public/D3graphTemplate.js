@@ -1,9 +1,10 @@
 import d3 from 'd3';
 
 export function renderChart(graphId, data) {
+  document.querySelector("#" + graphId).innerHTML = '' ;
   // element.clientWidth to adjust graph size to div
   var m = [20, 80, 20, 80]; // margins
-  var w = document.querySelector("#lineGraph").clientWidth - m[1] - m[3]; // width
+  var w = document.querySelector("#" + graphId).clientWidth - m[1] - m[3]; // width
   var h = 400 - m[0] - m[2]; // height
 
   var maxY = 0;
