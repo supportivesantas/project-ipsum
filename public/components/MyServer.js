@@ -87,9 +87,10 @@ class MyServer extends React.Component {
                 options={lineGraphOptions}
                 onChange={this.updateGraph.bind(this)}
                 />
-              <h5 className="xAxis-title">Server Traffic</h5>
+              <h4 className="xAxis-title">Hits Per Hour Today</h4>
               <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
               <div id="lineGraph"></div>
+              <h5 className="xAxis-title">Hours Ago</h5>
 
             </Col>
           </Row>
