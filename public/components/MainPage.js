@@ -52,11 +52,11 @@ class MainPage extends React.Component {
 
   render() {
     return (
-      <Grid><Row><Col md={12}>
-      {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
-        this.appList()
-      }
+
+      <Grid key={1}><Row><Col md={12}>
+        {this.appList()}
       </Col></Row></Grid>
+    
     );
   }
 }
