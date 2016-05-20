@@ -9,11 +9,18 @@ body {
   color:black;
   /* Margin bottom by footer height */
 }
-.btn.btn-success {
+.btn.btn-success, .btn.btn-primary {
   background-color: dodgerblue;
-  border-color: lightblue;
+  border-color: dodgerblue;
 }
-
+.btn.btn-success:hover, .btn.btn-primary:hover {
+  background-color: #A6E22E;
+  border-color: #A6E22E;
+}
+.btn.btn-success:focus, .btn.btn-primary:focus {
+  background-color: dodgerblue;
+  border: none;
+}
 /* for the login and about pages */
 .outerContainer{
   position: relative;
@@ -23,7 +30,7 @@ body {
 }
 
 #app {
-  margin: 0 0 5em 0;
+  margin: 0 0 0 0;
 }
 
 .footer {

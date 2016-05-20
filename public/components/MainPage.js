@@ -5,17 +5,19 @@ import { connect } from 'react-redux';
 import maps from '../mappingFunctions.js';
 import restHandler from '../util/restHelpers.js';
 import MainPageAppView from './MainPageAppView.js';
-import { Grid, Row, PageHeader } from 'react-bootstrap';
+import { Grid, Row, Col, PageHeader } from 'react-bootstrap';
 import {Link} from 'react-router';
 
 class MainPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false
     };
   }
 
   componentWillMount() {
+    this.setState({loading: true});
     // Get app and server data and place in store
     restHandler.get('/user/init', (err, res) => {
       if (res.status !== 401) {
@@ -26,6 +28,7 @@ class MainPage extends React.Component {
       } else {
         browserHistory.push('/logout');
       }
+      this.setState({loading: false})
     });
   }
 
@@ -49,9 +52,11 @@ class MainPage extends React.Component {
 
   render() {
     return (
-      <Grid><Row>
-        {this.appList()}
-      </Row></Grid>
+      <Grid><Row><Col md={12}>
+      {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
+        this.appList()
+      }
+      </Col></Row></Grid>
     );
   }
 }

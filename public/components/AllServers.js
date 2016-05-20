@@ -5,7 +5,7 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router';
 import _ from 'underscore';
 import request from '../util/restHelpers.js';
-import {Grid, Row, Col} from 'react-bootstrap';
+import {Grid, Row, Col, Button} from 'react-bootstrap';
 
 
 const selectRowProp = {
@@ -28,6 +28,20 @@ class AllServers extends React.Component {
         </div>
       </Link>
       );
+  }
+
+  updateServers() {
+    request.get('/user/init', (err, res) => {
+      if (res.status !== 401) {
+        console.log('refreshed', res.text)
+        const data = JSON.parse(res.text);
+        if (data.apps) {this.props.dispatch(actions.MASS_POPULATE_APPS(data.apps));}
+        if (data.servers) {this.props.dispatch(actions.MASS_POPULATE_SERVERS(data.servers));}
+        if (data.userhandle) {this.props.dispatch(actions.POPULATE_USER_DATA(data.userhandle));}
+      } else {
+        browserHistory.push('/logout');
+      }
+    });
   }
 
   goToServer(cell) {
@@ -63,7 +77,9 @@ class AllServers extends React.Component {
 
   render() {
     return (
-      <Grid><Row><Col md={12} xs={12}>
+      <Grid style={{marginBottom:'5em'}}>
+      <Row><Col md={12} xs={12}> <Button bsStyle='primary' onClick={this.updateServers.bind(this)}>Refresh List</Button></Col></Row>
+      <Row><Col md={12} xs={12}>
         <BootstrapTable ref='table' data={this.props.state.servers} striped={true} hover={true} selectRow={selectRowProp} search={true}>
           <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>Server ID</TableHeaderColumn>
           <TableHeaderColumn dataField="ip" dataAlign="center" dataSort={true}>Server IP</TableHeaderColumn>

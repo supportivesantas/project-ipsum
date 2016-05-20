@@ -3,7 +3,7 @@ import actions from '../actions/ipsumActions.js';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { renderChart } from '../D3graphTemplate';
-import { Panel, Grid, Row, Col, Clearfix, PageHeader, ListGroup, ListGroupItem} from 'react-bootstrap';
+import { Panel, Grid, Row, Col, PageHeader, Button, Image} from 'react-bootstrap';
 import request from '../util/restHelpers';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import barGraph from './BarGraph';
@@ -16,48 +16,64 @@ class MyApp extends React.Component {
     super(props);
     this.state = {
       lineGraphRoute: null,
-      resizefunc: null
+      resizefunc: null,
+      loading: false
     };
   }
 
-  componentDidMount(){
-
-    // call 24 hr bar graph data and render
-    request.post('/getStats/serverTotalsForApp', {
-      appid: this.props.state.appSelection.id,
-      hours: 24
-    }, (err, data) => {
-      if (err) {console.log('ERROR', err); return; }
-      var data = JSON.parse(data.text);
-      var output = [];
-      Object.keys(data).forEach((serverId) => {
-        output.push({
-          value: data[serverId].statValue,
-          label: data[serverId].hostname,
-          id: Number(serverId)
+  getAndGraphTodaysData(){
+    this.setState({loading: true}, () => {
+      // call 24 hr bar graph data and render
+      request.post('/getStats/serverTotalsForApp', {
+        appid: this.props.state.appSelection.id,
+        hours: 24
+      }, (err, data) => {
+        if (err) {console.log('ERROR', err); return; }
+        var data = JSON.parse(data.text);
+        var output = [];
+        Object.keys(data).forEach((serverId) => {
+          output.push({
+            value: data[serverId].statValue,
+            label: data[serverId].hostname,
+            id: Number(serverId)
+          });
         });
+
+        // for relative server load bar graph
+        this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
+        this.setState({loading: false}, () => {
+          barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
+            return -obj.value;
+          }));
+        }); 
       });
-      this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
-      barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
-        return -obj.value;
-      }));
+      
     });
 
-    //For line Graph
+    //For routes line Graph
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
     var appId = this.props.state.appSelection.id;
-    request.post('/getStats/app',
-      {appId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
-      (err, res) => {
-        if (err) { console.log("Error getting Server Data", err); }
-        this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
-        this.setState({lineGraphRoute: this.props.state.graphData[0].route});
-        renderChart('lineGraph', this.props.state.graphData[0].data);
-    });
+    this.setState({loading: true}, () => {
 
-    this.setState({resizefunc: this.resizedb()}, () => {
-      window.addEventListener('resize', this.state.resizefunc);
+      request.post('/getStats/app',
+        {appId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
+        (err, res) => {
+          this.setState({loading: false})
+          if (err) { console.log("Error getting Server Data", err); }
+          this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
+          this.setState({lineGraphRoute: this.props.state.graphData[0].route});
+          renderChart('lineGraph', this.props.state.graphData[0].data);
+      });
+
+      this.setState({resizefunc: this.resizedb()}, () => {
+        window.addEventListener('resize', this.state.resizefunc);
+      })
+      
     })
+  }
+
+  componentDidMount() {
+    this.getAndGraphTodaysData();
   }
 
   resizedb() {
@@ -117,35 +133,41 @@ class MyApp extends React.Component {
 
     return (
        <Grid>
-        <Row><Col xs={12} md={12}><PageHeader>{this.props.state.appSelection.appname} <small>at a glance</small></PageHeader></Col></Row>
-        {/*<Row className="app-control-panel">
-          <Col xs={12} md={12}>
-            <Panel header={<h1>Control Panel</h1>}>
-            Cool controls to come! Scale up, scale down, emergency shut down, etc.
-            </Panel>
-          </Col>
-        </Row>*/}
+        <Row><Col xs={12} md={12}>
+          <PageHeader>
+            {this.props.state.appSelection.appname} <small>at a glance</small>
+          </PageHeader>
+        </Col></Row>
 
         <Row className='serverStatContainer'>
 
           <Col xs={12} lg={12} >
-            <h2>What{'\''}s Happening</h2>
+          <div style={{display:'flex', justifyContent:'space-between'}}>
+            <h2>What{'\''}s Happening</h2>  <span className='pull-right'>
+              <Button onClick={this.getAndGraphTodaysData.bind(this)} bsStyle='primary'>Refresh</Button>
+            </span>
+          </div>
+
             <Panel header={<div>Routes</div>} >
             <Grid fluid>
             <Row>
             <Col xs={12} lg={12}>
-              <Select
-                value={this.state.lineGraphRoute}
-                multi={false}
-                options={lineGraphOptions}
-                onChange={this.updateGraph.bind(this)}
-                />
-              <h3 className="linegraph-title">Hits Per Hour Today</h3>
-              <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
 
-              <div id="lineGraph"></div>
-              <h5 className="xAxis-title">Hours Ago</h5>
+            {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
+              <div>
+                <Select
+                  value={this.state.lineGraphRoute}
+                  multi={false}
+                  options={lineGraphOptions}
+                  onChange={this.updateGraph.bind(this)}
+                  />
+                <h3 className="linegraph-title">Hits Per Hour Today</h3>
+                <p className="xAxis-subtitle">for {this.props.state.lineGraphTitle == '/Total' ? 'all monitored routes' : <i>{this.props.state.lineGraphTitle}</i>}</p>
 
+                <div id="lineGraph"></div>
+                <h5 className="xAxis-title">Hours Ago</h5>
+              </div>
+            }
             </Col>
             </Row>
             </Grid>
@@ -160,7 +182,9 @@ class MyApp extends React.Component {
               <Row>
                 <Col xs={12} md={6}>
                 <h4>Relative load (24 hr)</h4>
+                {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
                 <div id="todayBarGraph"></div>
+                }
                 </Col>
 
                 <Col xs={12} md={6}>
