@@ -7,7 +7,6 @@ const Server = require('../db/models/client-server.js');
 const Servers = require('../db/collections/client-server.js');
 var requestP = require('request-promise');
 var Promise = require('bluebird');
-const internalTasks = require('./internal_tasks');
 
 var log = function(error, stdout, stderr) {
   console.log(stdout);
@@ -109,15 +108,11 @@ module.exports = {
             max_threshold: data.max_threshold || 50000,
             max_servers: data.max_servers || 5,
           })
-          .save()
-          .then((newlb) => {
-            //DO AUTO DISCOVERY
-            res.send('success');
-            return internalTasks.syncServersToPlatforms(req.user.id);
-          })
-          .then(() => {
-            return internalTasks.syncServersToLB(req.user.id);
-          });
+            .save()
+            .then((newlb) => {
+              //DO AUTO DISCOVERY
+              res.send('success');
+            });
         } else {
           res.send('That server has already been added');
         }
