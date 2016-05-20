@@ -29,16 +29,13 @@ class app {
 
   save(client) {
     let self = this;
-    if (!this.saved) {
-      client.query('INSERT INTO "clientApps" (users_id, appname, port) VALUES ($1, $2, $3) RETURNING id', [this.userID, this.appname, this.port])
-        .then((result) => {
-          self.id = result[0].id;
-        })
-        .catch((error) => {
-          console.log('ERROR: Failed to insert into clientApps:', error);
-        });
-      this.saved = true;
-    }
+    return client.query('INSERT INTO "clientApps" (users_id, appname, port) VALUES ($1, $2, $3) RETURNING id', [this.userID, this.appname, this.port])
+      .then((result) => {
+        self.id = result[0].id;
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to insert into clientApps:', error);
+      });
   }
 }
 
