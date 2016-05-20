@@ -37,7 +37,7 @@ const getInitialState = () => {
       graphData: [],
       tokens: [],
       loadBalancers: [],
-      slaveServers: [],
+      slaveServers: []
     };
   }
 };

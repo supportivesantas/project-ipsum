@@ -89,7 +89,7 @@ class LoadBalancerListEntry extends React.Component {
           <li>Zone: {this.props.lb.zone}</li>
           <li>Port: {this.props.lb.port}</li>
         </ul>
-        <h4>Slave Servers:</h4>
+        <h4>Upstream Hosts:</h4>
         <ul style={{listStyle: 'none'}}>
           { _.map(this.props.state.slaveServers[this.props.lb.slavesArrayIndex], (slave) => {
             return <li> {slave.hostname} @ {slave.ip}</li>

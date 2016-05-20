@@ -174,7 +174,7 @@ class AddLoadBalancer extends React.Component {
                       &nbsp;&nbsp;{"location /upstream_conf {"}{"\n"}
                           &nbsp;&nbsp;&nbsp;&nbsp;upstream_conf;{"\n"}
                           &nbsp;&nbsp;&nbsp;&nbsp;allow 127.0.0.1;{"\n"}
-                          &nbsp;&nbsp;&nbsp;&nbsp;allow OUR_DEPLOYMENT_SERVER_HERE;{"\n"}
+                          &nbsp;&nbsp;&nbsp;&nbsp;allow 52.39.243.143;{"\n"}
                           &nbsp;&nbsp;&nbsp;&nbsp;deny all;{"\n"}
                       &nbsp;&nbsp;}{"\n"}
                      }
