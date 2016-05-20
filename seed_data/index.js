@@ -1,6 +1,7 @@
 "use strict";
 
 const configure = ('../server/api/configure');
+const Promise = require('bluebird');
 const pgp = require('pg-promise')({
   promiseLib: Promise,
 });
@@ -12,6 +13,7 @@ var maxAppsPerServer = 1; // max 1 apps per server
 var maxRoutes = 50; // max 50 routes
 var maxDepth = 5;   // max path depth is 5
 var generateMaxDays = 7;
+var currentDate = new Date();
 
 var appNames = [
   'picpost',
@@ -51,6 +53,10 @@ var randomRoute = [
   'money'
 ];
 
+var storedProcedureApp = 'CREATE OR REPLACE FUNCTION public.aggregate_app(clientapps_id integer, month integer, day integer, year integer) RETURNS void AS $BODY$DECLARE tablename TEXT; route RECORD; workdate DATE; nextworkdate DATE; userid INTEGER; routehits INTEGER; BEGIN workdate = (year::text || \'-\' || month::text || \'-\' || day::text)::date; nextworkdate = workdate + 1; userid = (SELECT "users_id" FROM "stats" WHERE "clientApps_id" = clientapps_id LIMIT 1); tablename = (userid::text || clientapps_id::text || month::text || day::text || year::text); EXECUTE FORMAT(\'DROP TABLE IF EXISTS %I\', tablename); EXECUTE FORMAT(\'CREATE TEMP TABLE %I ON COMMIT DROP AS (SELECT DISTINCT "statName" FROM "stats" WHERE "clientApps_id" = %L)\', tablename, clientapps_id::integer); FOR route IN EXECUTE FORMAT(\'SELECT "statName" FROM %I\', tablename) LOOP routehits = (SELECT SUM("statValue") FROM "stats" WHERE "statName" = route."statName" AND created_at >= workdate AND created_at < nextworkdate); INSERT INTO "appsummaries" ("users_id", "appid", "route", "value", "day", "month", "year") VALUES (userid, clientapps_id, route."statName", routehits, day, month, year); END LOOP; END $BODY$ LANGUAGE plpgsql VOLATILE NOT LEAKPROOF COST 100;';
+
+var storedProcedureServer = 'CREATE OR REPLACE FUNCTION public.aggregate_server(clientservers_id integer, month integer, day integer, year integer) RETURNS void AS $BODY$DECLARE tablename TEXT; route RECORD; workdate DATE; nextworkdate DATE; userid INTEGER; routehits INTEGER; BEGIN workdate = (year::text || \'-\' || month::text || \'-\' || day::text)::date; nextworkdate = workdate + 1; userid = (SELECT "users_id" FROM "stats" WHERE "clientServers_id" = clientservers_id LIMIT 1); tablename = (userid::text || clientservers_id::text || month::text || day::text || year::text); EXECUTE FORMAT(\'DROP TABLE IF EXISTS %I\', tablename); EXECUTE FORMAT(\'CREATE TEMP TABLE %I ON COMMIT DROP AS (SELECT DISTINCT "statName" FROM "stats" WHERE "clientServers_id" = %L)\', tablename, clientservers_id::integer); FOR route IN EXECUTE FORMAT(\'SELECT "statName" FROM %I\', tablename) LOOP routehits = (SELECT SUM("statValue") FROM "stats" WHERE "statName" = route."statName" AND created_at >= workdate AND created_at < nextworkdate); INSERT INTO "serversummaries" ("users_id", "serverid", "route", "value", "day", "month", "year") VALUES (userid, clientservers_id, route."statName", routehits, day, month, year); END LOOP; END $BODY$ LANGUAGE plpgsql VOLATILE NOT LEAKPROOF COST 100;';
+
 var userID = null;
 var username = null;
 var servers = [];
@@ -58,7 +64,6 @@ var apps = [];
 
 var compileStats = () => {
   var currentServer = 0;
-  var currentDate = new Date();
 
   console.log('Generating stats and saving to database');
 
@@ -101,8 +106,7 @@ var compileStats = () => {
           loopServer();
         } else {
           /* finished all servers now bail */
-          console.log('COMPLETELY DONE');
-          process.exit(0);
+          generateSummaries();
         }
         return;
       }
@@ -141,28 +145,85 @@ var compileStats = () => {
   loopServer();
 };
 
-var initAppsServers = () => {
+// generate summaries
+let generateSummaries = () => {
+  let appQueries = [];
+  let serverQueries = [];
+  let finished = 0;
+  let appDatesCrunched = 0;
+  let serverDatesCrunched = 0;
+  let appwdate = new Date(currentDate); // working date
+  let serverwdate = new Date(currentDate); // working date
+
+
+  let appProcessing = () => {
+    console.log('Processing App ' + appDatesCrunched);
+    // generate for apps first
+    for (let myapp of apps) {
+      console.log(myapp.id + ' ' + (appwdate.getMonth() + 1) + ' ' + appwdate.getDate() + ' ' + appwdate.getFullYear());
+      appQueries.push(client.func('aggregate_app', [myapp.id, appwdate.getMonth() + 1, appwdate.getDate(), appwdate.getFullYear()]));
+    }
+    Promise.all(appQueries)
+      .then((result) => {
+        appwdate.setDate(appwdate.getDate() - 1);
+        if (++appDatesCrunched >= generateMaxDays) {
+          finished++;
+          if (finished === 2) {
+            console.log('COMPLETELY DONE');
+            process.exit(0);
+          }
+        } else {
+          console.log('App Done');
+          appProcessing();
+        }
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to generate summaries', error);
+        process.exit(0);
+      });
+  };
+
+  let serverProcessing = () => {
+    console.log('Processing Server ' + serverDatesCrunched);
+    // generate for apps first
+    for (let myserver of servers) {
+      console.log(myserver.id + ' ' + (serverwdate.getMonth() + 1) + ' ' + serverwdate.getDate() + ' ' + serverwdate.getFullYear());
+      serverQueries.push(client.func('aggregate_server', [myserver.id, serverwdate.getMonth() + 1, serverwdate.getDate(), serverwdate.getFullYear()]));
+    }
+    Promise.all(serverQueries)
+      .then((result) => {
+        serverwdate.setDate(serverwdate.getDate() - 1);
+        if (++serverDatesCrunched >= generateMaxDays) {
+          finished++;
+          if (finished === 2) {
+            console.log('COMPLETELY DONE');
+            process.exit(0);
+          }
+        } else {
+          console.log('Server Done');
+          serverProcessing();
+        }
+      })
+      .catch((error) => {
+        console.log('ERROR: Failed to generate summaries', error);
+        process.exit(0);
+      });
+  };
+
+  appProcessing();
+  serverProcessing();
   
-  /* save apps and servers */
-  for (var serverName of serverNames) {
-    var thisServer = new server(userID, serverName);
-    thisServer.randomizeIP();
-    thisServer.save(client);
-    servers.push(thisServer);
-  }
+};
 
-  for (var appName of appNames) {
-    var thisApp = new app(userID, appName);
-    var maxRoutesApp = Math.ceil(Math.random() * maxRoutes); // max 50 routes
-    var maxDepthApp = Math.ceil(Math.random() * maxDepth); // max 5 depth
-    thisApp.buildRoutes(maxRoutesApp, maxDepthApp, randomRoute);
-    thisApp.save(client);
-    apps.push(thisApp);
-  }
 
-  // wait a generous 1 second for the inserts to finish
-  setTimeout(compileStats, 1000);
-}  
+
+
+
+
+
+
+
+
 
 var client = pgp(process.env.PG_CONNECTION_STRING);
 
@@ -173,22 +234,49 @@ if (process.argv.length < 3) {
 
 client.connect()
   .then((result) => {
+    // install procedure to compile app stats by app id and date
+    return client.query(storedProcedureApp);
+  })
+  .then((result) => {
+    // install procedure to compile server stats by server id and date
+    return client.query(storedProcedureServer);
+  })
+  .then((result) => {
     username = process.argv[2];
     console.log('Initializing Servers and Apps');
-    client.query('INSERT INTO "users" ("username") VALUES (${username}) ON CONFLICT ("username") DO UPDATE SET username = ${username} RETURNING id',
-    {username: username})
-      .then((result) => {
-        console.log('Inserted user ' + username + ' ', result);
-        userID = result[0].id;
-        initAppsServers();
-      })
-      .catch((error) => {
-        console.log('ERROR: Failed to insert user.', error);
-        process.exit();
-      });
+    return client.query('INSERT INTO "users" ("username") VALUES (${username}) ON CONFLICT ("username") DO UPDATE SET username = ${username} RETURNING id',
+      { username: username });
+  })
+  .then((result) => {
+    console.log('Inserted user ' + username + ' ', result);
+    userID = result[0].id;
     
+    let saveProgress = [];
+    /* save apps and servers */
+    for (let serverName of serverNames) {
+      let thisServer = new server(userID, serverName);
+      thisServer.randomizeIP();
+      saveProgress.push(thisServer.save(client));
+      servers.push(thisServer);
+    }
+
+    for (let appName of appNames) {
+      let thisApp = new app(userID, appName);
+      let maxRoutesApp = Math.ceil(Math.random() * maxRoutes); // max 50 routes
+      let maxDepthApp = Math.ceil(Math.random() * maxDepth); // max 5 depth
+      thisApp.buildRoutes(maxRoutesApp, maxDepthApp, randomRoute);
+      saveProgress.push(thisApp.save(client));
+      apps.push(thisApp);
+    }
+    
+    return Promise.all(saveProgress);
+  })
+  .then((result) => {
+    // don't really care about result just execute the next step.
+    compileStats();
   })
   .catch((error) => {
-    console.log('ERROR: Failed to connect to Postgres!', error)
+    console.log('ERROR: Fatal ', error);
+    process.exit();
   });
 
