@@ -2,21 +2,27 @@
 ![Travis Build Image](https://travis-ci.org/supportivesantas/project-ipsum.svg?branch=master)
 
 ## Table of Contents
-1. [Introduction](##introduction)
-2. [Team](##team)
-3. [Usage](##usage)
-  - [Basic Installation](###basic-intallation)  
-  - [Auto Scaling](###auto-scaling) 
-4. [Development](###development)
-  - [Requirements](###requirements)
-  - [Installing Dependencies](###installing-dependencies)
-  - [Getting Started](###getting-started) 
-  - [Application Architecture]
-5. [Contributing](###contributing)
-6. [License](###license)
+1. [Introduction](#introduction)
+2. [Team](#team)
+3. [Usage](#usage)
+  - [Basic Installation](#basic-intallation)  
+  - [Auto Scaling](#auto-scaling) 
+4. [Development](#development)
+  - [Requirements](#requirements)
+  - [Installing Dependencies](#installing-dependencies)
+  - [Development Sever](#development-server)
+  - [Scheduling Tasks](#scheduling-tasks)
+  - [Example Data and Application](#example-data-and-application)
+  - [Testing](#testing)
+  - [Application Architecture](#application-architecture)
+5. [Contributing](#contributing)
+6. [License](#license)
 
 ## Introduction
-DJ Deploy is  
+
+DJ Deploy is an easy way to monitor and mange your deployments. The core of DJ Deploy is comprised of an express middleware package which counts requests on the installed route. Advanced users can also use our service auto-scale their deployments (DigitalOcean currently supported) based on the same traffic data.
+
+![architecture](public/assets/img/architecture.png)
 
 ## Team
   - __Product Owner__: [Jonathan Mah](https://github.com/zelifus)
@@ -27,22 +33,22 @@ DJ Deploy is
 ## Usage
 
 ### Basic installation
-DJ Deploy runs as middleware in your Express application. Follow these steps get started.
+DJ Deploy runs as middleware in your Express application. If you are an end-user, follow these steps get started.
 
-1. To install, run: `npm install --save dj-deploy`
+1. To install to your app, run: `npm install --save lib-dj-deploy`, import the initClient function into your code as seen below.
 2. Configure your application information, using `sample.js` as an example. You MUST use the same Github handle you plan to use to login with to see your application in the web app.
 3. Import our middleware from `lib/libstats.js` and drop it into the routes you want to monitor in your application. For example, to use on all routes:
 
 ```
 var express = require('express');
-var libstats = require('./lib/libstats');
+var libstats = require('lib-dj-deploy');
 var app = express();
 
 app.use(libstats.initClient(app, {
-  username: 'zelifus',     /* your github username                  */
-  name: 'test',            /* your app name                         */
-  port: 8080,              /* your app port number                  */
-  interval: 600000,        /* suggested reporting interval: 10 min) */
+  username: 'zelifus',   /* your github username                      */
+  name: 'test',          /* your app name                             */
+  port: 8080,            /* your app port number                      */
+  interval: 600000,      /* reporting interval (ms). 10 min suggested */
   url: 'http://djdeploy.com/stats'
 }));
 ```
@@ -65,30 +71,53 @@ DJ Deploy continually compares the traffic information to the scaling thresholds
 
 ## Development
 
-To serve the bundled file in a dev environment (simulating a prod environment):
-1. run `webpack --config webpack.production.config.js` to create the bundle in the /build folder (20-30 sec)
-2. change isDeveloping to 'false' in server/server.js
-3. npm start
-
 ### Requirements
 - Node 5.x
 - Redis 3.x
 - Postgresql 9.5.x
+- Github developer application credentials
+- Cron for scheduling tasks
 - **Nginx+ load balanced system to run scaling features**
 
 ### Installing Dependencies
-Run `npm install` from the root directory.
+Run `npm install` from the root directory. If the NODE_ENV variable is set to production, the webpack bundle will be built as well.
 
-### Getting Started
-- Start the web server with `npm start`
-- Redis: This application uses Redis for session persistence. 
-    - Run `brew install redis` to install
-    - Run `redis-server` to start the server
+Set the correct environment variables:
+```
+export PG_CONNECTION_STRING=postgres://localhost
+export REDIS_CONNECTION_STRING=redis://localhost
+export GITHUB_CLIENT_SECRET=YOUR_SECRET_HERE
+export MAILGUN_SECRET=YOUR_SECRET_HERE
+export GITHUB_CLIENT_SECRET=YOUR_GITHUB_CLIENT_SECRET
+export GITHUB_CLIENT_ID=YOUR_GITHUB_CLIENT_ID
+export GITHUB_CALLBACK_URL=http://localhost:1337/auth/github/callback
+export SESSION_SECRET=YOUR_PASSPORT_SESSION_SECRET
+```
+
+### Development Server
+
+Simply run `npm start` to fire up the express server and Webpack middleware which serves a live, hot-reloading version of the application (about 7MB). Ensure Postgres and Redis are running before you start the server.
+
+To serve the bundled file in a dev environment (simulating a prod environment):
+1. run `webpack --config webpack.production.config.js` to create the bundle in the /build folder (20-30 sec). The bundled file (before gzip) is about 800kb.
+2. change isDeveloping to 'false' in server/server.js
+3. npm start
+
+Remember to delete the build file before resuming development, or Webpack will keep serving this file to you.
+
+### Scheduling Tasks
+
+Our current implementation use a crontab file to perform tasks which summarize daily data and check server load. Below is an example.
+
+```
+1 0 * * * source ~/PATH_TO_ENV_VARS && /usr/local/bin/node /var/app/djdeploy/server/summaries/generateSummaries.js
+0,30 * * * * source ~/PATH_TO_ENV_VARS && /usr/local/bin/node /var/app/djdeploy/server/checkBalancers/checkBalancers.js
+```
   
 ### Example Data and Application
 - Generate example traffic data:
 ```
-node seed_data/index.js EXAMPLE_USER_NAME
+node seed_data/index.js GITHUB_USER_NAME
 ```
 - Generate example summary data:
 ```
@@ -98,18 +127,10 @@ node server/summaries/generateSummaries.js
 ``` 
 node middleware/sample.js
 ```
-- Set the correct environment variables:
-```
-export PG_CONNECTION_STRING=postgres://localhost
-export GITHUB_CLIENT_SECRET=YOUR_SECRET_HERE
-export MAILGUN_SECRET=YOUR_SECRET_HERE
-```
+
 
 ### Testing
 Run the test Mocha-Chai suite with `npm test`
-
-
-
 
 
 ### Application Architecture ###
@@ -178,7 +199,7 @@ Run the test Mocha-Chai suite with `npm test`
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ## License
-See [License](https://github.com/supportivesantas/project-ipsum/blob/master/LICENSE)
+See [License](/LICENSE)
 
 
 
