@@ -112,7 +112,7 @@ module.exports = {
           .then((newlb) => {
             //DO AUTO DISCOVERY
             res.send('success');
-            return nternalTasks.syncServersToPlatforms(req.user.id);
+            return internalTasks.syncServersToPlatforms(req.user.id);
           })
           .then(() => {
             return internalTasks.syncServersToLB(req.user.id);
