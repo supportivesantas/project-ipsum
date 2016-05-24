@@ -17,12 +17,13 @@ class MyApp extends React.Component {
     this.state = {
       lineGraphRoute: null,
       resizefunc: null,
-      loading: false
+      loading1: false,
+      loading2: false
     };
   }
 
   getAndGraphTodaysData(){
-    this.setState({loading: true}, () => {
+    this.setState({loading1: true}, () => {
       // call 24 hr bar graph data and render
       request.post('/getStats/serverTotalsForApp', {
         appid: this.props.state.appSelection.id,
@@ -41,7 +42,7 @@ class MyApp extends React.Component {
 
         // for relative server load bar graph
         this.props.dispatch(actions.CHANGE_APP_SERVER_TOTALS(output));
-        this.setState({loading: false}, () => {
+        this.setState({loading1: false}, () => {
           barGraph('todayBarGraph', _.sortBy(this.props.state.appServerTotals, (obj) => {
             return -obj.value;
           }));
@@ -53,12 +54,12 @@ class MyApp extends React.Component {
     //For routes line Graph
     this.props.dispatch(actions.ADD_LINE_GRAPH_TITLE('/Total'));
     var appId = this.props.state.appSelection.id;
-    this.setState({loading: true}, () => {
+    this.setState({loading2: true}, () => {
 
       request.post('/getStats/app',
         {appId: appId, hours: 24}, //TODO figure out how to keep track of desired hours, have user settings/config in store?
         (err, res) => {
-          this.setState({loading: false})
+          this.setState({loading2: false})
           if (err) { console.log("Error getting Server Data", err); }
           this.props.dispatch(actions.ADD_SERVER_DATA(res.body));
           this.setState({lineGraphRoute: this.props.state.graphData[0].route});
@@ -153,7 +154,7 @@ class MyApp extends React.Component {
             <Row>
             <Col xs={12} lg={12}>
 
-            {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
+            {this.state.loading2 ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
               <div>
                 <Select
                   value={this.state.lineGraphRoute}
@@ -182,7 +183,7 @@ class MyApp extends React.Component {
               <Row>
                 <Col xs={12} md={6}>
                 <h4>Relative load (24 hr)</h4>
-                {this.state.loading ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
+                {this.state.loading1 ? <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img src="assets/loading.gif" /></div> : 
                 <div id="todayBarGraph"></div>
                 }
                 </Col>
