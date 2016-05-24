@@ -26,7 +26,7 @@ module.exports = {
         exclude: /node_modules/,
         query: {
           presets: ['react', 'es2015', 'react-hmre'],
-          cacheDirectory: true
+          cacheDirectory: false
         },
       },
       { test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css" },
