@@ -35,6 +35,7 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "knex": "^0.10.0",
+    "letsencrypt-express": "^1.1.5",
     "mailgun-js": "^0.7.10",
     "method-override": "^2.3.5",
     "passport": "^0.3.2",
