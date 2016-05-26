@@ -124,6 +124,18 @@ li.navbar-brand, li.navbar-brand a, li.navbar-brand a:hover {
 .panel-default>.panel-heading {
   background-color: white;
 }
+
+/* Carousel styling */
+.carousel-inner {
+  text-align:center;
+}
+.carousel-inner > .item > img {
+  display: inline;
+}
+.carousel-caption {
+  text-shadow: 0 0 8px #000;
+}
+
 /*=========== GRAPH STYLING  ===========*/
 path {
   stroke: #A6E22E;
