@@ -2,7 +2,7 @@ import React from 'react';
 import actions from '../actions/ipsumActions.js';
 import { connect } from 'react-redux';
 import NavigationBarLogin from './NavigationBarLogin.js';
-import { Grid, Col, Row, Jumbotron, Image, PageHeader, Modal, Button } from 'react-bootstrap';
+import { Grid, Col, Row, Jumbotron, Image, PageHeader, Modal, Button, Carousel} from 'react-bootstrap';
 import Footer from './Footer.js';
 
 var teamMembers = [
@@ -44,6 +44,8 @@ export default class About extends React.Component {
    }
 
   render() {
+    var screenshotList = ['history', 'lb', 'main', 'myapp', 'server', 'servers', 'tokens'];
+
     return (
       <div className="outerContainer">
       <Grid fluid className="mainContainer" style={{margin:'0 2em'}}>
@@ -79,9 +81,9 @@ export default class About extends React.Component {
         to spin up or destroy servers on your behalf, then instruct your load balancer
         to make the appropriate update. Check out the <a href="https://github.com/supportivesantas/project-ipsum">repo</a> for details.</p>
         <p><small>* Currently requires the use of NginxPlus</small></p>
-        <h2>Security</h2>
+        <h3>Security</h3>
         <p>Security is a top priority at DJ Deploy. We know you trust us with your data and API tokens. 
-        All and web traffic and authentication is sent over a secure HTTPS channel.</p>
+        All and web traffic and authentication is encrypted over HTTPS.</p>
       </Col>
 
 
@@ -113,9 +115,31 @@ export default class About extends React.Component {
       </Row>
 
       <Row>
+      <Col md={12}>
+      <hr />
+      <h2>See it in action</h2>
+      <Carousel>
+        {screenshotList.map( name => {
+          return (
+              <Carousel.Item>
+                <img width={900} height={500} alt="900x500" src={'/assets/ss/' + name + '.png'}/>
+                {/*<Carousel.Caption>
+                  <h3>First slide label</h3>
+                  <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                </Carousel.Caption>*/}
+              </Carousel.Item>
+            )
+        })}
+        
+      </Carousel>
+      </Col>
+      </Row>
+
+      <Row>
       <Col md={12} > 
       <hr />
-        <h2>Development Team</h2>
+      <h2>About Us</h2>
+        <h3>Development Team</h3>
         <Grid fluid>
           <Row>
           {
@@ -135,7 +159,7 @@ export default class About extends React.Component {
 
       <Row>
         <Col sm={12} md={12} xs={12}>
-          <h2> Built On </h2> 
+          <h3> Built On </h3> 
           <div className="technologies">
             <img className='techbadge' src="/assets/badges/react.png"/>
             <img className='techbadge' src="/assets/badges/redux.png"/>
@@ -143,7 +167,6 @@ export default class About extends React.Component {
             <img className='techbadge' src="/assets/badges/express.png"/>
             <img className='techbadge' src="/assets/badges/psql.png"/>
             <img className='techbadge' src="/assets/badges/redis.png"/>
-            <img className='techbadge' src="/assets/badges/docker.png"/>
             <img className='techbadge' src="/assets/badges/nginx.png"/>
           </div>
           <br />
