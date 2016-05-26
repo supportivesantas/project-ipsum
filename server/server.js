@@ -11,6 +11,16 @@ const nginxRouter = require('./routes/nginxRouter.js');
 const msgCtrl = require('./controllers/notificationController.js');
 
 const app = express();
+const appRedirect = express();
+
+appRedirect.listen(8080, (err) => {
+  console.log(err);
+});
+
+appRedirect.use('*', (req, res) => {
+  res.writeHead(302, { 'Location': 'https://www.djdeploy.com/' });
+  res.end();
+});
 
 var isDeveloping = process.env.NODE_ENV !== 'production'; // do not change this to const
 
