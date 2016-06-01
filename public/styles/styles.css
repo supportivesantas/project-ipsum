@@ -324,7 +324,7 @@ button {
 }
 
 .layout-middle-img-cover {
-  overflow: hidden;
+  /*overflow: hidden;*/
   background-size: cover;
   opacity:.7;
   width:50%;

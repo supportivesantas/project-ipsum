@@ -5,7 +5,6 @@ import Login from './components/Login.js';
 import About from './components/About.js';
 import MyApp from './components/MyApp.js';
 import MyServer from './components/MyServer.js';
-import AllApps from './components/AllApplications.js';
 import AllServers from './components/AllServers.js';
 import { Provider } from 'react-redux';
 import configureStore from './ipsumStore.js';
@@ -57,7 +56,6 @@ restoreSession()
 
           <Route path="/" component={App} onEnter={auth.requireAuth} >
             <IndexRoute component={MainPage} onEnter={auth.requireAuth} />
-            <Route path="/allApps" component={AllApps} onEnter={auth.requireAuth} />
             <Route path="/allServers" component={AllServers} onEnter={auth.requireAuth} />
             <Route path="/myServer" component={MyServer} onEnter={auth.requireAuth} />
             <Route path="/myApp" component={MyApp} onEnter={auth.requireAuth} />

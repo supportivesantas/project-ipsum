@@ -28,6 +28,7 @@ var teamMembers = [
   }
 ]
 
+
 export default class About extends React.Component {
 
   constructor(props) {
@@ -94,7 +95,7 @@ export default class About extends React.Component {
       <Button
         style={{marginTop: '1em'}}
         bsStyle="primary"
-        bsSize="medium"
+        bsSize="large"
         onClick={this.open.bind(this)}> 
           Expand
       </Button>
@@ -119,9 +120,9 @@ export default class About extends React.Component {
       <hr />
       <h2>See it in action</h2>
       <Carousel>
-        {screenshotList.map( name => {
+        {screenshotList.map( (name,i) => {
           return (
-              <Carousel.Item>
+              <Carousel.Item key={i}>
                 <img width={900} height={500} alt="900x500" src={'/assets/ss/' + name + '.png'}/>
                 {/*<Carousel.Caption>
                   <h3>First slide label</h3>
