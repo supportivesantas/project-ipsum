@@ -46,14 +46,8 @@ class MainPageAppView extends React.Component {
   resizedb() {
     var resize = function () {
       var apps = this.props.state.allAppSummaries || {};
-      var id = this.props.selected.id;
-      var app;
-      for (var i = 0; i < apps.length; i++) {
-        if (+apps[i].appid === id) {
-          app = apps[i];
-          break;
-        }
-      }
+      var id = this.props.selected.id.toString();
+      var app = _.findWhere(apps, {appid: id});
 
       if (app && app.data) {
         barGraph("Graph" + id, _.sortBy(app.data, (obj) => {

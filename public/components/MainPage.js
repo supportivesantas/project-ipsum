@@ -12,12 +12,10 @@ class MainPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
     };
   }
 
   componentWillMount() {
-    this.setState({loading: true});
     // Get app and server data and place in store
     restHandler.get('/user/init', (err, res) => {
       if (res.status !== 401) {
@@ -28,7 +26,6 @@ class MainPage extends React.Component {
       } else {
         browserHistory.push('/logout');
       }
-      this.setState({loading: false})
     });
   }
 
