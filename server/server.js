@@ -77,25 +77,25 @@ app.get('*', function (req, res) {
 })
 
 /*=============HTTPS Setup========================*/
-// var LEX = require('letsencrypt-express');
+var LEX = require('letsencrypt-express');
 
-// var lex = LEX.create({
-//  configDir: '/etc/letsencrypt',
-//  approveRegistration: function (hostname, cb) {
-//    cb(null, {
-//      domains: ['djdeploy.com'],
-//      email: 'bresnan.mw@gmail.com',
-//      agreeTos: true,
-//    });
-//  }
-// });
+var lex = LEX.create({
+ configDir: '/etc/letsencrypt',
+ approveRegistration: function (hostname, cb) {
+   cb(null, {
+     domains: ['djdeploy.com'],
+     email: 'bresnan.mw@gmail.com',
+     agreeTos: true,
+   });
+ }
+});
 
-// lex.onRequest = app;
+lex.onRequest = app;
 
-// lex.listen([3000], [1337, 5001], function () {
-//  var protocol = ('requestCert' in this) ? 'https': 'http';
-//  console.log("Listening at " + protocol + '://localhost:' + this.address().port);
-// });
+lex.listen([3000], [1337, 5001], function () {
+ var protocol = ('requestCert' in this) ? 'https': 'http';
+ console.log("Listening at " + protocol + '://localhost:' + this.address().port);
+});
 
 
 module.exports = app;
