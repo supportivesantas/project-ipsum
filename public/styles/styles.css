@@ -320,11 +320,16 @@ button {
   padding:0;
   margin: 4em 0 4em 0;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
+}
+
+.layout-middle.flip {
+  display: flex;
+  flex-flow: row-reverse nowrap;
 }
 
 .layout-middle-img-cover {
-  /*overflow: hidden;*/
+  overflow: hidden;
   background-size: cover;
   opacity:.7;
   width:50%;
@@ -340,11 +345,13 @@ button {
 }
 @media screen and (max-width: 800px){
  /* CSS definitions here */
- .layout-middle {
-    margin: 1em 0 1em 0;
+ .layout-middle, .layout-middle.flip {
+  margin: 1em 0 1em 0;
+  flex-flow: row wrap;
  }
+
  .layout-middle-img-cover {
-  display:none;
+  width:100%;
  }
   .layout-middle-text {
     width:100%;

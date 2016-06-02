@@ -40,13 +40,13 @@ var Login = () => {
     </Col></Row>
 
     <Row><Col md={12}>
-    <div className='layout-middle'>
+    <div className='layout-middle flip'>
+      <div className='layout-middle-img-cover' style={{backgroundImage: 'url(assets/img/servers.jpg)'}}></div>
       <div className='layout-middle-text'>
         <h1> <small> Trust</small> </h1>
         <h3> A robust service at your disposal </h3>
         <p>Add our proprietary middleware to your applications, and watch the data flow!</p>
       </div>
-      <div className='layout-middle-img-cover' style={{backgroundImage: 'url(assets/img/servers.jpg)'}}></div>
     </div>
     </Col></Row>
 
