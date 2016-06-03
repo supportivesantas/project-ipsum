@@ -25,6 +25,9 @@ body {
 .outerContainer{
   position: relative;
 }
+.outerContainer.about > .mainContainer{
+  padding: 0 0 280px 0;
+}
 .mainContainer{
   padding: 0 0 280px 0;
 }
@@ -82,6 +85,9 @@ nav.navbar {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+}
+button.navbar-toggle.collapsed {
+  margin-left:auto;
 }
 .navbar>.container-fluid .navbar-brand{
   margin-left: -5px;
@@ -349,13 +355,13 @@ button {
   margin: 1em 0 1em 0;
   flex-flow: row wrap;
  }
-
  .layout-middle-img-cover {
   width:100%;
+  height:40vh;
  }
   .layout-middle-text {
     width:100%;
-    padding: 3em
+    padding: 1em
   }
 }
 .tour-button {

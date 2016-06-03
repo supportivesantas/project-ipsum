@@ -48,8 +48,8 @@ export default class About extends React.Component {
     var screenshotList = ['history', 'lb', 'main', 'myapp', 'server', 'servers', 'tokens'];
 
     return (
-      <div className="outerContainer">
-      <Grid fluid className="mainContainer" style={{margin:'0 2em'}}>
+      <div className="outerContainer about">
+      <Grid className="mainContainer">
       <Row>
       <Col>
         <NavigationBarLogin />
