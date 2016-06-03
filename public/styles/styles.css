@@ -25,6 +25,9 @@ body {
 .outerContainer{
   position: relative;
 }
+.outerContainer.about > .mainContainer{
+  padding: 0 0 280px 0;
+}
 .mainContainer{
   padding: 0 0 280px 0;
 }
@@ -82,6 +85,9 @@ nav.navbar {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+}
+button.navbar-toggle.collapsed {
+  margin-left:auto;
 }
 .navbar>.container-fluid .navbar-brand{
   margin-left: -5px;
@@ -320,7 +326,12 @@ button {
   padding:0;
   margin: 4em 0 4em 0;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
+}
+
+.layout-middle.flip {
+  display: flex;
+  flex-flow: row-reverse nowrap;
 }
 
 .layout-middle-img-cover {
@@ -340,15 +351,17 @@ button {
 }
 @media screen and (max-width: 800px){
  /* CSS definitions here */
- .layout-middle {
-    margin: 1em 0 1em 0;
+ .layout-middle, .layout-middle.flip {
+  margin: 1em 0 1em 0;
+  flex-flow: row wrap;
  }
  .layout-middle-img-cover {
-  display:none;
+  width:100%;
+  height:40vh;
  }
   .layout-middle-text {
     width:100%;
-    padding: 3em
+    padding: 1em
   }
 }
 .tour-button {
