@@ -25,7 +25,7 @@ DJ Deploy is an easy way to monitor and mange your deployments. The core of DJ D
 ![architecture](public/assets/img/architecture.png)
 
 ## Team
-  - __Product Owner__: [Jonathan Mah](https://github.com/zelifus)
+  - __Product Owner__: Product Owner
   - __Scrum Master__: [Rane Gridley](https://github.com/ranebo)
   - __Development Team Members__: [Matt Bresnan](https://github.com/mbresnan1701), [Roland Fung](https://github.com/rolandfung)
 
