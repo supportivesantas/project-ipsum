@@ -45,7 +45,7 @@ var libstats = require('lib-dj-deploy');
 var app = express();
 
 app.use(libstats.initClient(app, {
-  username: 'zelifus',   /* your github username                      */
+  username: 'dingdong',   /* your github username                      */
   name: 'test',          /* your app name                             */
   port: 8080,            /* your app port number                      */
   interval: 600000,      /* reporting interval (ms). 10 min suggested */
